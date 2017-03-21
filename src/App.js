@@ -9,8 +9,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 
-import ContentArea from './components/ContentArea.js';
-
+import Editor from './components/Editor.js';
 
 
 const CenteredTitle=styled.h1`
@@ -23,8 +22,8 @@ class App extends Component {
 
     return (
       <div className="App">
-        <CenteredTitle>Simplepedia</CenteredTitle>
-        <ContentArea />
+        <CenteredTitle>Tutorial Builder</CenteredTitle>
+        <Editor />
       </div>
     );
   }
