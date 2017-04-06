@@ -6,8 +6,8 @@
 
 import React, { Component } from 'react';
 import CodeMirror from 'react-codemirror';
-require('codemirror/lib/codemirror.css');
-require('codemirror/mode/javascript/javascript');
+import 'codemirror/lib/codemirror.css';
+import 'codemirror/mode/javascript/javascript';
 import styled from 'styled-components';
 
 const CodeContainer = styled.div`

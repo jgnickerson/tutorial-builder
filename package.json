@@ -1,0 +1,28 @@
+{
+  "name": "tutorial-builder",
+  "version": "1.0.0",
+  "description": "Web app to build and follow JavaScript tutorials similar to those found on CodeCademy",
+  "main": "index.js",
+  "dependencies": {
+    "react": "^15.4.2",
+    "react-codemirror": "^0.3.0",
+    "react-dom": "^15.4.2",
+    "styled-components": "^1.4.4"
+  },
+  "devDependencies": {
+    "react-scripts": "0.9.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jgnickerson/tutorial-builder.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://github.com/jgnickerson/tutorial-builder#readme",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}
