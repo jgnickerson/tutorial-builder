@@ -4,12 +4,18 @@
   "description": "Web app to build and follow JavaScript tutorials similar to those found on CodeCademy",
   "main": "index.js",
   "dependencies": {
+    "body-parser": "^1.17.1",
+    "cors": "^2.8.3",
+    "express": "^4.15.2",
+    "mongodb": "^2.2.25",
     "react": "^15.4.2",
     "react-codemirror": "^0.3.0",
     "react-dom": "^15.4.2",
     "styled-components": "^1.4.4"
   },
   "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-mongodb-data": "^2.1.0",
     "react-scripts": "0.9.5"
   },
   "repository": {
