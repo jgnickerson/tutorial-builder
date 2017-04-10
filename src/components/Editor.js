@@ -34,7 +34,7 @@ class Editor extends Component{
 
     // create CodeMirror props
     const updateCode = ((newCode) => {
-      this.setState({code: newCode});
+      this.props.func(newCode);
     });
     const options = {
       mode: this.state.mode,
@@ -45,7 +45,7 @@ class Editor extends Component{
 
     return (
       <CodeContainer>
-        <CodeMirror ref="editor" value={this.state.code} onChange={updateCode} options={options} />
+        <CodeMirror ref="editor" value={this.props.code} onChange={updateCode} options={options} />
       </CodeContainer>
     );
 

@@ -8,7 +8,7 @@
 
 import React, { Component } from 'react';
 import styled from 'styled-components';
-
+import ExecutionEditContainer from './components/ExecutionEditContainer.js';
 import Editor from './components/Editor.js';
 
 
@@ -23,7 +23,7 @@ class App extends Component {
     return (
       <div className="App">
         <CenteredTitle>Tutorial Builder</CenteredTitle>
-        <Editor />
+        <ExecutionEditContainer />
       </div>
     );
   }
