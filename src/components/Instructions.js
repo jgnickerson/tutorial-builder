@@ -10,16 +10,14 @@ import 'codemirror/lib/codemirror.css';
 import 'codemirror/mode/javascript/javascript';
 import styled from 'styled-components';
 
-const HorizontalLI = styled.li`
+const InstructionContainer = styled.li`
   width: 45%;
   display: inline-block;
   padding: 5px;
   vertical-align: top;
-`;
-
-const InstructionContainer = styled.div`
   border: 1px solid #eee;
 `;
+
 
 class Instructions extends Component{
 
@@ -51,9 +49,7 @@ class Instructions extends Component{
     });
 
     return (
-      <HorizontalLI>
-        <InstructionContainer>{instructions}</InstructionContainer>
-      </HorizontalLI>
+      <InstructionContainer>{instructions}</InstructionContainer>
     );
 
 

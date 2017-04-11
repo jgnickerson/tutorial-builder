@@ -10,15 +10,11 @@ import 'codemirror/lib/codemirror.css';
 import 'codemirror/mode/javascript/javascript';
 import styled from 'styled-components';
 
-const HorizontalLI = styled.li`
+
+const CodeContainer = styled.li`
   width: 45%;
   display: inline-block;
-  padding: 5px;
   vertical-align: top;
-`;
-
-const CodeContainer = styled.div`
-  border: 1px solid #eee;
 `;
 
 class Editor extends Component{
@@ -47,11 +43,9 @@ class Editor extends Component{
     };
 
     return (
-      <HorizontalLI>
-          <CodeContainer>
-            <CodeMirror ref="editor" value={this.state.code} onChange={updateCode} options={options} />
-          </CodeContainer>
-      </HorizontalLI>
+        <CodeContainer>
+          <CodeMirror ref="editor" value={this.state.code} onChange={updateCode} options={options} />
+        </CodeContainer>
     );
 
 
