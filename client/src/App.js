@@ -19,7 +19,6 @@ const CenteredTitle=styled.h1`
 
 class App extends Component {
   render() {
-
     return (
       <div className="App">
         <CenteredTitle>Tutorial Builder</CenteredTitle>
