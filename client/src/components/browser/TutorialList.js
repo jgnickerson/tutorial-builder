@@ -10,11 +10,11 @@ function TutorialList(props){
 	const tutorials = props.tutorials.map((tutorial, index)=>{
 		return (
 			<TutorialSummary
-				key={tutorial.id}
-				id={tutorial.id}
+			key={tutorial._id}
+			id={tutorial._id}
     		title={tutorial.title}
   			author={tutorial.creator}
-  			created={tutorial.lastUpdate}
+  			lastUpdate={tutorial.lastUpdate}
     		rating={tutorial.rating}
     		onClick={props.onSelect}
     		// setRatingFor={(id, rating)=>this.setRating(id, rating)}

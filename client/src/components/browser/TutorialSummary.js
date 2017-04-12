@@ -32,16 +32,17 @@ function TutorialSummary(props){
       <Title>{props.title}</Title>
       <Author>{props.author}</Author>
       <StarRating rating={props.rating} setRating={(rating)=>{props.setRatingFor(props.id, rating)}}/>
-      <Created>({props.created})</Created>
+      <Created>({props.lastUpdate})</Created>
     </Summary>
   );
 }
 
 TutorialSummary.propTypes = {
+  id:React.PropTypes.string.isRequired,
   title:React.PropTypes.string.isRequired,
   author:React.PropTypes.string.isRequired,
-  created:React.PropTypes.string.isRequired,
-  rating:React.PropTypes.number,
+  lastUpdate:React.PropTypes.string.isRequired,
+  rating:React.PropTypes.number.isRequired,
   onClick:React.PropTypes.func.isRequired,
 };
 

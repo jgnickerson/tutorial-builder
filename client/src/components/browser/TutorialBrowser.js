@@ -6,12 +6,23 @@
 import React, { Component } from 'react';
 import TutorialList from './TutorialList.js';
 
-import data from '../../../../test_data/tutorials.json';
-
 class TutorialBrowser extends Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      tutorials:[]
+    };
+
+    fetch('/tutorials/')
+    .then((response)=>{
+      if (response.ok) {
+        return response.json();
+      }
+    })
+    .then((data)=>{
+      this.setState({tutorials:data})
+    })
     //would fetch tutorials from browser, and keep track of state like expanded tutorials here
 
     this.onSelect = this.onSelect.bind(this);
@@ -28,7 +39,7 @@ class TutorialBrowser extends Component {
   }
 
   render() {
-    return <TutorialList tutorials={data} onSelect={this.onSelect}/>
+    return <TutorialList tutorials={this.state.tutorials} onSelect={this.onSelect}/>
   }
 }
 

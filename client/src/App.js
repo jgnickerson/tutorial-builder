@@ -37,11 +37,10 @@ class App extends Component {
   }
 
   render() {
-
     //display either the browser or a specific tutorial
     const activeComponent = this.state.mode === 'browser' ?
       <TutorialBrowser onSelect={this.handleTutorialSelect}/> :
-      <TutorialContainer tutorialId={this.state.tutorialId} onExit={this.handleTutorialExit}/>;
+      <TutorialContainer tutorialId={this.state.activeTutorial} onExit={this.handleTutorialExit}/>;
 
     return (
       <div className="App">

@@ -7,12 +7,27 @@ import React, { Component } from 'react';
 import Tutorial from './Tutorial.js';
 
 class TutorialContainer extends Component {
-  // constructor(props) {
-  //   super(props);
-  // }
+  constructor(props) {
+    super(props);
+
+    this.state = {
+    	tutorial:null
+    }
+
+    fetch('/tutorials/'+ props.tutorialId)
+    .then(response=>{
+    	if(response.ok){
+    		return response.json();
+    	}
+    })
+    .then(data=>{
+    	this.setState({tutorial:data})
+    })
+
+  }
 
   render() {
-    return <Tutorial onExit={this.props.onExit}/>
+    return <Tutorial tutorial={this.state.tutorial} onExit={this.props.onExit}/>
   }
 }
 

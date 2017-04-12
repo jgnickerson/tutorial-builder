@@ -32,13 +32,13 @@ class Instructions extends Component{
     };
 
     // placeholder for instruction data read from server
-    const rawInstructions = [
-      { type: 'text', data: 'First do this'},
-      { type: 'code', data: '//This is a code snippet'},
-      { type: 'text', data: 'Now do this'}
-    ];
+    // const rawInstructions = [
+    //   { type: 'text', data: 'First do this'},
+    //   { type: 'code', data: '//This is a code snippet'},
+    //   { type: 'text', data: 'Now do this'}
+    // ];
 
-    const instructions = rawInstructions
+    const instructions = this.props.instructions
     .map((item, index) => {
       return item.type === 'text' ?
         <p key={index}>{item.data}</p> :

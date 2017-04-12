@@ -1,12 +1,11 @@
 [
   {
     "title": "test",
-    "id": "1",
     "creator": "kayla",
     "stages": [
       {
-        "instructions": "test",
-        "code": "test",
+        "instructions": [{"type": "text", "data": "text"}, {"type": "code", "data": "//This is a code snippet for Kayla's"}],
+        "code": "//This is Kayla's starting code",
         "hints": "test"
       }
     ],
@@ -15,12 +14,11 @@
   },
   {
     "title": "test1",
-    "id": "2",
     "creator": "amir",
     "stages": [
       {
-        "instructions": "test1",
-        "code": "test1",
+        "instructions": [{"type": "text", "data": "text"}, {"type": "code", "data": "//This is a code snippet for Amir's"}],
+        "code": "//This is Amir's starting code",
         "hints": "test1"
       }
     ],

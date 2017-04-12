@@ -21,7 +21,7 @@ class Editor extends Component{
   constructor(props){
     super(props);
     this.state = {
-      code: '// Code',
+      code: props.startingCode,
       mode: 'javascript'
     };
 
