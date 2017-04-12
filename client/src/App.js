@@ -10,6 +10,7 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 
 import Editor from './components/Editor.js';
+import Instructions from './components/Instructions.js';
 
 
 const CenteredTitle=styled.h1`
@@ -22,7 +23,10 @@ class App extends Component {
     return (
       <div className="App">
         <CenteredTitle>Tutorial Builder</CenteredTitle>
+      <ul>
+        <Instructions />
         <Editor />
+      </ul>
       </div>
     );
   }
