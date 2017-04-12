@@ -1,6 +1,7 @@
 [
   {
     "title": "test",
+    "id": "1",
     "creator": "kayla",
     "stages": [
       {
@@ -9,10 +10,12 @@
         "hints": "test"
       }
     ],
-    "lastUpdate": "Saturday"
+    "lastUpdate": "Saturday",
+    "rating": 4
   },
   {
     "title": "test1",
+    "id": "2",
     "creator": "amir",
     "stages": [
       {
@@ -21,6 +24,8 @@
         "hints": "test1"
       }
     ],
-    "lastUpdate": "Saturday"
+    "lastUpdate": "Saturday",
+     "rating": 2
+
   }
 ]
