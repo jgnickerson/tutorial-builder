@@ -37,8 +37,13 @@ class Instructions extends Component{
       { type: 'code', data: '//This is a code snippet'},
       { type: 'text', data: 'Now do this'}
     ];
-    
-    const instructions = rawInstructions.map(item => item.type === 'code' ? <p>{item.data}</p> : <CodeMirror ref="editor" value={item.data} options={options}/>);
+
+    const instructions = rawInstructions
+    .map((item, index) => {
+      return item.type === 'text' ?
+        <p key={index}>{item.data}</p> :
+        <CodeMirror key={index} ref="editor" value={item.data} options={options}/>
+    });
 
     return (
       <InstructionContainer>{instructions}</InstructionContainer>

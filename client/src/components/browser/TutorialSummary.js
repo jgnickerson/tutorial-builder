@@ -23,21 +23,21 @@ margin:0px;
 `
 
 /**
-Tutorial creates the basic structure of an individual tutorial
+TutorialSummary creates the basic structure of an individual tutorial
 **/
 
-function Tutorial(props){
+function TutorialSummary(props){
   return (
-    <Summary>
-    <Title onClick={(event)=>props.onClick(props.id)}>{props.title}</Title>
-    <Author>{props.author}</Author>
-    <StarRating rating={props.rating} setRating={(rating)=>{props.setRatingFor(props.id, rating)}}/>
-    <Created>({props.created})</Created>
+    <Summary onClick={() => {props.onClick(props.id)}}>
+      <Title>{props.title}</Title>
+      <Author>{props.author}</Author>
+      <StarRating rating={props.rating} setRating={(rating)=>{props.setRatingFor(props.id, rating)}}/>
+      <Created>({props.created})</Created>
     </Summary>
   );
 }
 
-Tutorial.propTypes = {
+TutorialSummary.propTypes = {
   title:React.PropTypes.string.isRequired,
   author:React.PropTypes.string.isRequired,
   created:React.PropTypes.string.isRequired,
@@ -45,4 +45,4 @@ Tutorial.propTypes = {
   onClick:React.PropTypes.func.isRequired,
 };
 
-export default Tutorial;
+export default TutorialSummary;
