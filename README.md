@@ -21,8 +21,8 @@ mongo --port 4201 tutorial-builder --eval "db.dropDatabase()"
 ~~~
 Then open a new terminal and run from the root directory:
 ~~~
-mongoimport --port 4201 --db tutorial-builder --collection tutorials --file ./test_data/tutorials.json
-mongoimport --port 4201 --db tutorial-builder --collection users --file ./test_data/users.json
+mongoimport --port 4201 --db tutorial-builder --collection tutorials --jsonArray ./test_data/tutorials.json
+mongoimport --port 4201 --db tutorial-builder --collection users --jsonArray ./test_data/users.json
 ~~~
 
 
