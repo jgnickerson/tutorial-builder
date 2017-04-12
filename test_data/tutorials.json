@@ -1,24 +1,28 @@
-{
-  "title": "test",
-  "creator": "kayla",
-  "stages": [
-    {
-      "instructions": "test",
-      "code": "test",
-      "hints": "test"
-    }
-  ],
-  "lastUpdate": "Saturday"
-}
-{
-  "title": "test1",
-  "creator": "amir",
-  "stages": [
-    {
-      "instructions": "test1",
-      "code": "test1",
-      "hints": "test1"
-    }
-  ],
-  "lastUpdate": "Saturday"
-}
+[
+  {
+    "title": "test",
+    "creator": "kayla",
+    "stages": [
+      {
+        "instructions": [{"type": "text", "data": "text"}, {"type": "code", "data": "//This is a code snippet for Kayla's"}],
+        "code": "//This is Kayla's starting code",
+        "hints": "test"
+      }
+    ],
+    "lastUpdate": "Saturday",
+    "rating": 4
+  },
+  {
+    "title": "test1",
+    "creator": "amir",
+    "stages": [
+      {
+        "instructions": [{"type": "text", "data": "text"}, {"type": "code", "data": "//This is a code snippet for Amir's"}],
+        "code": "//This is Amir's starting code",
+        "hints": "test1"
+      }
+    ],
+    "lastUpdate": "Saturday",
+     "rating": 2
+  }
+]
