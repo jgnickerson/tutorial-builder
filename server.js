@@ -22,6 +22,11 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
+// Express only serves static assets in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static('client/build'));
+}
+
 //connect to the database and store the reference
 const MongoClient = require('mongodb').MongoClient;
 var db;
@@ -41,10 +46,12 @@ MongoClient.connect('mongodb://localhost:4201/tutorial-builder', (err, database)
 	console.log('Listening on port %d', server.address().port);
 });
 
-// setup the routes
-app.get('/', (req, res)=>{
-	res.send("<h1>Homepage</h1>");
-});
+
+/*
+
+SERVER Routes
+
+*/
 
 // get the info about the tutorials
 app.get('/tutorials/:id*?', (req, res) => {

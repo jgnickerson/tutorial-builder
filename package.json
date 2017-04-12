@@ -1,34 +1,28 @@
 {
-  "name": "tutorial-builder",
+  "name": "tutorial-builder-server",
   "version": "1.0.0",
   "description": "Web app to build and follow JavaScript tutorials similar to those found on CodeCademy",
-  "main": "index.js",
+  "main": "server.js",
   "dependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-core": "^6.24.1",
     "body-parser": "^1.17.1",
     "cors": "^2.8.3",
     "express": "^4.15.2",
-    "mongodb": "^2.2.25",
-    "react": "^15.4.2",
-    "react-codemirror": "^0.3.0",
-    "react-dom": "^15.4.2",
-    "styled-components": "^1.4.4"
+    "mongodb": "^2.2.25"
   },
   "devDependencies": {
-    "gulp": "^3.9.1",
-    "gulp-mongodb-data": "^2.1.0",
-    "react-scripts": "0.9.5"
+    "concurrently": "^3.4.0"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jgnickerson/tutorial-builder.git"
   },
-  "author": "",
   "license": "ISC",
   "homepage": "https://github.com/jgnickerson/tutorial-builder#readme",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "start": "concurrently \"mongod --port 4201 --dbpath ./db\" \"npm run server\" \"npm run client\"",
+    "server": "babel-node server.js",
+    "client": "babel-node start-client.js"
   }
 }
