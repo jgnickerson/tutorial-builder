@@ -11,7 +11,8 @@ class TutorialContainer extends Component {
     super(props);
 
     this.state = {
-    	tutorial:null
+      code: "",
+    	tutorial: null
     }
 
     fetch('/tutorials/'+ props.tutorialId)
@@ -21,13 +22,23 @@ class TutorialContainer extends Component {
     	}
     })
     .then(data=>{
-    	this.setState({tutorial:data})
+    	this.setState({tutorial:data, code:data.stages[0].code})
     })
 
+    this.handleCodeChange = this.handleCodeChange.bind(this);
+  }
+
+  handleCodeChange(code) {
+    this.setState({code: code});
   }
 
   render() {
-    return <Tutorial tutorial={this.state.tutorial} onExit={this.props.onExit}/>
+    return <Tutorial
+      instructions={this.state.tutorial ? this.state.tutorial.stages[0].instructions : null}
+      code={this.state.code}
+      onExit={this.props.onExit}
+      onCodeChange={this.handleCodeChange}
+    />
   }
 }
 
