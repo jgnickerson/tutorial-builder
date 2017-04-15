@@ -2,6 +2,7 @@
   {
     "title": "test",
     "creator": "kayla",
+    "description":"This is the description for tutorial 1",
     "stages": [
       {
         "instructions": [{"type": "text", "data": "text"}, {"type": "code", "data": "//This is a code snippet for Kayla's"}],
@@ -15,6 +16,7 @@
   {
     "title": "test1",
     "creator": "amir",
+    "description":"This is the description for tutorial 2",
     "stages": [
       {
         "instructions": [{"type": "text", "data": "text"}, {"type": "code", "data": "//This is a code snippet for Amir's"}],

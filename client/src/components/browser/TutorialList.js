@@ -14,6 +14,7 @@ function TutorialList(props){
 			id={tutorial._id}
     		title={tutorial.title}
   			author={tutorial.creator}
+				description={tutorial.description}
   			lastUpdate={tutorial.lastUpdate}
     		rating={tutorial.rating}
     		onClick={props.onSelect}

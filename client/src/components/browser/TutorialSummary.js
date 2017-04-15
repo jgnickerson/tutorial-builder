@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import styled from 'styled-components';
 import StarRating from './StarRating.js';
 
@@ -8,8 +8,12 @@ margin: 20px;
 `;
 
 const Title = styled.p`
-  font-weight:bold;
-  margin:0px;
+font-weight:bold;
+margin:0px;
+`;
+
+const Description = styled.p`
+margin:10px;
 `;
 
 const Created = styled.p`
@@ -26,20 +30,38 @@ margin:0px;
 TutorialSummary creates the basic structure of an individual tutorial
 **/
 
-function TutorialSummary(props){
-  return (
-    <Summary onClick={() => {props.onClick(props.id)}}>
-      <Title>{props.title}</Title>
-      <Author>{props.author}</Author>
-      <StarRating rating={props.rating} setRating={(rating)=>{props.setRatingFor(props.id, rating)}}/>
-      <Created>({props.lastUpdate})</Created>
-    </Summary>
-  );
+class TutorialSummary extends Component{
+  constructor(props){
+    super(props);
+    this.state ={
+      showDescription:false
+    }
+  }
+  render(){
+    const tutorialSummary = this.state.showDescription === true ? (
+      <Summary onClick={() => {this.setState({showDescription:false})}}>
+      <Title>{this.props.title}</Title>
+      <button type="button" onClick={() => {this.props.onClick(this.props.id)}}>Open Tutorial</button>
+      <Description>{this.props.description}</Description>
+      <Author>{this.props.author}</Author>
+      <StarRating rating={this.props.rating} setRating={(rating)=>{this.props.setRatingFor(this.props.id, rating)}}/>
+      <Created>({this.props.lastUpdate})</Created>
+      </Summary>
+    ):
+    (<Summary onClick={() => {this.setState({showDescription:true})}}>
+    <Title>{this.props.title}</Title>
+    <Author>{this.props.author}</Author>
+    <StarRating rating={this.props.rating} setRating={(rating)=>{this.props.setRatingFor(this.props.id, rating)}}/>
+    <Created>({this.props.lastUpdate})</Created>
+    </Summary>)
+    return tutorialSummary;
+  }
 }
 
 TutorialSummary.propTypes = {
   id:React.PropTypes.string.isRequired,
   title:React.PropTypes.string.isRequired,
+  description:React.PropTypes.string,
   author:React.PropTypes.string.isRequired,
   lastUpdate:React.PropTypes.string.isRequired,
   rating:React.PropTypes.number.isRequired,
