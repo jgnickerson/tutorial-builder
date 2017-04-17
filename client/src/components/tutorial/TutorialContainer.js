@@ -42,7 +42,7 @@ class TutorialContainer extends Component {
         }
       });
 
-      let currentTutorial, userCode, currentStage;
+      let currentTutorial, userCode;
 
       if (tutorialAlreadyUsed) {
         // get the user's code and the current stage
@@ -54,6 +54,7 @@ class TutorialContainer extends Component {
 
         // set the state
         this.setState({
+          user: currentUser,
           tutorial : currentTutorial,
           jsCode: jsCode,
           htmlCode: htmlCode,
@@ -72,14 +73,11 @@ class TutorialContainer extends Component {
         	}
         })
         .then((originalTutorial) => {
-          console.log("og", originalTutorial);
           // modify the original tutorial to include user code and current stage
-          originalTutorial.jsCode = originalTutorial.stages[0].code.js;
-          originalTutorial.htmlCode = originalTutorial.stages[0].code.html;
-          originalTutorial.cssCode = originalTutorial.stages[0].code.css;
+          originalTutorial.js = originalTutorial.stages[0].code.js;
+          originalTutorial.html = originalTutorial.stages[0].code.html;
+          originalTutorial.css = originalTutorial.stages[0].code.css;
           originalTutorial.currentStage = 0;
-
-          console.log(originalTutorial);
 
           // push the tutorial to the list of user's tutorials
           currentUser.tutorialsUsed.push(originalTutorial);
@@ -101,20 +99,18 @@ class TutorialContainer extends Component {
           fetch(putRequest)
           .then((response)=>{
             if (response.ok){
-              //console.log(response.json());
-              // what is the issue with response? check the PUT route in server.js...
               return response.json();
             }
           })
           .then((serverUser) => {
-            let serverTutorial;
-            serverUser.tutorialsUsed.forEach((item, index) => {
-              if (item._id === props.tutorialId) {
-                serverTutorial = item;
-              }
+            let serverTutorial = serverUser.tutorialsUsed.find((item) => {
+              return item._id === props.tutorialId;
             });
+
+            console.log(serverTutorial);
             // then set the state
             this.setState({
+              user: serverUser,
               tutorial : serverTutorial,
               jsCode: serverTutorial.js,
               htmlCode: serverTutorial.html,
@@ -145,38 +141,71 @@ class TutorialContainer extends Component {
 
   // set up the interval for auto-saving
   componentDidMount() {
-    //this.interval = setInterval(this.updateCode, 2000);
+    this.interval = setInterval(this.updateCode, 1000);
   }
 
   // clear the interval when we don't need the component
   componentWillUnmount() {
-    //clearInterval(this.interval);
+    clearInterval(this.interval);
   }
 
   // the function that auto-saves the code
   updateCode() {
-    console.log("interval!");
+    if (this.state.tutorial && this.state.user) {
 
-    //console.log(this.state.tutorial);
-    //console.log(this.state.code);
-    // do this only if this.state.code && this.state.tutorial
-    // make sure the new tutorial includes _id and the new code
-    let completeNewTutorial = Object.assign({}, this.state.tutorial);
-    completeNewTutorial.stages[0].code = this.state.code;
-    console.log(completeNewTutorial);
-    //
-    // // stringify the object
-    // const articleStr = JSON.stringify(completeNewArticle);
-    //
-    // // define the PUT request
-    // const putRequest = new Request(
-    //   SERVER + "/articles/"+ completeNewArticle._id,
-    //   {
-    //     method:'PUT',
-    //     body: articleStr,
-    //     headers: new Headers({'Content-type': 'application/json'})
-    //   }
-    // );
+      //put the new code in the tutorial
+      let updatedTutorial = Object.assign({}, this.state.tutorial);
+      updatedTutorial.js = this.state.jsCode;
+      updatedTutorial.css = this.state.cssCode;
+      updatedTutorial.html = this.state.htmlCode;
+
+      // load the tutorial in the used tutorials array
+      let updatedTutorialsUsed = this.state.user.tutorialsUsed.slice();
+      updatedTutorialsUsed = updatedTutorialsUsed.map((item) => {
+        if (item._id === updatedTutorial._id) {
+          return updatedTutorial;
+        } else {
+          return item;
+        }
+      });
+
+      // load the array in the user object
+      let updatedUser = Object.assign({}, this.state.user);
+      updatedUser.tutorialsUsed = updatedTutorialsUsed;
+
+      // and send to user object to the server
+
+      // stringify the object
+      const userStr = JSON.stringify(updatedUser);
+
+      // define the PUT request
+      const putRequest = new Request(
+        SERVER + "/users/" + updatedUser._id,
+        {
+          method:'PUT',
+          body: userStr,
+          headers: new Headers({'Content-type': 'application/json'})
+        }
+      );
+
+      fetch(putRequest)
+      .then((response)=>{
+        if (response.ok){
+          return response.json();
+        }
+      })
+      .then((serverUser) => {
+        let serverTutorial = serverUser.tutorialsUsed.find((item) => {
+          return item._id === updatedTutorial._id;
+        });
+        // then set the state
+        this.setState({
+          user: serverUser,
+          tutorial : serverTutorial,
+          code : serverTutorial.userCode
+        });
+      });
+    }
   }
 
   handleCodeChange(code) {
@@ -197,11 +226,11 @@ class TutorialContainer extends Component {
     });
 
     return <Tutorial
-      instructions={this.state.tutorial ? this.state.tutorial.stages[0].instructions : null}
       code={this.getCodeToDisplay()}
       js={this.state.jsCode}
       html={this.state.htmlCode}
       css={this.state.cssCode}
+      instructions={this.state.tutorial ? this.state.tutorial.stages[this.state.tutorial.currentStage].instructions : null}
       onExit={this.props.onExit}
       onCodeChange={this.handleCodeChange}
       mode={this.state.mode}
