@@ -33,6 +33,7 @@ class TutorialContainer extends Component {
     this.handleCodeChange = this.handleCodeChange.bind(this);
   }
 
+<<<<<<< 83622a50787736753db5502c47fd5525117d2706
   getCodeToDisplay() {
     if (this.state.mode === 'javascript') {
       return this.state.codeJS;
@@ -43,6 +44,18 @@ class TutorialContainer extends Component {
     } else {
       return "Unknown mode";
     }
+=======
+  componentDidMount() {
+    this.interval = setInterval(this.updateCode, 2000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
+  updateCode() {
+    console.log("interval!");
+>>>>>>> set up the 2 second intervals
   }
 
   handleCodeChange(code) {
