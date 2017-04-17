@@ -4,12 +4,26 @@
 import React, { Component } from 'react';
 
 //Execute Component
-function Execute(props){
-    return <div><button onClick={()=>executeCode(props.code, false)}>Run</button></div>
+class Execute extends Component {
+  constructor() {
+    super();
+  }
+
+  componentWillUnmount() {
+    let iframe = document.getElementById("iframe");
+    iframe.parentNode.removeChild(iframe);
+
+    let consoleLogs = document.getElementById('console-logs');
+    consoleLogs.parentNode.removeChild(consoleLogs);
+  }
+
+  render () {
+    return <div><button onClick={()=>executeCode(this.props.js, this.props.html, this.props.css, true)}>Run</button></div>
+  }
 }
 
 
-function executeCode(code, showIframe) {
+function executeCode(js, rawHtml, css, showIframe) {
     //if an iFrame already exists, remove it
     if (document.getElementById("iframe")) {
         let iframe = document.getElementById("iframe");
@@ -40,8 +54,9 @@ function executeCode(code, showIframe) {
         parent.logEntry([...args]);
       }\n`
 
-    code = consoleLogRewrite + code;
-    let html = '<html><head>' + '<style>' + '</style></head><body>' + '<script type="text/javascript">' + code + '</script></body></html>';
+
+    let code = consoleLogRewrite + js;
+    let html = '<html><head>' + '<style>' + css + '</style></head><body>' + rawHtml + '<script type="text/javascript">' + code + '</script></body></html>';
 
     //writing file in the iframe and compiling
     iframe.contentDocument.open();

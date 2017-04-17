@@ -25,8 +25,8 @@ class TutorialContainer extends Component {
     	}
     })
     .then(data=>{
-    	this.setState({tutorial:data, codeJS:data.stages[0].code.javascript, 
-                                  codeHTML:data.stages[0].code.html, 
+    	this.setState({tutorial:data, codeJS:data.stages[0].code.javascript,
+                                  codeHTML:data.stages[0].code.html,
                                    codeCSS:data.stages[0].code.css})
     })
 
@@ -65,6 +65,9 @@ class TutorialContainer extends Component {
     return <Tutorial
       instructions={this.state.tutorial ? this.state.tutorial.stages[0].instructions : null}
       code={this.getCodeToDisplay()}
+      js={this.state.codeJS}
+      html={this.state.codeHTML}
+      css={this.state.codeCSS}
       onExit={this.props.onExit}
       onCodeChange={this.handleCodeChange}
       mode={this.state.mode}

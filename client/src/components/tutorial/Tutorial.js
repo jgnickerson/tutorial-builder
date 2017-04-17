@@ -16,7 +16,7 @@ function Tutorial(props) {
             <Instructions instructions={props.instructions}/>
             <Editor code={props.code} onCodeChange={props.onCodeChange} mode={props.mode} onModeChange={props.onModeChange}/>
           </ul>
-          <Execute code={props.code}/>
+          <Execute code={props.code} js={props.js} html={props.html} css={props.css}/>
         </div>
       )
     }else{
