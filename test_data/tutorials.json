@@ -5,10 +5,12 @@
     "description":"This is the description for tutorial 1",
     "stages": [
       {
-        "instructions": [{"type": "text", "data": "This is text explaining the first step of the tutorial."}, {"type": "code", "data": "//This is a code snippet for Kayla's"}, {"type": "text", "data": "This is text explaining the second step of the tutorial."}],
+        "instructions": [{"type": "text", "data": "This is text explaining the first step of the tutorial."},
+                         {"type": "code", "data": "//This is a code snippet for Kayla's"},
+                         {"type": "text", "data": "This is text explaining the second step of the tutorial."}],
         "code":
           {
-            "javascript": "// javascript",
+            "js": "//javascript",
             "html": "<!--html-->",
             "css": "/* css */"
           },
@@ -27,7 +29,7 @@
         "instructions": [{"type": "text", "data": "text"}, {"type": "code", "data": "//This is a code snippet for Amir's"}],
         "code":
           {
-            "javascript": "// javascript",
+            "js": "// javascript",
             "html": "<!--html-->",
             "css": "/* css */"
           },

@@ -145,15 +145,18 @@ app.delete('/users/:id', (req, res) => {
 // update a specific tutorial
 app.put('/tutorials/:id', (req, res) => {
 	let updatedTutorial = req.body;
-	db.collection("tutorials").update(
-		{_id: new ObjectID(req.params.id)},
-		updatedTutorial,
-		(err) => {
+	updatedTutorial._id = ObjectID.createFromHexString(updatedTutorial._id);
+
+	db.collection("tutorials").findOneAndUpdate(
+		{_id: updatedTutorial._id},
+		{$set: updatedTutorial},
+		{returnOriginal: false},
+		(err, result) => {
 			if (err) {
 				console.log(err);
 				res.sendStatus(500);
 			} else {
-				res.sendStatus(200);
+				res.send(result.value);
 			}
 		}
 	);
@@ -162,15 +165,18 @@ app.put('/tutorials/:id', (req, res) => {
 // update a specific user's account
 app.put('/users/:id', (req, res) => {
 	let updatedUser = req.body;
-	db.collection("users").update(
-		{_id: new ObjectID(req.params.id)},
-		updatedUser,
-		(err) => {
+	updatedUser._id = ObjectID.createFromHexString(updatedUser._id);
+
+	db.collection("users").findOneAndUpdate(
+		{_id: updatedUser._id},
+		{$set: updatedUser},
+		{returnOriginal: false},
+		(err, result) => {
 			if (err) {
 				console.log(err);
 				res.sendStatus(500);
 			} else {
-				res.sendStatus(200);
+				res.send(result.value);
 			}
 		}
 	);

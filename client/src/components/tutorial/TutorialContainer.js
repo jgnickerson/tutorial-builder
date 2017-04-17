@@ -6,65 +6,186 @@
 import React, { Component } from 'react';
 import Tutorial from './Tutorial.js';
 
+const SERVER = 'http://localhost:4200';
+
 class TutorialContainer extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      codeJS: "",
-      codeHTML: "",
-      codeCSS: "",
+      jsCode: "",
+      htmlCode: "",
+      cssCode: "",
       mode: 'javascript',
     	tutorial: null
     }
 
-    fetch('/tutorials/'+ props.tutorialId)
-    .then(response=>{
-    	if(response.ok){
-    		return response.json();
-    	}
-    })
-    .then(data=>{
-    	this.setState({tutorial:data, codeJS:data.stages[0].code.javascript,
-                                  codeHTML:data.stages[0].code.html,
-                                   codeCSS:data.stages[0].code.css})
-    })
+    // TODO: Rewrite this part to use the ID of the logged in user, as opposed
+    // to the first user in the "users" collection (assuming the user exists in db).
+    // UserID will be stored as a property once we figure out the accounts
+    fetch(SERVER + '/users/')
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      }
+    }).then((users) => {
+      let currentUser = users[0],
+        tutorialAlreadyUsed = false,
+        tutorialIndex;
+
+      //TODO Move this logic to the server
+      // check if this is the first time the tutorial is used by the user
+      currentUser.tutorialsUsed.forEach((item, index) => {
+        if (item._id === props.tutorialId) {
+          tutorialAlreadyUsed = true;
+          tutorialIndex = index;
+        }
+      });
+
+      let currentTutorial, userCode, currentStage;
+
+      if (tutorialAlreadyUsed) {
+        // get the user's code and the current stage
+        let currentTutorial = currentUser.tutorialsUsed[tutorialIndex];
+        let jsCode = currentTutorial.js,
+            htmlCode = currentTutorial.html,
+            cssCode = currentTutorial.css,
+            currentStage = currentTutorial.currentStage;
+
+        // set the state
+        this.setState({
+          tutorial : currentTutorial,
+          jsCode: jsCode,
+          htmlCode: htmlCode,
+          cssCode: cssCode,
+          currentStage : currentStage
+        });
+
+      } else {
+        // get the starting code and other info, and use it to
+        // create a new object in tutorialsUsed
+
+        fetch(SERVER + '/tutorials/'+ props.tutorialId)
+        .then((response) => {
+        	if(response.ok){
+        		return response.json();
+        	}
+        })
+        .then((originalTutorial) => {
+          console.log("og", originalTutorial);
+          // modify the original tutorial to include user code and current stage
+          originalTutorial.jsCode = originalTutorial.stages[0].code.js;
+          originalTutorial.htmlCode = originalTutorial.stages[0].code.html;
+          originalTutorial.cssCode = originalTutorial.stages[0].code.css;
+          originalTutorial.currentStage = 0;
+
+          console.log(originalTutorial);
+
+          // push the tutorial to the list of user's tutorials
+          currentUser.tutorialsUsed.push(originalTutorial);
+
+          // stringify the object
+          const userStr = JSON.stringify(currentUser);
+
+          // define the PUT request
+          const putRequest = new Request(
+            SERVER + "/users/" + currentUser._id,
+            {
+              method:'PUT',
+              body: userStr,
+              headers: new Headers({'Content-type': 'application/json'})
+            }
+          );
+
+          // add the tutorial to the user's list of used tutorials in the db
+          fetch(putRequest)
+          .then((response)=>{
+            if (response.ok){
+              //console.log(response.json());
+              // what is the issue with response? check the PUT route in server.js...
+              return response.json();
+            }
+          })
+          .then((serverUser) => {
+            let serverTutorial;
+            serverUser.tutorialsUsed.forEach((item, index) => {
+              if (item._id === props.tutorialId) {
+                serverTutorial = item;
+              }
+            });
+            // then set the state
+            this.setState({
+              tutorial : serverTutorial,
+              jsCode: serverTutorial.js,
+              htmlCode: serverTutorial.html,
+              cssCode: serverTutorial.css,
+              currentStage : serverTutorial.currentStage
+            });
+
+          });
+        });
+      }
+    });
 
     this.handleCodeChange = this.handleCodeChange.bind(this);
+    this.updateCode = this.updateCode.bind(this);
   }
 
-<<<<<<< 83622a50787736753db5502c47fd5525117d2706
   getCodeToDisplay() {
     if (this.state.mode === 'javascript') {
-      return this.state.codeJS;
+      return this.state.jsCode;
     } else if (this.state.mode === 'html') {
-      return this.state.codeHTML;
+      return this.state.htmlCode;
     } else if (this.state.mode === 'css') {
-      return this.state.codeCSS;
+      return this.state.cssCode;
     } else {
       return "Unknown mode";
     }
-=======
+  }
+
+  // set up the interval for auto-saving
   componentDidMount() {
-    this.interval = setInterval(this.updateCode, 2000);
+    //this.interval = setInterval(this.updateCode, 2000);
   }
 
+  // clear the interval when we don't need the component
   componentWillUnmount() {
-    clearInterval(this.interval);
+    //clearInterval(this.interval);
   }
 
+  // the function that auto-saves the code
   updateCode() {
     console.log("interval!");
->>>>>>> set up the 2 second intervals
+
+    //console.log(this.state.tutorial);
+    //console.log(this.state.code);
+    // do this only if this.state.code && this.state.tutorial
+    // make sure the new tutorial includes _id and the new code
+    let completeNewTutorial = Object.assign({}, this.state.tutorial);
+    completeNewTutorial.stages[0].code = this.state.code;
+    console.log(completeNewTutorial);
+    //
+    // // stringify the object
+    // const articleStr = JSON.stringify(completeNewArticle);
+    //
+    // // define the PUT request
+    // const putRequest = new Request(
+    //   SERVER + "/articles/"+ completeNewArticle._id,
+    //   {
+    //     method:'PUT',
+    //     body: articleStr,
+    //     headers: new Headers({'Content-type': 'application/json'})
+    //   }
+    // );
   }
 
   handleCodeChange(code) {
     if (this.state.mode === 'javascript') {
-      this.setState({codeJS: code});
+      this.setState({jsCode: code});
     } else if (this.state.mode === 'html') {
-      this.setState({codeHTML: code});
+      this.setState({htmlCode: code});
     } else if (this.state.mode === 'css') {
-      this.setState({codeCSS: code});
+      this.setState({cssCode: code});
     }
   }
 
@@ -78,9 +199,9 @@ class TutorialContainer extends Component {
     return <Tutorial
       instructions={this.state.tutorial ? this.state.tutorial.stages[0].instructions : null}
       code={this.getCodeToDisplay()}
-      js={this.state.codeJS}
-      html={this.state.codeHTML}
-      css={this.state.codeCSS}
+      js={this.state.jsCode}
+      html={this.state.htmlCode}
+      css={this.state.cssCode}
       onExit={this.props.onExit}
       onCodeChange={this.handleCodeChange}
       mode={this.state.mode}
