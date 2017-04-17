@@ -6,7 +6,12 @@
     "stages": [
       {
         "instructions": [{"type": "text", "data": "text"}, {"type": "code", "data": "//This is a code snippet for Kayla's"}],
-        "code": "//This is Kayla's starting code",
+        "code": 
+          {
+            "javascript": "// javascript",
+            "html": "// html",
+            "css": "// css"
+          },
         "hints": "test"
       }
     ],
@@ -20,7 +25,12 @@
     "stages": [
       {
         "instructions": [{"type": "text", "data": "text"}, {"type": "code", "data": "//This is a code snippet for Amir's"}],
-        "code": "//This is Amir's starting code",
+        "code": 
+          {
+            "javascript": "// javascript",
+            "html": "// html",
+            "css": "// css"
+          },
         "hints": "test1"
       }
     ],

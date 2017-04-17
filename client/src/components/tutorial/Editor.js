@@ -11,9 +11,10 @@ import 'codemirror/mode/javascript/javascript';
 import styled from 'styled-components';
 
 const CodeContainer = styled.li`
-  width: 45%;
+  width: 49%;
   display: inline-block;
   vertical-align: top;
+  float: right;
 `;
 
 function Editor(props){
@@ -25,9 +26,16 @@ function Editor(props){
   };
 
   return (
-    <CodeContainer>
-      <CodeMirror value={props.code} onChange={props.onChange} options={options} />
-    </CodeContainer>
+    <div>
+      <CodeContainer>
+        <select onChange={props.onModeChange} defaultValue={props.mode}>
+          <option value="javascript">JavaScript</option>
+          <option value="html">HTML</option>
+          <option value="css">CSS</option>
+        </select>
+        <CodeMirror value={props.code} onChange={props.onCodeChange} options={options} />
+      </CodeContainer>
+    </div>
   );
 }
 

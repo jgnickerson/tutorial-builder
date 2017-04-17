@@ -14,9 +14,9 @@ function Tutorial(props) {
           <button onClick={props.onExit}>Exit</button>
           <ul>
             <Instructions instructions={props.instructions}/>
-            <Editor code={props.code} onChange={props.onCodeChange} mode={"javascript"}/>
-            <Execute code={props.code}/>
+            <Editor code={props.code} onCodeChange={props.onCodeChange} mode={props.mode} onModeChange={props.onModeChange}/>
           </ul>
+          <Execute code={props.code}/>
         </div>
       )
     }else{
