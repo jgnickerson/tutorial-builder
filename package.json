@@ -23,6 +23,7 @@
   "scripts": {
     "start": "concurrently \"mongod --port 4201 --dbpath ./db\" \"npm run server\" \"npm run client\"",
     "server": "babel-node server.js",
-    "client": "babel-node start-client.js"
+    "client": "babel-node start-client.js",
+    "refresh": "mongod --port 4201 --dbpath ./db | mongo --port 4201 tutorial-builder --eval \"db.dropDatabase()\" | sleep 0.5s | mongoimport --port 4201 --db tutorial-builder --collection tutorials --jsonArray ./test_data/tutorials.json | mongoimport --port 4201 --db tutorial-builder --collection users --jsonArray ./test_data/users.json"
   }
 }

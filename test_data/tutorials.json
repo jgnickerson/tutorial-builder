@@ -1,27 +1,6 @@
 [
   {
-    "title": "test",
-    "creator": "kayla",
-    "description":"This is the description for tutorial 1",
-    "stages": [
-      {
-        "instructions": [{"type": "text", "data": "This is text explaining the first step of the tutorial."},
-                         {"type": "code", "data": "//This is a code snippet for Kayla's"},
-                         {"type": "text", "data": "This is text explaining the second step of the tutorial."}],
-        "code":
-          {
-            "js": "//javascript",
-            "html": "<!--html-->",
-            "css": "/* css */"
-          },
-        "hints": "test"
-      }
-    ],
-    "lastUpdate": "Saturday",
-    "rating": 4
-  },
-  {
-    "title": "test1",
+    "title": "Getting Started with Tutorials",
     "creator": "amir",
     "description":"In this tutorial you will use very basic Javascript, HTML, and CSS to create and format some text.",
     "stages": [
@@ -48,7 +27,28 @@
         "hints": "test1"
       }
     ],
-    "lastUpdate": "Saturday",
-     "rating": 2
+    "lastUpdate": "2017-04-18T05:00:00",
+     "rating": 4.5
+  },
+  {
+    "title": "Awesome Tutorial 1",
+    "creator": "Kayla",
+    "description":"This is the description for tutorial 1",
+    "stages": [
+      {
+        "instructions": [{"type": "text", "data": "This is text explaining the first step of the tutorial."},
+                         {"type": "code", "data": "//This is a code snippet for Kayla's"},
+                         {"type": "text", "data": "This is text explaining the second step of the tutorial."}],
+        "code":
+          {
+            "js": "//javascript",
+            "html": "<!--html-->",
+            "css": "/* css */"
+          },
+        "hints": "test"
+      }
+    ],
+    "lastUpdate": "2017-04-17T05:00:00",
+    "rating": 4
   }
 ]
