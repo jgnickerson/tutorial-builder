@@ -11,10 +11,15 @@ class Execute extends Component {
 
   componentWillUnmount() {
     let iframe = document.getElementById("iframe");
-    iframe.parentNode.removeChild(iframe);
+    if (iframe) {
+      iframe.parentNode.removeChild(iframe);
+    }
+
 
     let consoleLogs = document.getElementById('console-logs');
-    consoleLogs.parentNode.removeChild(consoleLogs);
+    if (consoleLogs) {
+      consoleLogs.parentNode.removeChild(consoleLogs);
+    }
   }
 
   render () {
