@@ -24,11 +24,17 @@
             "html": "<!--html-->",
             "css": "/* css */"
           },
+        "successConds":
+          {
+            "js": "js successCond",
+            "html": "html successCond",
+            "css": "css successCond"
+          },
         "hints": "test1"
       }
     ],
     "lastUpdate": "2017-04-18T05:00:00",
-     "rating": 4.5
+    "rating": 4.5
   },
   {
     "title": "Awesome Tutorial 1",
@@ -44,6 +50,12 @@
             "js": "//javascript",
             "html": "<!--html-->",
             "css": "/* css */"
+          },
+        "successConds":
+          {
+            "js": "js successCond",
+            "html": "html successCond",
+            "css": "css successCond"
           },
         "hints": "test"
       }

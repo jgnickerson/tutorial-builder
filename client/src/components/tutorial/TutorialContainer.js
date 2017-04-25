@@ -50,8 +50,10 @@ class TutorialContainer extends Component {
         let jsCode = currentTutorial.js,
             htmlCode = currentTutorial.html,
             cssCode = currentTutorial.css,
-            currentStage = currentTutorial.currentStage;
+            currentStage = currentTutorial.currentStage,
+            successConds = currentTutorial.successConds;
 
+        console.log(successConds);
         // set the state
         this.setState({
           user: currentUser,
@@ -59,7 +61,8 @@ class TutorialContainer extends Component {
           jsCode: jsCode,
           htmlCode: htmlCode,
           cssCode: cssCode,
-          currentStage : currentStage
+          currentStage : currentStage,
+          successConds : successConds
         });
 
       } else {
@@ -73,6 +76,8 @@ class TutorialContainer extends Component {
         	}
         })
         .then((originalTutorial) => {
+          console.log(originalTutorial);
+
           // modify the original tutorial to include user code and current stage
           originalTutorial.js = originalTutorial.stages[0].code.js;
           originalTutorial.html = originalTutorial.stages[0].code.html;
@@ -115,7 +120,8 @@ class TutorialContainer extends Component {
               jsCode: serverTutorial.js,
               htmlCode: serverTutorial.html,
               cssCode: serverTutorial.css,
-              currentStage : serverTutorial.currentStage
+              currentStage : serverTutorial.currentStage,
+              successConds : serverTutorial.successConds
             });
 
           });
@@ -235,6 +241,7 @@ class TutorialContainer extends Component {
       onCodeChange={this.handleCodeChange}
       mode={this.state.mode}
       onModeChange={onModeChange}
+      successConds={this.state.successConds}
     />
   }
 }

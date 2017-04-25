@@ -23,7 +23,12 @@ class Execute extends Component {
   }
 
   render () {
-    return <div><button onClick={()=>executeCode(this.props.js, this.props.html, this.props.css, true)}>Run</button></div>
+    const onRun = (() => {
+      executeCode(this.props.js, this.props.html, this.props.css, true);
+      //checkSuccess(this.props.successConds);
+      console.log(this.props.successConds);
+    });
+    return <div><button onClick={onRun}>Run</button></div>
   }
 }
 
@@ -67,6 +72,10 @@ function executeCode(js, rawHtml, css, showIframe) {
     iframe.contentDocument.open();
     iframe.contentDocument.write(html);
     iframe.contentDocument.close();
+}
+
+function checkSuccess(successConds) {
+    console.log(successConds.js);
 }
 
 function refreshLogs() {
