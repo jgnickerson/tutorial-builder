@@ -20,108 +20,98 @@ class TutorialContainer extends Component {
     	tutorial: null
     }
 
-    // TODO: Rewrite this part to use the ID of the logged in user, as opposed
-    // to the first user in the "users" collection (assuming the user exists in db).
-    // UserID will be stored as a property once we figure out the accounts
-    fetch(SERVER + '/users/')
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      }
-    }).then((users) => {
-      let currentUser = users[0],
-        tutorialAlreadyUsed = false,
-        tutorialIndex;
+    let activeUser = props.activeUser,
+      tutorialAlreadyUsed = false,
+      tutorialIndex;
 
-      //TODO Move this logic to the server
-      // check if this is the first time the tutorial is used by the user
-      currentUser.tutorialsUsed.forEach((item, index) => {
-        if (item._id === props.tutorialId) {
-          tutorialAlreadyUsed = true;
-          tutorialIndex = index;
-        }
-      });
-
-      let currentTutorial, userCode;
-
-      if (tutorialAlreadyUsed) {
-        // get the user's code and the current stage
-        let currentTutorial = currentUser.tutorialsUsed[tutorialIndex];
-        let jsCode = currentTutorial.js,
-            htmlCode = currentTutorial.html,
-            cssCode = currentTutorial.css,
-            currentStage = currentTutorial.currentStage;
-
-        // set the state
-        this.setState({
-          user: currentUser,
-          tutorial : currentTutorial,
-          jsCode: jsCode,
-          htmlCode: htmlCode,
-          cssCode: cssCode,
-          currentStage : currentStage
-        });
-
-      } else {
-        // get the starting code and other info, and use it to
-        // create a new object in tutorialsUsed
-
-        fetch(SERVER + '/tutorials/'+ props.tutorialId)
-        .then((response) => {
-        	if(response.ok){
-        		return response.json();
-        	}
-        })
-        .then((originalTutorial) => {
-          // modify the original tutorial to include user code and current stage
-          originalTutorial.js = originalTutorial.stages[0].code.js;
-          originalTutorial.html = originalTutorial.stages[0].code.html;
-          originalTutorial.css = originalTutorial.stages[0].code.css;
-          originalTutorial.currentStage = 0;
-
-          // push the tutorial to the list of user's tutorials
-          currentUser.tutorialsUsed.push(originalTutorial);
-
-          // stringify the object
-          const userStr = JSON.stringify(currentUser);
-
-          // define the PUT request
-          const putRequest = new Request(
-            SERVER + "/users/" + currentUser._id,
-            {
-              method:'PUT',
-              body: userStr,
-              headers: new Headers({'Content-type': 'application/json'})
-            }
-          );
-
-          // add the tutorial to the user's list of used tutorials in the db
-          fetch(putRequest)
-          .then((response)=>{
-            if (response.ok){
-              return response.json();
-            }
-          })
-          .then((serverUser) => {
-            let serverTutorial = serverUser.tutorialsUsed.find((item) => {
-              return item._id === props.tutorialId;
-            });
-
-            console.log(serverTutorial);
-            // then set the state
-            this.setState({
-              user: serverUser,
-              tutorial : serverTutorial,
-              jsCode: serverTutorial.js,
-              htmlCode: serverTutorial.html,
-              cssCode: serverTutorial.css,
-              currentStage : serverTutorial.currentStage
-            });
-
-          });
-        });
+    //TODO Move this logic to the server
+    // check if this is the first time the tutorial is used by the user
+    activeUser.tutorialsUsed.forEach((item, index) => {
+      if (item._id === props.tutorialId) {
+        tutorialAlreadyUsed = true;
+        tutorialIndex = index;
       }
     });
+
+    let currentTutorial, userCode;
+
+    if (tutorialAlreadyUsed) {
+      // get the user's code and the current stage
+      let currentTutorial = activeUser.tutorialsUsed[tutorialIndex];
+      let jsCode = currentTutorial.js,
+          htmlCode = currentTutorial.html,
+          cssCode = currentTutorial.css,
+          currentStage = currentTutorial.currentStage;
+
+      // set the state
+      this.setState({
+        user: activeUser,
+        tutorial : currentTutorial,
+        jsCode: jsCode,
+        htmlCode: htmlCode,
+        cssCode: cssCode,
+        currentStage : currentStage
+      });
+
+    } else {
+      // get the starting code and other info, and use it to
+      // create a new object in tutorialsUsed
+
+      fetch(SERVER + '/tutorials/'+ props.tutorialId)
+      .then((response) => {
+      	if(response.ok){
+      		return response.json();
+      	}
+      })
+      .then((originalTutorial) => {
+        // modify the original tutorial to include user code and current stage
+        originalTutorial.js = originalTutorial.stages[0].code.js;
+        originalTutorial.html = originalTutorial.stages[0].code.html;
+        originalTutorial.css = originalTutorial.stages[0].code.css;
+        originalTutorial.currentStage = 0;
+
+        // push the tutorial to the list of user's tutorials
+        activeUser.tutorialsUsed.push(originalTutorial);
+
+        // stringify the object
+        const userStr = JSON.stringify(activeUser);
+
+        // define the PUT request
+        const putRequest = new Request(
+          SERVER + "/users/" + activeUser._id,
+          {
+            method:'PUT',
+            body: userStr,
+            headers: new Headers({'Content-type': 'application/json'})
+          }
+        );
+
+        // add the tutorial to the user's list of used tutorials in the db
+        fetch(putRequest)
+        .then((response)=>{
+          if (response.ok){
+            return response.json();
+          }
+        })
+        .then((serverUser) => {
+          let serverTutorial = serverUser.tutorialsUsed.find((item) => {
+            return item._id === props.tutorialId;
+          });
+
+          console.log(serverTutorial);
+          // then set the state
+          this.setState({
+            user: serverUser,
+            tutorial : serverTutorial,
+            jsCode: serverTutorial.js,
+            htmlCode: serverTutorial.html,
+            cssCode: serverTutorial.css,
+            currentStage : serverTutorial.currentStage
+          });
+
+        });
+      });
+    }
 
     this.handleCodeChange = this.handleCodeChange.bind(this);
     this.updateCode = this.updateCode.bind(this);

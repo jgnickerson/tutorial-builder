@@ -75,14 +75,19 @@ app.get('/tutorials/:id*?', (req, res) => {
 });
 
 // get the info about the users
-app.get('/users/:id*?', (req, res) => {
-	// if we have a specific id to look up
-	if (req.params.id) {
-		db.collection("users").find({_id: new ObjectID(req.params.id)}).toArray((err, result) =>{
+app.get('/users/:username*?', (req, res) => {
+	// if we have a specific username to look up
+	if (req.params.username) {
+		db.collection("users").find({username: req.params.username}).toArray((err, result) =>{
 			if (err) {
 				console.log(err);
 			}
-			res.send(result[0]);
+
+			if (result[0]) {
+				res.send(result[0]);
+			} else {
+				res.sendStatus(500);
+			}
 		});
 	} else {
 		db.collection("users").find().toArray((err, result) => {
@@ -109,12 +114,22 @@ app.post('/tutorials', (req, res) =>{
 // create a new user
 app.post('/users', (req, res) =>{
 	let newUser = req.body;
-	db.collection("users").insert(newUser, (err, storedUser) => {
+	// avoid duplicate usernames
+	db.collection("users").find({username: newUser.username}).toArray((err, result) => {
 		if (err) {
 			console.log(err);
 		}
+		if (result.length > 0) {
+			res.sendStatus(500);
+		} else {
+			db.collection("users").insert(newUser, (err, storedUser) => {
+				if (err) {
+					console.log(err);
+				}
 
-		res.send(storedUser.ops);
+				res.send(storedUser.ops);
+			});
+		}
 	});
 });
 
