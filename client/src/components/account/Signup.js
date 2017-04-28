@@ -21,11 +21,16 @@ function Signup(props) {
     </div>)
 }
 
-// Signup.propTypes = {
-//   onExit: React.PropTypes.func.isRequired,
-//   onCodeChange: React.PropTypes.func.isRequired,
-//   instructions: React.PropTypes.array,
-//   code: React.PropTypes.string
-// }
+Signup.propTypes = {
+  username: React.PropTypes.string.isRequired,
+  password: React.PropTypes.string.isRequired,
+  setUsername: React.PropTypes.func.isRequired,
+  setPassword: React.PropTypes.func.isRequired,
+  errorMessage: React.PropTypes.string,
+  passCheck: React.PropTypes.string,
+  setPassCheck: React.PropTypes.func.isRequired,
+  backToLogin: React.PropTypes.func.isRequired,
+  attemptRegister: React.PropTypes.func.isRequired
+}
 
 export default Signup;

@@ -18,11 +18,14 @@ function Login(props) {
     </div>)
 }
 
-// Login.propTypes = {
-//   onExit: React.PropTypes.func.isRequired,
-//   onCodeChange: React.PropTypes.func.isRequired,
-//   instructions: React.PropTypes.array,
-//   code: React.PropTypes.string
-// }
+Login.propTypes = {
+  username: React.PropTypes.string.isRequired,
+  password: React.PropTypes.string.isRequired,
+  setUsername: React.PropTypes.func.isRequired,
+  setPassword: React.PropTypes.func.isRequired,
+  attemptLogin: React.PropTypes.func.isRequired,
+  errorMessage: React.PropTypes.string,
+  switchToRegister: React.PropTypes.func.isRequired
+}
 
 export default Login;

@@ -5,6 +5,7 @@ import Login from './components/account/Login.js';
 import Signup from './components/account/Signup.js';
 import TutorialBrowser from './components/browser/TutorialBrowser.js';
 import TutorialContainer from './components/tutorial/TutorialContainer.js';
+import MenuBar from './components/MenuBar.js';
 
 const SERVER = 'http://localhost:4200';
 
@@ -39,7 +40,7 @@ class App extends Component {
     this.setState({
       mode: 'tutorial',
       activeTutorial: tutorialId
-    })
+    });
   }
 
   handleTutorialExit() {
@@ -171,51 +172,119 @@ class App extends Component {
     });
   }
 
+  autoSave(modifiedCode, currentStage) {
+
+    //put the new code in user's tutorialsUsed
+    let updatedUser = Object.assign({}, this.state.activeUser);
+    updatedUser.tutorialsUsed.map((item) => {
+      if (item._id == this.state.activeTutorial) {
+        item.js = modifiedCode.js;
+        item.css = modifiedCode.css;
+        item.html = modifiedCode.html;
+        item.currentStage = currentStage;
+      }
+
+      return item;
+    });
+
+    // stringify the object
+    const userStr = JSON.stringify(updatedUser);
+
+    // define the PUT request
+    const putRequest = new Request(
+      SERVER + "/users/" + updatedUser._id,
+      {
+        method:'PUT',
+        body: userStr,
+        headers: new Headers({'Content-type': 'application/json'})
+      }
+    );
+
+    // send the obj to the server
+    fetch(putRequest)
+    .then((response)=>{
+      if (response.ok){
+        return response.json();
+      }
+    })
+    .then((serverUser) => {
+
+      // then set the state
+      this.setState({
+        user: serverUser
+      });
+
+    });
+  }
+
   render() {
     let activeComponent;
 
     if (this.state.mode === 'login') {
-      activeComponent = <Login
-                          username={this.state.activeUser.username}
-                          password={this.state.activeUser.password}
-                          setUsername={(event) => this.setState({activeUser: {username: event.target.value, password: this.state.activeUser.password }})}
-                          setPassword={(event) => this.setState({activeUser: {username: this.state.activeUser.username, password: event.target.value }})}
-                          attemptLogin={this.attemptLogin}
-                          errorMessage={this.state.errorMessage}
-                          switchToRegister={this.switchToRegister}/>
+      activeComponent = (
+        <div>
+          <CenteredTitle>Tutorial Builder</CenteredTitle>
+          <Login username={this.state.activeUser.username}
+                 password={this.state.activeUser.password}
+                 setUsername={(event) => this.setState({activeUser: {username: event.target.value, password: this.state.activeUser.password }})}
+                 setPassword={(event) => this.setState({activeUser: {username: this.state.activeUser.username, password: event.target.value }})}
+                 attemptLogin={this.attemptLogin}
+                 errorMessage={this.state.errorMessage}
+                 switchToRegister={this.switchToRegister}/>
+        </div>
+      );
+
     } else if (this.state.mode === 'signup') {
-      activeComponent = <Signup
-                          username={this.state.activeUser.username}
-                          password={this.state.activeUser.password}
-                          setUsername={(event) => this.setState({activeUser: {username: event.target.value, password: this.state.activeUser.password }})}
-                          setPassword={(event) => this.setState({activeUser: {username: this.state.activeUser.username, password: event.target.value }})}
-                          errorMessage={this.state.errorMessage}
-                          passCheck={this.state.passCheck}
-                          setPassCheck={(event) => this.setState({passCheck: event.target.value})}
-                          backToLogin={this.changeAccount}
-                          attemptRegister={this.attemptRegister}
-                          />
+      activeComponent = (
+        <div>
+          <CenteredTitle>Tutorial Builder</CenteredTitle>
+          <Signup username={this.state.activeUser.username}
+                  password={this.state.activeUser.password}
+                  setUsername={(event) => this.setState({activeUser: {username: event.target.value, password: this.state.activeUser.password }})}
+                  setPassword={(event) => this.setState({activeUser: {username: this.state.activeUser.username, password: event.target.value }})}
+                  errorMessage={this.state.errorMessage}
+                  passCheck={this.state.passCheck}
+                  setPassCheck={(event) => this.setState({passCheck: event.target.value})}
+                  backToLogin={this.changeAccount}
+                  attemptRegister={this.attemptRegister}/>
+        </div>
+      );
+
     } else if (this.state.mode === 'successfulRegistration') {
       activeComponent = (
         <div>
-          <h2>You have successfully registered!</h2>
-          <br/>
-          <button onClick={this.changeAccount}>Go back to Log In</button>
+          <CenteredTitle>Tutorial Builder</CenteredTitle>
+          <div>
+            <h2>You have successfully registered!</h2>
+            <br/>
+            <button onClick={this.changeAccount}>Go back to Log In</button>
+          </div>
         </div>
       );
+
     } else if (this.state.mode === 'browser') {
-      activeComponent = <TutorialBrowser onSelect={this.handleTutorialSelect}/>
+      activeComponent = (
+        <div>
+          <MenuBar logout={this.changeAccount} browse={this.handleTutorialExit}/>
+          <TutorialBrowser onSelect={this.handleTutorialSelect}/>
+        </div>
+      );
+
     } else {
       // if the user selected a tutorial, show it to them
-      activeComponent = <TutorialContainer
-                          tutorialId={this.state.activeTutorial}
-                          onExit={this.handleTutorialExit}
-                          activeUser={this.state.activeUser}/>;
+      activeComponent = (
+        <div>
+          <MenuBar logout={this.changeAccount} browse={this.handleTutorialExit}/>
+          <TutorialContainer onExit={this.handleTutorialExit}
+                             activeTutorial={this.state.activeTutorial}
+                             username={this.state.activeUser.username}
+                             autoSave={(modifiedCode, currentStage) => this.autoSave(modifiedCode, currentStage)}/>;
+        </div>
+      );
     }
 
     return (
       <div className="App">
-        <CenteredTitle>Tutorial Builder</CenteredTitle>
         {activeComponent}
       </div>
     )

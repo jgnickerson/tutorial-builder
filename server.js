@@ -74,6 +74,50 @@ app.get('/tutorials/:id*?', (req, res) => {
 	}
 });
 
+// get info about the specific tutorial used by the user
+app.get('/users/:username/:tutorial', (req, res) => {
+
+	db.collection("users").find({username: req.params.username}).toArray((err, result) => {
+		if (err) {
+			console.log(err);
+		}
+
+		let userObj = result[0],
+			tutorialObj, tutorialIndex;
+
+		userObj.tutorialsUsed.forEach((item, index) => {
+			if (item._id == req.params.tutorial) {
+				tutorialObj = item;
+				tutorialIndex = index;
+			}
+		});
+
+		if (tutorialObj) {
+			res.send(tutorialObj);
+
+		} else {
+
+			db.collection("tutorials").find({_id: new ObjectID(req.params.tutorial)}).toArray((err, result) => {
+				if (err) {
+					console.log(err);
+				}
+				let originalTutorial = result[0];
+				originalTutorial.js = originalTutorial.stages[0].code.js;
+				originalTutorial.html = originalTutorial.stages[0].code.html;
+				originalTutorial.css = originalTutorial.stages[0].code.css;
+				originalTutorial.currentStage = 0;
+
+				db.collection("users").update(
+					{ username: req.params.username },
+					{$push: { tutorialsUsed: originalTutorial}}
+				).then(() => {
+					res.send(originalTutorial);
+				});
+			});
+		}
+	});
+});
+
 // get the info about the users
 app.get('/users/:username*?', (req, res) => {
 	// if we have a specific username to look up
