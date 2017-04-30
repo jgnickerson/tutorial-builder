@@ -2,6 +2,14 @@
     Execute code component
 */
 import React from 'react';
+import styled from 'styled-components';
+
+const Console = styled.div`
+  height: 100%;
+  background-color: #d1d1d1;
+  margin-bottom: 2px;
+  border: 1px black solid;
+`;
 
 //Execute Component
 function Execute(props) {
@@ -10,7 +18,7 @@ function Execute(props) {
       <div className="execution-iframe-div" id="execution-iframe-div">
         <iframe id="execution-iframe"></iframe>
       </div>
-      <div classname="execution-console-div" id="execution-console-div"></div>
+      <Console className="execution-console-div" id="execution-console-div"></Console>
       <button onClick={()=>executeCode(props.js, props.html, props.css, true)}>Run</button>
     </div>)
 }
@@ -38,8 +46,10 @@ function executeCode(js, rawHtml, css, showIframe) {
         console.log("JavaScript error - line " + linenumber + ": " + message);
       }\n`
 
+    let endBufferCode = `parent.formatConsole(); parent.formatConsole();`;
 
-    let code = consoleLogRewrite + js;
+
+    let code = consoleLogRewrite + js + endBufferCode;
     let html = '<html><head>' + '<style>' + css + '</style></head><body>' + rawHtml + '<script type="text/javascript">' + code + '</script></body></html>';
 
     //writing file in the iframe and compiling
@@ -85,9 +95,16 @@ window.logEntry = function(logEntries) {
   for (let i = 1; i < logEntries.length; i++) {
     logEntry = logEntry + " " + logEntries[i];
   }
+
+  //const div = <div><p>{logEntry}</p></div>;
   let div = document.createElement('div');
   div.appendChild(document.createTextNode(logEntry));
   consoleLogs.appendChild(div);
+}
+
+window.formatConsole = function() {
+  const consoleLogs = document.getElementById('execution-console-div');
+  consoleLogs.appendChild(document.createElement('br'));
 }
 
 export default Execute;
