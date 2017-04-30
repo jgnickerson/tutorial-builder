@@ -11,12 +11,12 @@ import 'codemirror/mode/javascript/javascript';
 import styled from 'styled-components';
 
 const InstructionContainer = styled.li`
-  width: 49%;
+  width: 100%;
+  height: 100%;
   display: inline-block;
   padding: 5px;
   vertical-align: top;
   border: 1px solid #eee;
-  float: left;
 `;
 
 

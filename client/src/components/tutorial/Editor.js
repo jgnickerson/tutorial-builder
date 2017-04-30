@@ -11,10 +11,11 @@ import 'codemirror/mode/javascript/javascript';
 import styled from 'styled-components';
 
 const CodeContainer = styled.li`
-  width: 49%;
+  width: 100%;
+  height: 100%;
   display: inline-block;
   vertical-align: top;
-  float: right;
+  height: 100%;
 `;
 
 function Editor(props){
