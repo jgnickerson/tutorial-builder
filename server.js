@@ -6,11 +6,15 @@ const PORT = 4200
 const http = require('http'),
 	express = require('express'),
 	cors = require('cors'),
-	bodyParser = require('body-parser');
+	bodyParser = require('body-parser'),
+	jwt = require('jsonwebtoken');
 
 // create the server
 const app = express();
 const server = http.createServer(app);
+
+//TODO move this to a config file
+const passphrase = "Amir is cool";
 
 // configure the server
 const corsOptions = {
@@ -52,6 +56,40 @@ MongoClient.connect('mongodb://localhost:4201/tutorial-builder', (err, database)
 SERVER Routes
 
 */
+
+app.post('/login', (req, res) => {
+	findUser(req.body.username).then(user => {
+		if (req.body.password === user.password) {
+			const tokenData = {
+				username: user.username,
+				id: user._id
+			};
+
+			const response = {
+				username: user.username,
+				token: jwt.sign(tokenData, passphrase)
+			}
+
+			return res.json(response);
+
+		} else {
+			//TODO incorrect password, send it back
+		}
+	}).catch(err => {
+		//TODO handle this err, user not found, or something similar
+		console.log(err);
+	})
+});
+
+function findUser(username) {
+	return db.collection('users').findOne({username: username});
+}
+
+app.get('/test', (req, res) => {
+	jwt.verify(req.get("authorization").split(" ")[1], passphrase, (err, decoded) => {
+			console.log(decoded);
+	})
+});
 
 // get the info about the tutorials
 app.get('/tutorials/:id*?', (req, res) => {
