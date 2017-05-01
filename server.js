@@ -60,18 +60,7 @@ SERVER Routes
 app.post('/login', (req, res) => {
 	findUser(req.body.username).then(user => {
 		if (req.body.password === user.password) {
-			const tokenData = {
-				username: user.username,
-				id: user._id
-			};
-
-			const response = {
-				username: user.username,
-				token: jwt.sign(tokenData, passphrase)
-			}
-
-			return res.json(response);
-
+			return res.json(buildJwtResponse(user));
 		} else {
 			//TODO incorrect password, send it back
 		}
@@ -81,8 +70,47 @@ app.post('/login', (req, res) => {
 	})
 });
 
+// create a new user
+app.post('/users', (req, res) =>{
+	const findOrAddUser = findUser(req.body.username).then(user => {
+		return new Promise((resolve, reject) => {
+			if (!user) {
+				db.collection("users").insertOne(req.body, (err, result) => {
+					if (err) { reject(err) } else { resolve() }
+				});
+			} else {
+				//TODO return error saying username already exists
+				reject("user already exists");
+			}
+		})
+	}, err => console.log(err))
+
+	//what happens to this chain if the above promise catches?
+	findOrAddUser.then(() => {
+		console.log('executing this');
+		findUser(req.body.username).then(user => {
+			return res.json(buildJwtResponse(user))
+		}, err => { console.log(err); return res.sendStatus(500) })
+	}, err => { console.log(err) return res.sendStatus(403); //username already exists ?
+	})
+});
+
 function findUser(username) {
 	return db.collection('users').findOne({username: username});
+}
+
+function buildJwtResponse(user) {
+	const tokenData = {
+		username: user.username,
+		id: user._id
+	};
+
+	const response = {
+		username: user.username,
+		token: jwt.sign(tokenData, passphrase)
+	}
+
+	return response;
 }
 
 app.get('/test', (req, res) => {
@@ -190,28 +218,6 @@ app.post('/tutorials', (req, res) =>{
 		}
 
 		res.send(storedTutorial.ops);
-	});
-});
-
-// create a new user
-app.post('/users', (req, res) =>{
-	let newUser = req.body;
-	// avoid duplicate usernames
-	db.collection("users").find({username: newUser.username}).toArray((err, result) => {
-		if (err) {
-			console.log(err);
-		}
-		if (result.length > 0) {
-			res.sendStatus(500);
-		} else {
-			db.collection("users").insert(newUser, (err, storedUser) => {
-				if (err) {
-					console.log(err);
-				}
-
-				res.send(storedUser.ops);
-			});
-		}
 	});
 });
 
