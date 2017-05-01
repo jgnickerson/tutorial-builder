@@ -24,11 +24,11 @@
             "html": "<!--html-->",
             "css": "/* css */"
           },
-        "successConds":
+        "solution":
           {
-            "js": "js successCond",
-            "html": "html successCond",
-            "css": "css successCond"
+            "js": "const x = 3 + 4; console.log(x);",
+            "html": "<h1>This is a heading!</h1>",
+            "css": "h1 { color: Aqua }"
           },
         "hints": "test1"
       }
@@ -51,11 +51,11 @@
             "html": "<!--html-->",
             "css": "/* css */"
           },
-        "successConds":
+        "solution":
           {
-            "js": "js successCond",
-            "html": "html successCond",
-            "css": "css successCond"
+            "js": "//js solution",
+            "html": "<!--html solution-->",
+            "css": "/* css solution */"
           },
         "hints": "test"
       }

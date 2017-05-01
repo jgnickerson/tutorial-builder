@@ -25,13 +25,16 @@ class Execute extends Component {
   render () {
     const onRun = (() => {
       executeCode(this.props.js, this.props.html, this.props.css, true);
-      //checkSuccess(this.props.successConds);
-      console.log(this.props.successConds);
     });
-    return <div><button onClick={onRun}>Run</button></div>
+    const onShow = (() => {
+        executeCode(this.props.solution.js, this.props.solution.html, this.props.solution.css, true);
+    });
+    return  <div>
+                <button onClick={onRun}>Run</button>
+                <button onClick={onShow}>Show Solution</button>
+            </div>
   }
 }
-
 
 function executeCode(js, rawHtml, css, showIframe) {
     //if an iFrame already exists, remove it
@@ -72,10 +75,6 @@ function executeCode(js, rawHtml, css, showIframe) {
     iframe.contentDocument.open();
     iframe.contentDocument.write(html);
     iframe.contentDocument.close();
-}
-
-function checkSuccess(successConds) {
-    console.log(successConds.js);
 }
 
 function refreshLogs() {

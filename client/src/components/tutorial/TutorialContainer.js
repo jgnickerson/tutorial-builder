@@ -51,9 +51,8 @@ class TutorialContainer extends Component {
             htmlCode = currentTutorial.html,
             cssCode = currentTutorial.css,
             currentStage = currentTutorial.currentStage,
-            successConds = currentTutorial.successConds;
+            solution = currentTutorial.stages[currentStage].solution;
 
-        console.log(successConds);
         // set the state
         this.setState({
           user: currentUser,
@@ -62,7 +61,7 @@ class TutorialContainer extends Component {
           htmlCode: htmlCode,
           cssCode: cssCode,
           currentStage : currentStage,
-          successConds : successConds
+          solution : solution
         });
 
       } else {
@@ -121,9 +120,8 @@ class TutorialContainer extends Component {
               htmlCode: serverTutorial.html,
               cssCode: serverTutorial.css,
               currentStage : serverTutorial.currentStage,
-              successConds : serverTutorial.successConds
+              solution : serverTutorial.stages[serverTutorial.currentStage].solution
             });
-
           });
         });
       }
@@ -241,7 +239,7 @@ class TutorialContainer extends Component {
       onCodeChange={this.handleCodeChange}
       mode={this.state.mode}
       onModeChange={onModeChange}
-      successConds={this.state.successConds}
+      solution={this.state.solution}
     />
   }
 }
