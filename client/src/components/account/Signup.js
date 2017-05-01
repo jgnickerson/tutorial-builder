@@ -10,9 +10,9 @@ function Signup(props) {
       <h1>Registration</h1>
       <input placeholder="Enter a username" value={props.username} onChange={props.setUsername}/>
       <br/>
-      <input placeholder="Enter a password" value={props.password} onChange={props.setPassword}/>
+      <input placeholder="Enter a password" type="password" value={props.password} onChange={props.setPassword}/>
       <br/>
-      <input placeholder="Re-enter your password" value={props.passCheck} onChange={props.setPassCheck}/>
+      <input placeholder="Re-enter your password" type="password" value={props.passCheck} onChange={props.setPassCheck}/>
       <br/>
       <button onClick={props.attemptRegister}>Register</button>
       <button onClick={props.backToLogin}>Go back</button>
