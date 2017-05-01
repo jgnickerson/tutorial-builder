@@ -39,7 +39,11 @@ class TutorialBrowser extends Component {
   }
 
   render() {
-    return <TutorialList tutorials={this.state.tutorials} onSelect={this.onSelect}/>
+    return (
+      <div>
+        <TutorialList tutorials={this.state.tutorials} onSelect={this.onSelect}/>
+      </div>
+    )
   }
 }
 

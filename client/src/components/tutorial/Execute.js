@@ -1,58 +1,33 @@
 /*
     Execute code component
 */
-import React, { Component } from 'react';
+import React from 'react';
+import styled from 'styled-components';
+
+const Console = styled.div`
+  height: 100%;
+  background-color: #d1d1d1;
+  margin-bottom: 2px;
+  border: 1px black solid;
+`;
 
 //Execute Component
-class Execute extends Component {
-  constructor() {
-    super();
-  }
-
-  componentWillUnmount() {
-    let iframe = document.getElementById("iframe");
-    if (iframe) {
-      iframe.parentNode.removeChild(iframe);
-    }
-
-
-    let consoleLogs = document.getElementById('console-logs');
-    if (consoleLogs) {
-      consoleLogs.parentNode.removeChild(consoleLogs);
-    }
-  }
-
-  render () {
-    const onRun = (() => {
-      executeCode(this.props.js, this.props.html, this.props.css, true);
-    });
-    const onShow = (() => {
-        executeCode(this.props.solution.js, this.props.solution.html, this.props.solution.css, true);
-    });
-    return  <div>
-                <button onClick={onRun}>Run</button>
-                <button onClick={onShow}>Show Solution</button>
-            </div>
-  }
+function Execute(props) {
+  return (
+    <div className="execution-body">
+      <div className="execution-iframe-div" id="execution-iframe-div">
+        <iframe id="execution-iframe"></iframe>
+      </div>
+      <Console className="execution-console-div" id="execution-console-div"></Console>
+      <button onClick={()=>executeCode(props.js, props.html, props.css, true)}>Run</button>
+      <button onClick={()=>executeCode(props.solution.js, props.solution.html, props.solution.css, true)}>Show Solution</button>
+    </div>)
 }
 
 function executeCode(js, rawHtml, css, showIframe) {
-    //if an iFrame already exists, remove it
-    if (document.getElementById("iframe")) {
-        let iframe = document.getElementById("iframe");
-        iframe.parentNode.removeChild(iframe);
-    }
 
-    //create a new iframe
-    const iframe = document.createElement('iframe');
-    iframe.setAttribute("id","iframe")
-    document.body.appendChild(iframe);
-
-    if (!showIframe) {
-      iframe.style.display = 'none';
-    }
-
-    refreshLogs();
+    const iframe = refreshIframe(showIframe);
+    clearExistingLogs();
 
     //this code redirects all console.log in user code to a function of ours (logEntry)
     let consoleLogRewrite = `
@@ -65,10 +40,17 @@ function executeCode(js, rawHtml, css, showIframe) {
 
         var args = Array.prototype.slice.call(arguments);
         parent.logEntry([...args]);
+      }
+
+      window.onerror = function(message, url, linenumber) {
+        linenumber = linenumber - 16;
+        console.log("JavaScript error - line " + linenumber + ": " + message);
       }\n`
 
+    let endBufferCode = `parent.formatConsole(); parent.formatConsole();`;
 
-    let code = consoleLogRewrite + js;
+
+    let code = consoleLogRewrite + js + endBufferCode;
     let html = '<html><head>' + '<style>' + css + '</style></head><body>' + rawHtml + '<script type="text/javascript">' + code + '</script></body></html>';
 
     //writing file in the iframe and compiling
@@ -77,32 +59,53 @@ function executeCode(js, rawHtml, css, showIframe) {
     iframe.contentDocument.close();
 }
 
-function refreshLogs() {
-  //if the consoleLogs node already exists, remove it
-  let consoleLogs = document.getElementById('console-logs');
-  if (consoleLogs) {
-    consoleLogs.parentNode.removeChild(consoleLogs);
+function refreshIframe(showIframe) {
+  //remove already existing iFrame
+  if (document.getElementById("execution-iframe")) {
+      let iframe = document.getElementById("execution-iframe");
+      iframe.parentNode.removeChild(iframe);
   }
 
-  //(re)create the node
-  consoleLogs = document.createElement('div');
-  consoleLogs.setAttribute('id', 'console-logs');
-  document.body.appendChild(consoleLogs);
+  //create a new iframe
+  const iframeNode = document.getElementById("execution-iframe-div");
+  const iframe = document.createElement('iframe');
+  iframe.setAttribute("id","execution-iframe")
+  iframeNode.appendChild(iframe);
+
+  if (!showIframe) {
+    iframe.style.display = 'none';
+  }
+
+  return iframe;
+}
+
+function clearExistingLogs() {
+  //remove all existing console logs from the div
+  let consoleLogs = document.getElementById('execution-console-div');
+  while (consoleLogs.hasChildNodes()) {
+    consoleLogs.removeChild(consoleLogs.lastChild);
+  }
 
   return consoleLogs;
 }
 
 window.logEntry = function(logEntries) {
-  const consoleLogs = document.getElementById('console-logs');
+  const consoleLogs = document.getElementById('execution-console-div');
 
   let logEntry = logEntries[0];
   for (let i = 1; i < logEntries.length; i++) {
     logEntry = logEntry + " " + logEntries[i];
   }
+
+  //const div = <div><p>{logEntry}</p></div>;
   let div = document.createElement('div');
   div.appendChild(document.createTextNode(logEntry));
   consoleLogs.appendChild(div);
-  document.body.appendChild(consoleLogs);
+}
+
+window.formatConsole = function() {
+  const consoleLogs = document.getElementById('execution-console-div');
+  consoleLogs.appendChild(document.createElement('br'));
 }
 
 export default Execute;
