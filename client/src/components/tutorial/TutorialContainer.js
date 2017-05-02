@@ -33,7 +33,8 @@ class TutorialContainer extends Component {
         htmlCode: serverTutorial.html,
         cssCode: serverTutorial.css,
         currentStage: serverTutorial.currentStage,
-        instructions: serverTutorial.stages[serverTutorial.currentStage].instructions
+        instructions: serverTutorial.stages[serverTutorial.currentStage].instructions,
+        solution: serverTutorial.stages[serverTutorial.currentStage].solution
       });
     });
 
