@@ -26,6 +26,9 @@ class TutorialContainer extends Component {
       if(response.ok){
         return response.json();
       }
+      else{
+        console.log("something wrong");
+      }
     })
     .then((serverTutorial) => {
       this.setState({

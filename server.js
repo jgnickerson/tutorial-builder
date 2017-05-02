@@ -79,7 +79,7 @@ app.get('/users/:username/:tutorial', (req, res) => {
 
 	db.collection("users").find({username: req.params.username}).toArray((err, result) => {
 		if (err) {
-			console.log(err);
+			console.log("shit");
 		}
 
 		let userObj = result[0],
@@ -145,7 +145,9 @@ app.get('/users/:username*?', (req, res) => {
 
 // create a new tutorial
 app.post('/tutorials', (req, res) =>{
-	let newTutorial = req.body;
+	const newTutorial = req.body;
+	newTutorial.lastUpdate = Date().toString();
+
 	db.collection("tutorials").insert(newTutorial, (err, storedTutorial) => {
 		if (err) {
 			console.log(err);
