@@ -79,7 +79,7 @@ app.get('/users/:username/:tutorial', (req, res) => {
 
 	db.collection("users").find({username: req.params.username}).toArray((err, result) => {
 		if (err) {
-			console.log(err);
+			console.log("shit");
 		}
 
 		let userObj = result[0],

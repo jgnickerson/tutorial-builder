@@ -7,7 +7,8 @@ import TutorialSummary from './TutorialSummary.js';
 
 function TutorialList(props){
 	//the data of all the tutorials, which is sent over in an array, is parsed out into a series of individual tutorials
-	const tutorials = props.tutorials.map((tutorial, index)=>{
+	let tutorials = props.tutorials.filter((tutorial) => {tutorial.published});
+	tutorials = tutorials.map((tutorial, index)=>{
 		return (
 			<TutorialSummary
 			key={tutorial._id}

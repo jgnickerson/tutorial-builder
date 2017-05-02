@@ -15,7 +15,7 @@ const EqualHeightDiv = styled.div`
 `;
 
 function Tutorial(props) {
-    if (props.instructions){
+    if (props.mode){
       return (
         <div>
           <button onClick={props.onExit}>Exit</button>
