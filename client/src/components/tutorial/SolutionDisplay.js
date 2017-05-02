@@ -31,11 +31,11 @@ class SolutionDisplay extends Component {
 
   getCodeToDisplay() {
     if (this.state.mode === 'javascript') {
-      return this.state.solution.js;
+      return this.props.solution.js;
     } else if (this.state.mode === 'html') {
-      return this.state.solution.html;
+      return this.props.solution.html;
     } else if (this.state.mode === 'css') {
-      return this.state.solution.css;
+      return this.props.solution.css;
     } else {
       return "Unknown mode";
     }
@@ -77,7 +77,7 @@ class SolutionDisplay extends Component {
     </div>
   );
   }
-  
+
 }
 
 export default SolutionDisplay;
