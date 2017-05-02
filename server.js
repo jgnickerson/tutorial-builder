@@ -145,7 +145,9 @@ app.get('/users/:username*?', (req, res) => {
 
 // create a new tutorial
 app.post('/tutorials', (req, res) =>{
-	let newTutorial = req.body;
+	const newTutorial = req.body;
+	newTutorial.lastUpdate = Date().toString();
+
 	db.collection("tutorials").insert(newTutorial, (err, storedTutorial) => {
 		if (err) {
 			console.log(err);

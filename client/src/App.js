@@ -32,6 +32,7 @@ class App extends Component {
     this.handleTutorialSelect = this.handleTutorialSelect.bind(this);
     this.handleTutorialExit = this.handleTutorialExit.bind(this);
     this.handleCreateNew = this.handleCreateNew.bind(this);
+    this.handleSaveNewTutorial = this.handleSaveNewTutorial.bind(this);
     this.attemptLogin = this.attemptLogin.bind(this);
     this.switchToRegister = this.switchToRegister.bind(this);
     this.attemptRegister = this.attemptRegister.bind(this);
@@ -53,51 +54,47 @@ class App extends Component {
   }
 
   handleCreateNew() {
-    // only allow non-empty passwords and non-empty usernames
-      // if the passwords match
-        // put the user's info from the state into an object
-        const newTutorial = {
-          title: "Untitled",
-          author: this.state.activeUser,
-          lastUpdate: Date(),
-          jsCode: "",
-          htmlCode: "",
-          cssCode: "",
-          currentStage: null,
-          instructions: "",
-          published: false
-        };
+    this.setState({
+      mode: 'createNew',
+      activeTutorial: null
+    });
+  }
 
-        // stringify the object
-        const tutorial = JSON.stringify(newTutorial);
+  handleSaveNewTutorial(tutorial) {
+    tutorial.creator = this.state.activeUser.username;
 
-        // define the POST request
-        const postRequest = new Request(
-          SERVER + "/tutorials/",
-          {
-            method:'POST',
-            body: tutorial,
-            headers: new Headers({'Content-type': 'application/json'})
-          }
-        );
+    console.log(tutorial);
 
-        // attempt adding the new tutorial to the db
-        fetch(postRequest)
-        .then((response)=>{
-          if (response.ok){
-            return response.json();
-          } else {
-            console.log("something went wrong with the new tutorial");
-          }
-        })
-        .then((serverTutorial) => {
-          if (serverTutorial) {
-            this.setState({
-              mode: "createNew",
-              activeTutorial: serverTutorial[0]._id
-            });
-          }
+    // stringify the object
+    const payload = JSON.stringify(tutorial);
+
+    // define the POST request
+    const postRequest = new Request(
+      SERVER + "/tutorials/",
+      {
+        method:'POST',
+        body: payload,
+        headers: new Headers({'Content-type': 'application/json'})
+      }
+    );
+
+    // attempt adding the new tutorial to the db
+    fetch(postRequest)
+    .then((response)=>{
+      if (response.ok){
+        return response.json();
+      } else {
+        console.log("something went wrong with the new tutorial");
+      }
+    })
+    .then((serverTutorial) => {
+      if (serverTutorial) {
+        this.setState({
+          mode: "browser",
+          activeTutorial: null
         });
+      }
+    });
   }
 
   attemptLogin() {
@@ -323,9 +320,10 @@ class App extends Component {
       activeComponent = (
         <div>
         <MenuBar createNew={this.handleCreateNew} logout={this.changeAccount} browse={this.handleTutorialExit}/>
-        <CreateContainer onExit={this.handleTutorialExit}
-                           activeTutorial={this.state.activeTutorial}
-                           username={this.state.activeUser.username}/>;
+        <CreateContainer
+          onExit={this.handleTutorialExit}
+          save={this.handleSaveNewTutorial}
+        />;
       </div>
     );
     }
