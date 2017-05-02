@@ -33,9 +33,9 @@ class TutorialContainer extends Component {
         htmlCode: serverTutorial.html,
         cssCode: serverTutorial.css,
         currentStage: serverTutorial.currentStage,
-        instructions: serverTutorial.stages[serverTutorial.currentStage].instructions
+        instructions: serverTutorial.stages[serverTutorial.currentStage].instructions,
+        solution: serverTutorial.stages[serverTutorial.currentStage].solution
       });
-
     });
 
     this.handleCodeChange = this.handleCodeChange.bind(this);
@@ -102,6 +102,7 @@ class TutorialContainer extends Component {
           onCodeChange={this.handleCodeChange}
           mode={this.state.mode}
           onModeChange={onModeChange}
+          solution={this.state.solution}
         />
       </div>
     )
