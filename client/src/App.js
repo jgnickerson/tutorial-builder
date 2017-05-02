@@ -37,6 +37,7 @@ class App extends Component {
     this.switchToRegister = this.switchToRegister.bind(this);
     this.attemptRegister = this.attemptRegister.bind(this);
     this.changeAccount = this.changeAccount.bind(this);
+    this.updateUserInfo = this.updateUserInfo.bind(this);
   }
 
   handleTutorialSelect(tutorialId) {
@@ -50,7 +51,7 @@ class App extends Component {
     if (!(browserMode === 'used' || browserMode === 'owned')) {
       browserMode = null;
     }
-    
+
     this.setState({
       mode: 'browser',
       activeTutorial: null,
@@ -264,10 +265,34 @@ class App extends Component {
 
       // then set the state
       this.setState({
-        user: serverUser
+        activeUser: serverUser
       });
 
     });
+  }
+
+  updateUserInfo(tutorial) {
+    let userObj = Object.assign({}, this.state.activeUser);
+
+    let alreadyUsed = false;
+
+    userObj.tutorialsUsed.map((item) => {
+      if (item._id == tutorial._id) {
+        alreadyUsed = true;
+        return tutorial;
+      } else {
+        return item;
+      }
+    });
+
+    if (!alreadyUsed) {
+      userObj.tutorialsUsed.push(tutorial);
+    }
+
+    this.setState({
+      activeUser: userObj
+    });
+
   }
 
   render() {
@@ -343,6 +368,7 @@ class App extends Component {
           <TutorialContainer onExit={this.handleTutorialExit}
                              activeTutorial={this.state.activeTutorial}
                              username={this.state.activeUser.username}
+                             updateUserInfo={(tutorial) => this.updateUserInfo(tutorial)}
                              autoSave={(modifiedCode, currentStage) => this.autoSave(modifiedCode, currentStage)}/>;
         </div>
       );

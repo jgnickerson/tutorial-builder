@@ -31,6 +31,10 @@ class TutorialContainer extends Component {
       }
     })
     .then((serverTutorial) => {
+      // need to update the user information in the App state first
+      props.updateUserInfo(serverTutorial);
+
+      // then set the state of tutorial container
       this.setState({
         jsCode: serverTutorial.js,
         htmlCode: serverTutorial.html,
