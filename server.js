@@ -107,12 +107,20 @@ app.get('/users/:username/:tutorial', (req, res) => {
 				originalTutorial.css = originalTutorial.stages[0].code.css;
 				originalTutorial.currentStage = 0;
 
-				db.collection("users").update(
+				db.collection("users").findOneAndUpdate(
 					{ username: req.params.username },
-					{$push: { tutorialsUsed: originalTutorial}}
-				).then(() => {
-					res.send(originalTutorial);
-				});
+					{ $push: { tutorialsUsed: originalTutorial }},
+					{returnOriginal: false},
+      		(err, result) => {
+						if (err) {
+							console.log(err);
+						}
+
+						let storedTutorials = result.value.tutorialsUsed;
+
+						res.send(storedTutorials[storedTutorials.length-1]);
+					}
+				);
 			});
 		}
 	});

@@ -46,11 +46,16 @@ class App extends Component {
     });
   }
 
-  handleTutorialExit() {
+  handleTutorialExit(browserMode) {
+    if (!(browserMode === 'used' || browserMode === 'owned')) {
+      browserMode = null;
+    }
+    
     this.setState({
       mode: 'browser',
-      activeTutorial: null
-    })
+      activeTutorial: null,
+      browserMode: browserMode
+    });
   }
 
   handleCreateNew() {
@@ -215,6 +220,7 @@ class App extends Component {
         username: "",
         password: "",
       },
+      browserMode: null,
       errorMessage: ""
     });
   }
@@ -312,8 +318,10 @@ class App extends Component {
     } else if (this.state.mode === 'browser') {
       activeComponent = (
         <div>
-          <MenuBar createNew={this.handleCreateNew} logout={this.changeAccount} browse={this.handleTutorialExit}/>
-          <TutorialBrowser onSelect={this.handleTutorialSelect}/>
+          <MenuBar createNew={this.handleCreateNew} logout={this.changeAccount} browse={(browserMode) => this.handleTutorialExit(browserMode)}/>
+          <TutorialBrowser onSelect={this.handleTutorialSelect}
+                           browserMode={this.state.browserMode}
+                           username={this.state.activeUser.username}/>
         </div>
       );
     } else if (this.state.mode === 'createNew') {
@@ -331,7 +339,7 @@ class App extends Component {
       // if the user selected a tutorial, show it to them
       activeComponent = (
         <div>
-          <MenuBar createNew={this.handleCreateNew} logout={this.changeAccount} browse={this.handleTutorialExit}/>
+          <MenuBar createNew={this.handleCreateNew} logout={this.changeAccount} browse={(browserMode) => this.handleTutorialExit(browserMode)}/>
           <TutorialContainer onExit={this.handleTutorialExit}
                              activeTutorial={this.state.activeTutorial}
                              username={this.state.activeUser.username}
