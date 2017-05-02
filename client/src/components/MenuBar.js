@@ -24,7 +24,7 @@ function MenuBar(props) {
         <Navbar.Collapse>
           <Nav>
             <NavItem onSelect={() => {props.browse()}} href="#">All Tutorials</NavItem>
-            <NavItem>Build a new tutorial</NavItem>
+            <NavItem onSelect={props.createNew}>Build a new tutorial</NavItem>
             <NavDropdown eventKey={1} title="Account" id="basic-nav-dropdown">
               <MenuItem eventKey={1.1} onSelect={() => props.browse('used')}>Tutorials used</MenuItem>
               <MenuItem eventKey={1.2} onSelect={() => props.browse('owned')}>Tutorials owned</MenuItem>

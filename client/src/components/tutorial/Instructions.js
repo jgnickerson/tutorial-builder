@@ -39,12 +39,17 @@ class Instructions extends Component{
     //   { type: 'text', data: 'Now do this'}
     // ];
 
-    const instructions = this.props.instructions
-    .map((item, index) => {
+    var instructions = this.props.instructions;
+    if(instructions){
+     instructions = instructions.map((item, index) => {
       return item.type === 'text' ?
         <p key={index}>{item.data}</p> :
         <CodeMirror key={index} ref="editor" value={item.data} options={options}/>
     });
+  } else{
+      instructions = <CodeMirror ref="editor" value={null} options={options}/>
+
+  }
 
     return (
       <InstructionContainer>{instructions}</InstructionContainer>

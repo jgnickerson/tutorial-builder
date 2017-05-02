@@ -6,6 +6,7 @@ import Signup from './components/account/Signup.js';
 import TutorialBrowser from './components/browser/TutorialBrowser.js';
 import TutorialContainer from './components/tutorial/TutorialContainer.js';
 import MenuBar from './components/MenuBar.js';
+import CreateContainer from './components/tutorial/CreateContainer.js'
 
 const SERVER = 'http://localhost:4200';
 
@@ -30,6 +31,8 @@ class App extends Component {
     //ES6 Class/React thing we have to do to make sure this is bound properly...
     this.handleTutorialSelect = this.handleTutorialSelect.bind(this);
     this.handleTutorialExit = this.handleTutorialExit.bind(this);
+    this.handleCreateNew = this.handleCreateNew.bind(this);
+    this.handleSaveNewTutorial = this.handleSaveNewTutorial.bind(this);
     this.attemptLogin = this.attemptLogin.bind(this);
     this.switchToRegister = this.switchToRegister.bind(this);
     this.attemptRegister = this.attemptRegister.bind(this);
@@ -52,6 +55,50 @@ class App extends Component {
       mode: 'browser',
       activeTutorial: null,
       browserMode: browserMode
+    });
+  }
+
+  handleCreateNew() {
+    this.setState({
+      mode: 'createNew',
+      activeTutorial: null
+    });
+  }
+
+  handleSaveNewTutorial(tutorial) {
+    tutorial.creator = this.state.activeUser.username;
+
+    console.log(tutorial);
+
+    // stringify the object
+    const payload = JSON.stringify(tutorial);
+
+    // define the POST request
+    const postRequest = new Request(
+      SERVER + "/tutorials/",
+      {
+        method:'POST',
+        body: payload,
+        headers: new Headers({'Content-type': 'application/json'})
+      }
+    );
+
+    // attempt adding the new tutorial to the db
+    fetch(postRequest)
+    .then((response)=>{
+      if (response.ok){
+        return response.json();
+      } else {
+        console.log("something went wrong with the new tutorial");
+      }
+    })
+    .then((serverTutorial) => {
+      if (serverTutorial) {
+        this.setState({
+          mode: "browser",
+          activeTutorial: null
+        });
+      }
     });
   }
 
@@ -271,18 +318,28 @@ class App extends Component {
     } else if (this.state.mode === 'browser') {
       activeComponent = (
         <div>
-          <MenuBar logout={this.changeAccount} browse={(browserMode) => this.handleTutorialExit(browserMode)}/>
+          <MenuBar createNew={this.handleCreateNew} logout={this.changeAccount} browse={(browserMode) => this.handleTutorialExit(browserMode)}/>
           <TutorialBrowser onSelect={this.handleTutorialSelect}
                            browserMode={this.state.browserMode}
                            username={this.state.activeUser.username}/>
         </div>
       );
-
-    } else {
+    } else if (this.state.mode === 'createNew') {
+      activeComponent = (
+        <div>
+        <MenuBar createNew={this.handleCreateNew} logout={this.changeAccount} browse={this.handleTutorialExit}/>
+        <CreateContainer
+          onExit={this.handleTutorialExit}
+          save={this.handleSaveNewTutorial}
+        />;
+      </div>
+    );
+    }
+    else {
       // if the user selected a tutorial, show it to them
       activeComponent = (
         <div>
-          <MenuBar logout={this.changeAccount} browse={(browserMode) => this.handleTutorialExit(browserMode)}/>
+          <MenuBar createNew={this.handleCreateNew} logout={this.changeAccount} browse={(browserMode) => this.handleTutorialExit(browserMode)}/>
           <TutorialContainer onExit={this.handleTutorialExit}
                              activeTutorial={this.state.activeTutorial}
                              username={this.state.activeUser.username}

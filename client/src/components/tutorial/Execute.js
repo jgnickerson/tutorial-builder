@@ -13,6 +13,10 @@ const Console = styled.div`
 
 //Execute Component
 function Execute(props) {
+  const onShow = (()=>{
+    console.log(props.solution);
+    executeCode(props.solution.js, props.solution.html, props.solution.css, true);
+  });
   return (
     <div className="execution-body">
       <div className="execution-iframe-div" id="execution-iframe-div">
@@ -20,6 +24,7 @@ function Execute(props) {
       </div>
       <Console className="execution-console-div" id="execution-console-div"></Console>
       <button onClick={()=>executeCode(props.js, props.html, props.css, true)}>Run</button>
+      <button onClick={onShow}>Show Solution</button>
     </div>)
 }
 
