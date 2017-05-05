@@ -83,7 +83,13 @@ app.post('/users', (req, res) =>{
 	const findOrAddUser = db.collection('users').findOne({username: req.body.username}).then(user => {
 		return new Promise((resolve, reject) => {
 			if (!user) {
-				db.collection("users").insertOne(req.body, (err, result) => {
+				const user = {
+					username: req.body.username,
+					password: req.body.password,
+					tutorialsUsed: [],
+					tutorialsOwned: []
+				};
+				db.collection("users").insertOne(user, (err, result) => {
 					if (err) { reject(boom.badImplementation(err)) }
 					resolve();
 				});
@@ -123,20 +129,36 @@ app.get('/test',
 });
 
 // get the info about the tutorials
-app.get('/tutorials/:id*?', (req, res) => {
+app.get('/tutorials/:id*?', 
+	jwtMiddleware({secret: passphrase, credentialsRequired: false}),
+	(req, res) => {
 	// if we have a specific id to look up
 	if (req.params.id) {
-		db.collection("tutorials").find({_id: new ObjectID(req.params.id)}).toArray((err, result) => {
-      if (err) {
-        console.log(err);
-      }
-			res.send(result[0]);
-	  });
+		if (req.user) {
+			db.collection("users").findOne({_id: new ObjectID(req.user.id)})
+			.then(user => {
+				const tutorial = user.tutorialsUsed.find(tutorial => tutorial._id.equals(new ObjectID(req.params.id)));
+				if (tutorial) {
+					return res.send(tutorial);
+				} else {
+					db.collection("tutorials").findOne({_id: new ObjectID(req.params.id)})
+					.then(tutorial => {
+						db.collection("users").update(
+							{_id: new ObjectID(req.user.id)},
+							{$push: {tutorialsUsed: tutorial}})
+						.then(() => res.send(tutorial), err => res.send(boom.badImplementation(err)));
+					}, err => res.send(boom.badImplementation(err)));
+				}
+			}, err => res.send(boom.badImplementation(err)));
+		} else {
+			db.collection("tutorials").findOne({_id: new ObjectID(req.params.id)})
+			.then(tutorial => res.send(tutorial), err => res.send(boom.badImplementation(err)));
+		}
 	// otherwise send all entries
 	} else {
 		db.collection("tutorials").find().toArray((err, result) => {
 			if (err) {
-				console.log(err);
+				res.send(boom.badImplementation(err));
 			}
 			res.send(result);
 		});
