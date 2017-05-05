@@ -121,15 +121,8 @@ function buildJwtResponse(user) {
 	return response;
 }
 
-app.get('/test',
-	jwtMiddleware({secret: passphrase}),
-	(req, res) => {
-		console.log(req.user);
-		res.send(req.user);
-});
-
 // get the info about the tutorials
-app.get('/tutorials/:id*?', 
+app.get('/tutorials/:id*?',
 	jwtMiddleware({secret: passphrase, credentialsRequired: false}),
 	(req, res) => {
 	// if we have a specific id to look up
@@ -143,6 +136,8 @@ app.get('/tutorials/:id*?',
 				} else {
 					db.collection("tutorials").findOne({_id: new ObjectID(req.params.id)})
 					.then(tutorial => {
+						//TODO remove hack(tutorial)
+						tutorial = hack(tutorial);
 						db.collection("users").update(
 							{_id: new ObjectID(req.user.id)},
 							{$push: {tutorialsUsed: tutorial}})
@@ -152,7 +147,8 @@ app.get('/tutorials/:id*?',
 			}, err => res.send(boom.badImplementation(err)));
 		} else {
 			db.collection("tutorials").findOne({_id: new ObjectID(req.params.id)})
-			.then(tutorial => res.send(tutorial), err => res.send(boom.badImplementation(err)));
+			//TODO remove hack(tutorial)
+			.then(tutorial => res.send(hack(tutorial)), err => res.send(boom.badImplementation(err)));
 		}
 	// otherwise send all entries
 	} else {
@@ -165,49 +161,20 @@ app.get('/tutorials/:id*?',
 	}
 });
 
-// get info about the specific tutorial used by the user
-app.get('/users/:username/:tutorial', (req, res) => {
-
-	db.collection("users").find({username: req.params.username}).toArray((err, result) => {
-		if (err) {
-			console.log(err);
-		}
-
-		let userObj = result[0],
-			tutorialObj, tutorialIndex;
-
-		userObj.tutorialsUsed.forEach((item, index) => {
-			if (item._id == req.params.tutorial) {
-				tutorialObj = item;
-				tutorialIndex = index;
-			}
-		});
-
-		if (tutorialObj) {
-			res.send(tutorialObj);
-
-		} else {
-
-			db.collection("tutorials").find({_id: new ObjectID(req.params.tutorial)}).toArray((err, result) => {
-				if (err) {
-					console.log(err);
-				}
-				let originalTutorial = result[0];
-				originalTutorial.js = originalTutorial.stages[0].code.js;
-				originalTutorial.html = originalTutorial.stages[0].code.html;
-				originalTutorial.css = originalTutorial.stages[0].code.css;
-				originalTutorial.currentStage = 0;
-
-				db.collection("users").update(
-					{ username: req.params.username },
-					{$push: { tutorialsUsed: originalTutorial}}
-				).then(() => {
-					res.send(originalTutorial);
-				});
-			});
-		}
-	});
-});
+//TODO disappear when we remove stages from a tutorial
+function hack(tutorial) {
+	return {
+		title: tutorial.title,
+		creator: tutorial.creator,
+		description: tutorial.description,
+		stages: tutorial.stages,
+		js: tutorial.stages[0].code.js,
+		html: tutorial.stages[0].code.html,
+		css: tutorial.stages[0].code.css,
+		lastUpdate: tutorial.lastUpdate,
+		rating: tutorial.rating
+	}
+}
 
 // get the info about the users
 app.get('/users/:username*?', (req, res) => {
@@ -290,22 +257,34 @@ app.put('/tutorials/:id', (req, res) => {
 	);
 });
 
-// update a specific user's account
-app.put('/users/:id', (req, res) => {
-	let updatedUser = req.body;
-	updatedUser._id = ObjectID.createFromHexString(updatedUser._id);
-
-	db.collection("users").findOneAndUpdate(
-		{_id: updatedUser._id},
-		{$set: updatedUser},
-		{returnOriginal: false},
-		(err, result) => {
-			if (err) {
-				console.log(err);
-				res.sendStatus(500);
-			} else {
-				res.send(result.value);
-			}
-		}
-	);
+//persisting tutorial edits for owner
+app.put('/users/owner/:tutorialID', (req,res) => {
+	console.log("owner");
 });
+
+//persisting tutorial code while a user is taking the tutorial, see below commented out.
+//below code will not work for a single tutorial object. Amir is pushing the entire user object again
+app.put('/users/:tutorialID', (req,res) => {
+	//expecting a single tutorial object in the body
+	console.log("user");
+});
+
+// update a specific user's account
+// app.put('/users/:id', (req, res) => {
+// 	let updatedUser = req.body;
+// 	updatedUser._id = ObjectID.createFromHexString(updatedUser._id);
+//
+// 	db.collection("users").findOneAndUpdate(
+// 		{_id: updatedUser._id},
+// 		{$set: updatedUser},
+// 		{returnOriginal: false},
+// 		(err, result) => {
+// 			if (err) {
+// 				console.log(err);
+// 				res.sendStatus(500);
+// 			} else {
+// 				res.send(result.value);
+// 			}
+// 		}
+// 	);
+// });
