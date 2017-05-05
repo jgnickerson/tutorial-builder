@@ -8,7 +8,8 @@ const http = require('http'),
 	cors = require('cors'),
 	bodyParser = require('body-parser'),
 	jwt = require('jsonwebtoken'),
-	jwtMiddleware = require('express-jwt');
+	jwtMiddleware = require('express-jwt'),
+	boom = require('boom');
 
 // create the server
 const app = express();
@@ -64,7 +65,7 @@ app.post('/login',(req, res) => {
 		if (req.body.password === user.password) {
 			return res.json(buildJwtResponse(user));
 		} else {
-			//TODO incorrect password, send it back
+			res.send(boom.unauthorized('invalid password'))
 		}
 	}, err => {
 		//TODO handle this err, user not found, or something similar

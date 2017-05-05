@@ -7,6 +7,7 @@
     "babel-cli": "^6.24.1",
     "babel-core": "^6.24.1",
     "body-parser": "^1.17.1",
+    "boom": "^4.3.1",
     "cors": "^2.8.3",
     "express": "^4.15.2",
     "express-jwt": "^5.3.0",
@@ -24,7 +25,7 @@
   "homepage": "https://github.com/jgnickerson/tutorial-builder#readme",
   "scripts": {
     "start": "concurrently \"mongod --port 4201 --dbpath ./db\" \"npm run server\" \"npm run client\"",
-    "server": "babel-node server.js",
+    "server": "nodemon server.js --exec babel-node",
     "client": "babel-node start-client.js",
     "refresh": "mongod --port 4201 --dbpath ./db | mongo --port 4201 tutorial-builder --eval \"db.dropDatabase()\" | sleep 0.5s | mongoimport --port 4201 --db tutorial-builder --collection tutorials --jsonArray ./test_data/tutorials.json | mongoimport --port 4201 --db tutorial-builder --collection users --jsonArray ./test_data/users.json"
   }
