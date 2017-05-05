@@ -60,42 +60,45 @@ SERVER Routes
 */
 
 app.post('/login',(req, res) => {
-	db.collection('users').findOne({username: username}).then(user => {
+	db.collection('users').findOne({username: req.body.username}).then(user => {
+		if (!user) {
+			return res.send(boom.unauthorized('invalid username'));
+		}
+
 		//TODO add salting/hasing using bcrypt
 		if (req.body.password === user.password) {
 			return res.json(buildJwtResponse(user));
 		} else {
-			res.send(boom.unauthorized('invalid password'))
+			return res.send(boom.unauthorized('invalid password'));
 		}
+
+	//there was some other mongo error
 	}, err => {
-		//TODO handle this err, user not found, or something similar
-		console.log(err);
+		return res.send(boom.badImplementation(err));
 	})
 });
 
 // create a new user
 app.post('/users', (req, res) =>{
-	const findOrAddUser = db.collection('users').findOne({username: username}).then(user => {
+	const findOrAddUser = db.collection('users').findOne({username: req.body.username}).then(user => {
 		return new Promise((resolve, reject) => {
 			if (!user) {
 				db.collection("users").insertOne(req.body, (err, result) => {
-					if (err) { reject(err) } else { resolve() }
+					if (err) { reject(boom.badImplementation(err)) }
+					resolve();
 				});
 			} else {
-				//TODO return error saying username already exists
-				reject("user already exists");
+				reject(boom.badData('username already exists'));
 			}
 		})
-	}, err => console.log(err))
+	}, err => res.send(boom.badImplementation(err)));
 
 	//what happens to this chain if the above promise catches?
 	findOrAddUser.then(() => {
-		console.log('executing this');
-		db.collection('users').findOne({username: username}).then(user => {
+		db.collection('users').findOne({username: req.body.username}).then(user => {
 			return res.json(buildJwtResponse(user))
-		}, err => { console.log(err); return res.sendStatus(500) })
-	}, err => { console.log(err); return res.sendStatus(403); //username already exists ?
-	})
+		}, err => res.send(boom.badImplementation(err)));
+	}, err => res.send(err));
 });
 
 function buildJwtResponse(user) {

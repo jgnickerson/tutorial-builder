@@ -15,7 +15,8 @@
     "mongodb": "^2.2.25"
   },
   "devDependencies": {
-    "concurrently": "^3.4.0"
+    "concurrently": "^3.4.0",
+    "nodemon": "^1.11.0"
   },
   "repository": {
     "type": "git",
