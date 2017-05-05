@@ -7,13 +7,14 @@ const http = require('http'),
 	express = require('express'),
 	cors = require('cors'),
 	bodyParser = require('body-parser'),
-	jwt = require('jsonwebtoken');
+	jwt = require('jsonwebtoken'),
+	jwtMiddleware = require('express-jwt');
 
 // create the server
 const app = express();
 const server = http.createServer(app);
 
-//TODO move this to a config file
+//TODO move this jwt passphrase to a config/.env file
 const passphrase = "Amir is cool";
 
 // configure the server
@@ -57,14 +58,15 @@ SERVER Routes
 
 */
 
-app.post('/login', (req, res) => {
-	findUser(req.body.username).then(user => {
+app.post('/login',(req, res) => {
+	db.collection('users').findOne({username: username}).then(user => {
+		//TODO add salting/hasing using bcrypt
 		if (req.body.password === user.password) {
 			return res.json(buildJwtResponse(user));
 		} else {
 			//TODO incorrect password, send it back
 		}
-	}).catch(err => {
+	}, err => {
 		//TODO handle this err, user not found, or something similar
 		console.log(err);
 	})
@@ -72,7 +74,7 @@ app.post('/login', (req, res) => {
 
 // create a new user
 app.post('/users', (req, res) =>{
-	const findOrAddUser = findUser(req.body.username).then(user => {
+	const findOrAddUser = db.collection('users').findOne({username: username}).then(user => {
 		return new Promise((resolve, reject) => {
 			if (!user) {
 				db.collection("users").insertOne(req.body, (err, result) => {
@@ -88,16 +90,12 @@ app.post('/users', (req, res) =>{
 	//what happens to this chain if the above promise catches?
 	findOrAddUser.then(() => {
 		console.log('executing this');
-		findUser(req.body.username).then(user => {
+		db.collection('users').findOne({username: username}).then(user => {
 			return res.json(buildJwtResponse(user))
 		}, err => { console.log(err); return res.sendStatus(500) })
-	}, err => { console.log(err) return res.sendStatus(403); //username already exists ?
+	}, err => { console.log(err); return res.sendStatus(403); //username already exists ?
 	})
 });
-
-function findUser(username) {
-	return db.collection('users').findOne({username: username});
-}
 
 function buildJwtResponse(user) {
 	const tokenData = {
@@ -113,10 +111,11 @@ function buildJwtResponse(user) {
 	return response;
 }
 
-app.get('/test', (req, res) => {
-	jwt.verify(req.get("authorization").split(" ")[1], passphrase, (err, decoded) => {
-			console.log(decoded);
-	})
+app.get('/test',
+	jwtMiddleware({secret: passphrase}),
+	(req, res) => {
+		console.log(req.user);
+		res.send(req.user);
 });
 
 // get the info about the tutorials
@@ -221,7 +220,7 @@ app.post('/tutorials', (req, res) =>{
 	});
 });
 
-// create a new tutorial
+// deletes a tutorial
 app.delete('/tutorials/:id', (req, res) => {
 	db.collection("tutorials").remove({_id: new ObjectID(req.params.id)}, (err) => {
 		if (err) {
@@ -233,7 +232,7 @@ app.delete('/tutorials/:id', (req, res) => {
 	});
 });
 
-// create a new user
+// delete a user
 app.delete('/users/:id', (req, res) => {
 	db.collection("users").remove({_id: new ObjectID(req.params.id)}, (err) => {
 		if (err) {
