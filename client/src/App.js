@@ -39,51 +39,6 @@ class App extends Component {
     this.setState({ mode: 'login', activeTutorial: null })
   }
 
-  autoSave(modifiedCode, currentStage) {
-
-    // //put the new code in user's tutorialsUsed
-    // let updatedUser = Object.assign({}, this.state.activeUser);
-    // updatedUser.tutorialsUsed.map((item) => {
-    //   if (item._id == this.state.activeTutorial) {
-    //     item.js = modifiedCode.js;
-    //     item.css = modifiedCode.css;
-    //     item.html = modifiedCode.html;
-    //     item.currentStage = currentStage;
-    //   }
-    //
-    //   return item;
-    // });
-    //
-    // // stringify the object
-    // const userStr = JSON.stringify(updatedUser);
-    //
-    // // define the PUT request
-    // const putRequest = new Request(
-    //   SERVER + "/users/" + updatedUser._id,
-    //   {
-    //     method:'PUT',
-    //     body: userStr,
-    //     headers: new Headers({'Content-type': 'application/json'})
-    //   }
-    // );
-    //
-    // // send the obj to the server
-    // fetch(putRequest)
-    // .then((response)=>{
-    //   if (response.ok){
-    //     return response.json();
-    //   }
-    // })
-    // .then((serverUser) => {
-    //
-    //   // then set the state
-    //   this.setState({
-    //     user: serverUser
-    //   });
-    //
-    // });
-  }
-
   render() {
     let activeComponent;
 
@@ -112,9 +67,7 @@ class App extends Component {
         activeComponent = (
           <div>
             <MenuBar logout={this.handleLogout} browse={this.handleTutorialExit}/>
-            <TutorialContainer onExit={this.handleTutorialExit}
-                               activeTutorial={this.state.activeTutorial}
-                               autoSave={(modifiedCode, currentStage) => this.autoSave(modifiedCode, currentStage)}/>;
+            <TutorialContainer onExit={this.handleTutorialExit} activeTutorial={this.state.activeTutorial}/>;
           </div>
         );
     }

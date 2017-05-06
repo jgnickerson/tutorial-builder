@@ -32,23 +32,42 @@ class TutorialContainer extends Component {
     fetch('/tutorials/' + this.props.activeTutorial, {
       method: 'GET',
       headers: headers
-    }).then(response => {
-      if(response.ok){
-        return response.json();
+    }).then(response => { if(response.ok) return response.json() })
+    .then(data => {
+      if (!data.isBoom) {
+        this.setState({
+          jsCode: data.js,
+          htmlCode: data.html,
+          cssCode: data.css,
+          currentStage: data.currentStage,
+          instructions: data.stages[data.currentStage].instructions
+        });
+
+        this.persistInterval = setInterval(() => this.persistTutorial(), 1000);
       } else {
-        //TODO error check
-        console.log(response);
+        //TODO handle error
+        console.log(data)
       }
-    })
-    .then(serverTutorial => {
-      this.setState({
-        jsCode: serverTutorial.js,
-        htmlCode: serverTutorial.html,
-        cssCode: serverTutorial.css,
-        currentStage: serverTutorial.currentStage,
-        instructions: serverTutorial.stages[serverTutorial.currentStage].instructions
-      });
     });
+  }
+
+  persistTutorial() {
+    const jwt = window.localStorage.getItem('jwt');
+    //we only want to try to persist if the user has a jwt (i.e. authenticated)
+    if (jwt) {
+      fetch('/users/' + this.props.activeTutorial, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt},
+        body: {js: this.state.jsCode, html: this.state.htmlCode, css: this.state.cssCode}
+      })
+      .then(response=> { if (response.ok) return response.json() })
+      .then(data=> {
+        if (data.isBoom) {
+          console.log(data);
+          //TODO handle error
+        }
+      })
+    }
   }
 
   getCodeToDisplay() {
@@ -63,23 +82,9 @@ class TutorialContainer extends Component {
     }
   }
 
-  // set up the interval for auto-saving
-  componentDidMount() {
-
-    this.interval = setInterval(() => {
-      const modifiedCode = {
-        js: this.state.jsCode,
-        css: this.state.cssCode,
-        html: this.state.htmlCode
-      }
-      this.props.autoSave(modifiedCode, this.state.currentStage);
-    },
-    1000);
-  }
-
   // clear the interval when we don't need the component
   componentWillUnmount() {
-    clearInterval(this.interval);
+    clearInterval(this.persistInterval);
   }
 
   handleCodeChange(code) {
@@ -93,7 +98,6 @@ class TutorialContainer extends Component {
   }
 
   render() {
-
     const onModeChange = ((element) => {
       const mode = element.target.value;
       this.setState({mode: mode});
