@@ -266,9 +266,26 @@ app.put('/users/owner/:tutorialID', (req,res) => {
 
 //persisting tutorial code while a user is taking the tutorial, see below commented out.
 //below code will not work for a single tutorial object. Amir is pushing the entire user object again
-app.put('/users/:tutorialID', (req,res) => {
-	//expecting a single tutorial object in the body
-	console.log("user");
+app.put('/users/:tutorialID', 
+	jwtMiddleware({secret: passphrase}),
+	(req,res) => {
+		//expecting persisting js, html, and css in the body
+		if (req.user) {
+			console.log(req.body);
+			db.collection("users").findOneAndUpdate(
+				{_id: new ObjectID(req.user.id), "tutorialsUsed._id": new ObjectID(req.params.tutorialID)},
+				{$set: {"tutorialsUsed.$.stages.0.code": req.body}},
+				{returnOriginal: false},
+				(err, result) => {
+					if (err) {
+						res.send(boom.badImplementation(err));
+						res.sendStatus(500);
+					} else {
+						console.log(result);
+						res.send(result.value);
+					}
+			});
+		}
 });
 
 // update a specific user's account
