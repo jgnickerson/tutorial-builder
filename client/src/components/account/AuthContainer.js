@@ -34,12 +34,18 @@ class AuthContainer extends Component {
         if (response.ok) {
           return response.json();
         } else {
-          //TODO handle and set error messages here
+          //TODO handle error messages here
           console.log(response);
         }
-      }).then((data) => {
-        localStorage.setItem('jwt', data.token);
-        this.props.switchMode('browser');
+      })
+      .then((data) => {
+        if (data.token) {
+          localStorage.setItem('jwt', data.token);
+          this.props.switchMode('browser');
+        } else {
+          //TODO handle error messages
+          console.log(data);
+        }
       });
     } else {
       this.setState({errorMessage: "Please enter your credentials."})
