@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
 
 import AuthContainer from './components/account/AuthContainer.js';
 import TutorialBrowser from './components/browser/TutorialBrowser.js';
 import TutorialContainer from './components/tutorial/TutorialContainer.js';
 import MenuBar from './components/MenuBar.js';
-
-const SERVER = 'http://localhost:4200';
 
 class App extends Component {
   constructor(props){
@@ -22,6 +19,7 @@ class App extends Component {
     this.handleTutorialSelect = this.handleTutorialSelect.bind(this);
     this.handleTutorialExit = this.handleTutorialExit.bind(this);
     this.switchMode = this.switchMode.bind(this);
+    this.handleLogout = this.handleLogout.bind(this);
   }
 
   handleTutorialSelect(tutorialId) {
@@ -36,49 +34,54 @@ class App extends Component {
     this.setState({ mode: mode, errorMessage: "" });
   }
 
+  handleLogout() {
+    window.sessionStorage.removeItem('jwt');
+    this.setState({ mode: 'login', activeTutorial: null })
+  }
+
   autoSave(modifiedCode, currentStage) {
 
-    //put the new code in user's tutorialsUsed
-    let updatedUser = Object.assign({}, this.state.activeUser);
-    updatedUser.tutorialsUsed.map((item) => {
-      if (item._id == this.state.activeTutorial) {
-        item.js = modifiedCode.js;
-        item.css = modifiedCode.css;
-        item.html = modifiedCode.html;
-        item.currentStage = currentStage;
-      }
-
-      return item;
-    });
-
-    // stringify the object
-    const userStr = JSON.stringify(updatedUser);
-
-    // define the PUT request
-    const putRequest = new Request(
-      SERVER + "/users/" + updatedUser._id,
-      {
-        method:'PUT',
-        body: userStr,
-        headers: new Headers({'Content-type': 'application/json'})
-      }
-    );
-
-    // send the obj to the server
-    fetch(putRequest)
-    .then((response)=>{
-      if (response.ok){
-        return response.json();
-      }
-    })
-    .then((serverUser) => {
-
-      // then set the state
-      this.setState({
-        user: serverUser
-      });
-
-    });
+    // //put the new code in user's tutorialsUsed
+    // let updatedUser = Object.assign({}, this.state.activeUser);
+    // updatedUser.tutorialsUsed.map((item) => {
+    //   if (item._id == this.state.activeTutorial) {
+    //     item.js = modifiedCode.js;
+    //     item.css = modifiedCode.css;
+    //     item.html = modifiedCode.html;
+    //     item.currentStage = currentStage;
+    //   }
+    //
+    //   return item;
+    // });
+    //
+    // // stringify the object
+    // const userStr = JSON.stringify(updatedUser);
+    //
+    // // define the PUT request
+    // const putRequest = new Request(
+    //   SERVER + "/users/" + updatedUser._id,
+    //   {
+    //     method:'PUT',
+    //     body: userStr,
+    //     headers: new Headers({'Content-type': 'application/json'})
+    //   }
+    // );
+    //
+    // // send the obj to the server
+    // fetch(putRequest)
+    // .then((response)=>{
+    //   if (response.ok){
+    //     return response.json();
+    //   }
+    // })
+    // .then((serverUser) => {
+    //
+    //   // then set the state
+    //   this.setState({
+    //     user: serverUser
+    //   });
+    //
+    // });
   }
 
   render() {
@@ -98,7 +101,7 @@ class App extends Component {
       case 'browser':
         activeComponent = (
           <div>
-            <MenuBar logout={() => this.switchMode('login')} browse={this.handleTutorialExit}/>
+            <MenuBar logout={this.handleLogout} browse={this.handleTutorialExit}/>
             <TutorialBrowser onSelect={this.handleTutorialSelect}/>
           </div>
         );
@@ -108,7 +111,7 @@ class App extends Component {
       default:
         activeComponent = (
           <div>
-            <MenuBar logout={() => this.switchMode('login')} browse={this.handleTutorialExit}/>
+            <MenuBar logout={this.handleLogout} browse={this.handleTutorialExit}/>
             <TutorialContainer onExit={this.handleTutorialExit}
                                activeTutorial={this.state.activeTutorial}
                                autoSave={(modifiedCode, currentStage) => this.autoSave(modifiedCode, currentStage)}/>;

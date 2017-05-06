@@ -140,6 +140,7 @@ class AuthContainer extends Component {
             <button onClick={() => this.props.switchMode('browser')}>Browse Tutorials!</button>
           </div>
         );
+      default:
     }
 
     return (

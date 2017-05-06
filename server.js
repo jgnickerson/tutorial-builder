@@ -164,6 +164,7 @@ app.get('/tutorials/:id*?',
 //TODO disappear when we remove stages from a tutorial
 function hack(tutorial) {
 	return {
+		_id: tutorial._id,
 		title: tutorial.title,
 		creator: tutorial.creator,
 		description: tutorial.description,
@@ -172,7 +173,8 @@ function hack(tutorial) {
 		html: tutorial.stages[0].code.html,
 		css: tutorial.stages[0].code.css,
 		lastUpdate: tutorial.lastUpdate,
-		rating: tutorial.rating
+		rating: tutorial.rating,
+		currentStage: 0
 	}
 }
 

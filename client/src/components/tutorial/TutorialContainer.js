@@ -6,8 +6,6 @@
 import React, { Component } from 'react';
 import Tutorial from './Tutorial.js';
 
-const SERVER = 'http://localhost:4200';
-
 class TutorialContainer extends Component {
   constructor(props) {
     super(props);
@@ -21,13 +19,28 @@ class TutorialContainer extends Component {
       mode: 'javascript'
     }
 
-    fetch(SERVER + '/users/' + props.username + '/' + props.activeTutorial)
-    .then((response) => {
+    this.getTutorial();
+
+    this.handleCodeChange = this.handleCodeChange.bind(this);
+    this.getCodeToDisplay = this.getCodeToDisplay.bind(this);
+  }
+
+  getTutorial() {
+    const jwt = window.localStorage.getItem('jwt');
+    const headers = jwt ? {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt} : {'Content-Type': 'application/json'};
+
+    fetch('/tutorials/' + this.props.activeTutorial, {
+      method: 'GET',
+      headers: headers
+    }).then(response => {
       if(response.ok){
         return response.json();
+      } else {
+        //TODO error check
+        console.log(response);
       }
     })
-    .then((serverTutorial) => {
+    .then(serverTutorial => {
       this.setState({
         jsCode: serverTutorial.js,
         htmlCode: serverTutorial.html,
@@ -35,11 +48,7 @@ class TutorialContainer extends Component {
         currentStage: serverTutorial.currentStage,
         instructions: serverTutorial.stages[serverTutorial.currentStage].instructions
       });
-
     });
-
-    this.handleCodeChange = this.handleCodeChange.bind(this);
-    this.getCodeToDisplay = this.getCodeToDisplay.bind(this);
   }
 
   getCodeToDisplay() {
