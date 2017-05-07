@@ -260,8 +260,44 @@ app.put('/tutorials/:id', (req, res) => {
 });
 
 //persisting tutorial edits for owner
-app.put('/users/owner/:tutorialID', (req,res) => {
-	console.log("owner");
+app.put('/users/owner/:tutorialID*?', 
+	jwtMiddleware({secret: passphrase}),
+	(req,res) => {
+		if (req.user) {
+			// if the tutorial has no ID
+			if (!req.params.id) {
+				db.collection("tutorials").insert(req.body)
+				.then(insertResponse => {
+					let tutorial = req.body;
+					tutorial._id = new ObjectID(insertResponse.ops[0]._id);
+					tutorial = hack(tutorial);
+					db.collection("users").update(
+							{_id: new ObjectID(req.user.id)},
+							{$push: {"tutorialsOwned": tutorial}})
+					.then(() => {
+						res.send(tutorial);
+					}, err => res.send(boom.badImplementation(err)));
+				}, err => res.send(boom.badImplementation(err)));
+			// if the tutorial has an ID
+			} else {
+				// update tutorial in tutorialsOwned
+				let tutorial = req.body;
+				tutorial._id = new ObjectID(req.params.tutorialID);
+				tutorial = hack(tutorial);
+				db.collection("users").update(
+					{_id: new ObjectID(req.user.id), "tutorialsOwned._id": new ObjectID(req.params.tutorialID)},
+					{$set: {"tutorialsOwned.$": hack(tutorial)}},
+					{returnOriginal: false},
+					(err, result) => {
+						if (err) {
+							res.send(boom.badImplementation(err));
+							res.sendStatus(500);
+						} else {
+							res.send(result.value);
+						}
+				});
+			}
+		}
 });
 
 //persisting tutorial code while a user is taking the tutorial, see below commented out.
@@ -271,7 +307,6 @@ app.put('/users/:tutorialID',
 	(req,res) => {
 		//expecting persisting js, html, and css in the body
 		if (req.user) {
-			console.log(req.body);
 			db.collection("users").findOneAndUpdate(
 				{_id: new ObjectID(req.user.id), "tutorialsUsed._id": new ObjectID(req.params.tutorialID)},
 				{$set: {
@@ -280,13 +315,10 @@ app.put('/users/:tutorialID',
 					"tutorialsUsed.$.css": req.body.css
 				}},
 				{returnOriginal: false},
-				(err, result) => {
+				(err) => {
 					if (err) {
 						res.send(boom.badImplementation(err));
 						res.sendStatus(500);
-					} else {
-						console.log(result);
-						res.send(result.value);
 					}
 			});
 		}
