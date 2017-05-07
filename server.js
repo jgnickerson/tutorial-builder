@@ -274,7 +274,11 @@ app.put('/users/:tutorialID',
 			console.log(req.body);
 			db.collection("users").findOneAndUpdate(
 				{_id: new ObjectID(req.user.id), "tutorialsUsed._id": new ObjectID(req.params.tutorialID)},
-				{$set: {"tutorialsUsed.$.stages.0.code": req.body}},
+				{$set: {
+					"tutorialsUsed.$.js": req.body.js,
+					"tutorialsUsed.$.html": req.body.html,
+					"tutorialsUsed.$.css": req.body.css
+				}},
 				{returnOriginal: false},
 				(err, result) => {
 					if (err) {

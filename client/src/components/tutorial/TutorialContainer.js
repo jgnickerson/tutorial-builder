@@ -36,9 +36,9 @@ class TutorialContainer extends Component {
     .then(data => {
       if (!data.isBoom) {
         this.setState({
-          jsCode: data.stages[data.currentStage].code.js,
-          htmlCode: data.stages[data.currentStage].code.html,
-          cssCode: data.stages[data.currentStage].code.css,
+          jsCode: data.js,
+          htmlCode: data.html,
+          cssCode: data.css,
           currentStage: data.currentStage,
           instructions: data.stages[data.currentStage].instructions
         });
@@ -55,11 +55,10 @@ class TutorialContainer extends Component {
     const jwt = window.localStorage.getItem('jwt');
     //we only want to try to persist if the user has a jwt (i.e. authenticated)
     if (jwt) {
-      console.log({js: this.state.jsCode, html: this.state.htmlCode, css: this.state.cssCode});
       fetch('/users/' + this.props.activeTutorial, {
         method: 'PUT',
         headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt},
-        body: {js: this.state.jsCode, html: this.state.htmlCode, css: this.state.cssCode}
+        body: JSON.stringify({js: this.state.jsCode, html: this.state.htmlCode, css: this.state.cssCode})
       })
       .then(response=> { if (response.ok) return response.json() })
       .then(data=> {
