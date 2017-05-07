@@ -5,7 +5,9 @@ Will handle fetching of tutorial and manage state of Tutorial (e.g. current step
 
 import React, { Component } from 'react';
 import Tutorial from './Tutorial.js';
+import CreateTutorial from './CreateTutorial.js';
 import InstructionWriter from './InstructionWriter.js';
+import arrayMove from 'react-sortable-hoc';
 
 const SERVER = 'http://localhost:4200';
 
@@ -54,6 +56,7 @@ class CreateContainer extends Component {
     this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
     this.handleInstructionAdd = this.handleInstructionAdd.bind(this);
     this.handleSaveNewTutorial = this.handleSaveNewTutorial.bind(this);
+    this.onSortEnd = this.onSortEnd.bind(this);
   }
 
   getCodeToDisplay() {
@@ -114,11 +117,27 @@ class CreateContainer extends Component {
             html: this.state.htmlCode
           }
         }
-      ],    
+      ],
     }
 
     this.props.save(tutorial)
   }
+
+  onSortEnd = ({oldIndex, newIndex}) => {
+    // thank you Github: https://github.com/clauderic/react-sortable-hoc/blob/master/src/utils.js
+    const instructions = this.state.instructions;
+    if (newIndex >= instructions.length) {
+      let k = newIndex - instructions.length;
+      while (k-- + 1) {
+        instructions.push(undefined);
+      }
+    }
+    instructions.splice(newIndex, 0, instructions.splice(oldIndex, 1)[0]);
+
+    this.setState({
+      instructions: instructions,
+    });
+  };
 
   render() {
 
@@ -135,20 +154,10 @@ class CreateContainer extends Component {
       <label>Description</label>
       <input onChange={this.handleDescriptionChange}></input>
       <br/>
-      <Tutorial
-        code={this.getCodeToDisplay()}
-        js={this.state.jsCode}
-        html={this.state.htmlCode}
-        css={this.state.cssCode}
-        instructions={this.state.instructions}
-        onExit={this.props.onExit}
-        onCodeChange={this.handleCodeChange}
-        mode={this.state.mode}
-        onModeChange={onModeChange}
-      />
-    <InstructionWriter addInstruction={this.handleInstructionAdd}/>
-    <br/>
-    <br/>
+      <CreateTutorial instructions={this.state.instructions} onSortEnd={this.onSortEnd}/>
+      <InstructionWriter addInstruction={this.handleInstructionAdd}/>
+      <br/>
+      <br/>
       <button onClick={this.handleSaveNewTutorial}>Save Tutorial</button>
       </div>
     )
