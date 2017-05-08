@@ -259,7 +259,7 @@ app.put('/tutorials/:id', (req, res) => {
 	);
 });
 
-//adds newly created tutorial to tutorials and tutorialsUsed
+//adds newly created tutorial to tutorials and tutorialsOwned
 app.post('/users/owner/', 
 	jwtMiddleware({secret: passphrase}),
 	(req,res) => {
