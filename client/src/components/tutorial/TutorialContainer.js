@@ -6,8 +6,6 @@
 import React, { Component } from 'react';
 import Tutorial from './Tutorial.js';
 
-const SERVER = 'http://localhost:4200';
-
 class TutorialContainer extends Component {
   constructor(props) {
     super(props);
@@ -16,37 +14,58 @@ class TutorialContainer extends Component {
       jsCode: "",
       htmlCode: "",
       cssCode: "",
-      currentStage: null,
       instructions: null,
+      solution: {},
       mode: 'javascript'
     }
 
-    fetch(SERVER + '/users/' + props.username + '/' + props.activeTutorial)
-    .then((response) => {
-      if(response.ok){
-        return response.json();
-      }
-      else{
-        console.log("something wrong");
-      }
-    })
-    .then((serverTutorial) => {
-      // need to update the user information in the App state first
-      props.updateUserInfo(serverTutorial);
-
-      // then set the state of tutorial container
-      this.setState({
-        jsCode: serverTutorial.js,
-        htmlCode: serverTutorial.html,
-        cssCode: serverTutorial.css,
-        currentStage: serverTutorial.currentStage,
-        instructions: serverTutorial.stages[serverTutorial.currentStage].instructions,
-        solution: serverTutorial.stages[serverTutorial.currentStage].solution
-      });
-    });
+    this.getTutorial();
 
     this.handleCodeChange = this.handleCodeChange.bind(this);
     this.getCodeToDisplay = this.getCodeToDisplay.bind(this);
+  }
+
+  getTutorial() {
+    const jwt = window.localStorage.getItem('jwt');
+    const headers = jwt ? {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt} : {'Content-Type': 'application/json'};
+
+    fetch('/tutorials/' + this.props.activeTutorial, {
+      method: 'GET',
+      headers: headers
+    }).then(response => { if(response.ok) return response.json() })
+    .then(data => {
+      if (!data.isBoom) {
+        this.setState({
+          jsCode: data.js,
+          htmlCode: data.html,
+          cssCode: data.css,
+          solution: data.solution,
+          instructions: data.instructions
+        });
+
+        this.persistInterval = setInterval(() => this.persistTutorial(), 1000);
+      } else {
+        //TODO handle error
+        console.log(data)
+      }
+    });
+  }
+
+  persistTutorial() {
+    const jwt = window.localStorage.getItem('jwt');
+    //we only want to try to persist if the user has a jwt (i.e. authenticated)
+    if (jwt) {
+      fetch('/users/' + this.props.activeTutorial, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt},
+        body: JSON.stringify({js: this.state.jsCode, html: this.state.htmlCode, css: this.state.cssCode})
+      })
+      .then(response=> {
+        if (response.isBoom) {
+          //TODO handle error
+        }
+       })
+    }
   }
 
   getCodeToDisplay() {
@@ -61,23 +80,9 @@ class TutorialContainer extends Component {
     }
   }
 
-  // set up the interval for auto-saving
-  componentDidMount() {
-
-    this.interval = setInterval(() => {
-      const modifiedCode = {
-        js: this.state.jsCode,
-        css: this.state.cssCode,
-        html: this.state.htmlCode
-      }
-      this.props.autoSave(modifiedCode, this.state.currentStage);
-    },
-    1000);
-  }
-
   // clear the interval when we don't need the component
   componentWillUnmount() {
-    clearInterval(this.interval);
+    clearInterval(this.persistInterval);
   }
 
   handleCodeChange(code) {
@@ -91,7 +96,6 @@ class TutorialContainer extends Component {
   }
 
   render() {
-
     const onModeChange = ((element) => {
       const mode = element.target.value;
       this.setState({mode: mode});

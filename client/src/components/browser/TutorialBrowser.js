@@ -21,41 +21,42 @@ class TutorialBrowser extends Component {
   }
 
   fetchTutorials(props) {
-    // if browser mode is specified
-    if (props.browserMode) {
-      // fetch user-specific data
-      fetch('/users/'+props.username)
-      .then((response)=>{
-        if (response.ok) {
-          return response.json();
-        }
-      })
-      .then((userData)=>{
-        let tutorials;
-        if (props.browserMode === 'used') {
-          // only the tutorials used by the user
-          tutorials = userData.tutorialsUsed;
-        } else {
-          // browserMode === 'owned'
-          // only the tutorials owned by the user
-          tutorials = userData.tutorialsOwned;
-        }
-        this.setState({tutorials: tutorials});
-
-      });
-
-    // otherwise fetch all tutorials
-    } else {
-      fetch('/tutorials/')
-      .then((response)=>{
-        if (response.ok) {
-          return response.json();
-        }
-      })
-      .then((data)=>{
-        this.setState({tutorials:data})
-      })
-    }
+    fetch('/tutorials/')
+    .then((response)=>{
+      if (response.ok) {
+        return response.json();
+      }
+    })
+    .then(data=>{
+      this.setState({tutorials:data})
+    })
+    // // if browser mode is specified
+    // if (props.browserMode) {
+    //   // fetch user-specific data
+    //   fetch('/users/'+props.username)
+    //   .then((response)=>{
+    //     if (response.ok) {
+    //       return response.json();
+    //     }
+    //   })
+    //   .then((userData)=>{
+    //     let tutorials;
+    //     if (props.browserMode === 'used') {
+    //       // only the tutorials used by the user
+    //       tutorials = userData.tutorialsUsed;
+    //     } else {
+    //       // browserMode === 'owned'
+    //       // only the tutorials owned by the user
+    //       tutorials = userData.tutorialsOwned;
+    //     }
+    //     this.setState({tutorials: tutorials});
+    //
+    //   });
+    //
+    // // otherwise fetch all tutorials
+    // } else {
+    //
+    // }
   }
 
   componentWillReceiveProps(nextProps){

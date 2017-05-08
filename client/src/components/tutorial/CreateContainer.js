@@ -9,47 +9,48 @@ import CreateTutorial from './CreateTutorial.js';
 import InstructionWriter from './InstructionWriter.js';
 import arrayMove from 'react-sortable-hoc';
 
-const SERVER = 'http://localhost:4200';
-
 class CreateContainer extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      tutorialID: props.tutorialID ? props.tutorialID : null,
       title: "",
       description: "",
       jsCode: "",
       htmlCode: "",
       cssCode: "",
-      currentStage: 0,
       instructions: [],
       mode: 'javascript'
     }
 
-    // console.log(props.activeTutorial);
-    // fetch(SERVER + '/tutorials/' + props.activeTutorial)
-    // .then((response) => {
-    //   if(response.ok){
-    //     return response.json();
-    //   }
-    //   else{
-    //     console.log("something wrong");
-    //   }
-    // })
-    // .then((serverTutorial) => {
-    //   this.setState({
-    //     jsCode: serverTutorial.js,
-    //     htmlCode: serverTutorial.html,
-    //     cssCode: serverTutorial.css
-    //   })
-    //
-    //   if(serverTutorial.instructions === null){
-    //     this.setState({
-    //       currentStage: serverTutorial.currentStage,
-    //       instructions: serverTutorial.stages[serverTutorial.currentStage].instructions
-    //     });
-    //   }
-    // });
+    //if someone is editing this tutorial
+    //TODO AMIR, this prop doesn't exist yet.
+    //you may want to do it this way, you may not
+    if (props.tutorialID) {
+      this.persistInterval = setInterval(()=> this.persistTutorial(), 1000);
+
+    //someone is creating a completely new tutorial
+    } else {
+      const jwt = window.localStorage.getItem('jwt');
+      if (jwt) {
+        fetch('/users/owner', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt},
+          body: JSON.stringify({title: this.state.title, description: this.state.description, js: this.state.jsCode, html: this.state.htmlCode, css: this.state.cssCode, instructions: this.state.instructions, published: false})
+        }).then(response=> { if (response.ok) return response.json()
+        }).then(data=>{
+          if (!data.isBoom) {
+            this.setState({tutorialID: data._id});
+            this.persistInterval = setInterval(() => this.persistTutorial(), 1000);
+          } else {
+            //TODO handle error
+            console.log(data);
+          }
+        });
+      }
+    }
+
     this.handleCodeChange = this.handleCodeChange.bind(this);
     this.getCodeToDisplay = this.getCodeToDisplay.bind(this);
     this.handleTitleChange = this.handleTitleChange.bind(this);
@@ -57,6 +58,17 @@ class CreateContainer extends Component {
     this.handleInstructionAdd = this.handleInstructionAdd.bind(this);
     this.handleSaveNewTutorial = this.handleSaveNewTutorial.bind(this);
     this.onSortEnd = this.onSortEnd.bind(this);
+  }
+
+  persistTutorial() {
+    const jwt = window.localStorage.getItem('jwt');
+    if (jwt) {
+      fetch('/users/owner/' + this.state.tutorialID, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt},
+        body: JSON.stringify({title: this.state.title, description: this.state.description, js: this.state.jsCode, html: this.state.htmlCode, css: this.state.cssCode, instructions: this.state.instructions})
+      }).then(response=> { if (!response.ok) console.log(response) }) //TODO handle error
+    }
   }
 
   getCodeToDisplay() {
@@ -71,10 +83,9 @@ class CreateContainer extends Component {
     }
   }
 
-
   // clear the interval when we don't need the component
   componentWillUnmount() {
-    clearInterval(this.interval);
+    clearInterval(this.persistInterval);
   }
 
   handleCodeChange(code) {
@@ -105,22 +116,14 @@ class CreateContainer extends Component {
   }
 
   handleSaveNewTutorial() {
-    const tutorial = {
-      title: this.state.title,
-      description: this.state.description,
-      stages: [
-        {
-          instructions: this.state.instructions,
-          code: {
-            js: this.state.jsCode,
-            css: this.state.cssCode,
-            html: this.state.htmlCode
-          }
-        }
-      ],
-    }
-
-    this.props.save(tutorial)
+    /*
+      TODO when this called, it should hit a route on the server that flips tutorial.published
+      in the tutorials db, and updates that tutorial with the latest from users.tutoraialsOwnder.
+      This route hasn't been written yet.
+      Right now, when you create a new tutorial, it's automatically added to db.tutorials.
+      This is so we can get an _id on the tutorial before putting it in db.users.tutorialsOwned.
+    */
+    console.log("add a new tutorial");
   }
 
   onSortEnd = ({oldIndex, newIndex}) => {
@@ -140,25 +143,19 @@ class CreateContainer extends Component {
   };
 
   render() {
-
-    const onModeChange = ((element) => {
-      const mode = element.target.value;
-      this.setState({mode: mode});
-    });
-
     return (
       <div>
-      <label>Tutorial Title</label>
-      <input onChange={this.handleTitleChange}></input>
-      <br/>
-      <label>Description</label>
-      <input onChange={this.handleDescriptionChange}></input>
-      <br/>
-      <CreateTutorial instructions={this.state.instructions} onSortEnd={this.onSortEnd}/>
-      <InstructionWriter addInstruction={this.handleInstructionAdd}/>
-      <br/>
-      <br/>
-      <button onClick={this.handleSaveNewTutorial}>Save Tutorial</button>
+        <label>Tutorial Title</label>
+        <input onChange={this.handleTitleChange}></input>
+        <br/>
+        <label>Description</label>
+        <input onChange={this.handleDescriptionChange}></input>
+        <br/>
+        <CreateTutorial instructions={this.state.instructions} onSortEnd={this.onSortEnd}/>
+        <InstructionWriter addInstruction={this.handleInstructionAdd}/>
+        <br/>
+        <br/>
+        <button onClick={this.handleSaveNewTutorial}>Save Tutorial</button>
       </div>
     )
   }

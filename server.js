@@ -6,11 +6,17 @@ const PORT = 4200
 const http = require('http'),
 	express = require('express'),
 	cors = require('cors'),
-	bodyParser = require('body-parser');
+	bodyParser = require('body-parser'),
+	jwt = require('jsonwebtoken'),
+	jwtMiddleware = require('express-jwt'),
+	boom = require('boom');
 
 // create the server
 const app = express();
 const server = http.createServer(app);
+
+//TODO move this jwt passphrase to a config/.env file
+const passphrase = "Amir is cool";
 
 // configure the server
 const corsOptions = {
@@ -53,77 +59,105 @@ SERVER Routes
 
 */
 
+app.post('/login',(req, res) => {
+	db.collection('users').findOne({username: req.body.username}).then(user => {
+		if (!user) {
+			return res.send(boom.unauthorized('invalid username'));
+		}
+
+		//TODO add salting/hasing using bcrypt
+		if (req.body.password === user.password) {
+			return res.json(buildJwtResponse(user));
+		} else {
+			return res.send(boom.unauthorized('invalid password'));
+		}
+
+	//there was some other mongo error
+	}, err => {
+		return res.send(boom.badImplementation(err));
+	})
+});
+
+// create a new user
+app.post('/users', (req, res) =>{
+	const findOrAddUser = db.collection('users').findOne({username: req.body.username}).then(user => {
+		return new Promise((resolve, reject) => {
+			if (!user) {
+				const user = {
+					username: req.body.username,
+					password: req.body.password,
+					tutorialsUsed: [],
+					tutorialsOwned: []
+				};
+				db.collection("users").insertOne(user, (err, result) => {
+					if (err) { reject(boom.badImplementation(err)) }
+					resolve();
+				});
+			} else {
+				reject(boom.badData('username already exists'));
+			}
+		})
+	}, err => res.send(boom.badImplementation(err)));
+
+	//what happens to this chain if the above promise catches?
+	findOrAddUser.then(() => {
+		db.collection('users').findOne({username: req.body.username}).then(user => {
+			return res.json(buildJwtResponse(user))
+		}, err => res.send(boom.badImplementation(err)));
+	}, err => res.send(err));
+});
+
+function buildJwtResponse(user) {
+	const tokenData = {
+		username: user.username,
+		id: user._id
+	};
+
+	const response = {
+		username: user.username,
+		token: jwt.sign(tokenData, passphrase)
+	}
+
+	return response;
+}
+
 // get the info about the tutorials
-app.get('/tutorials/:id*?', (req, res) => {
+app.get('/tutorials/:id*?',
+	jwtMiddleware({secret: passphrase, credentialsRequired: false}),
+	(req, res) => {
 	// if we have a specific id to look up
 	if (req.params.id) {
-		db.collection("tutorials").find({_id: new ObjectID(req.params.id)}).toArray((err, result) => {
-      if (err) {
-        console.log(err);
-      }
-			res.send(result[0]);
-	  });
+		if (req.user) {
+			db.collection("users").findOne({_id: new ObjectID(req.user.id)})
+			.then(user => {
+				const tutorial = user.tutorialsUsed.find(tutorial => tutorial._id.equals(new ObjectID(req.params.id)));
+				if (tutorial) {
+					return res.send(tutorial);
+				} else {
+					db.collection("tutorials").findOne({_id: new ObjectID(req.params.id)})
+					.then(tutorial => {
+						db.collection("users").update(
+							{_id: new ObjectID(req.user.id)},
+							{$push: {tutorialsUsed: tutorial}})
+						.then(() => res.send(tutorial), err => res.send(boom.badImplementation(err)));
+					}, err => res.send(boom.badImplementation(err)));
+				}
+			}, err => res.send(boom.badImplementation(err)));
+		} else {
+			db.collection("tutorials").findOne({_id: new ObjectID(req.params.id)})
+			.then(tutorial => res.send(tutorial), err => res.send(boom.badImplementation(err)));
+		}
 	// otherwise send all entries
 	} else {
 		db.collection("tutorials").find().toArray((err, result) => {
 			if (err) {
-				console.log(err);
+				res.send(boom.badImplementation(err));
+			} else {
+				result = result.filter(tutorial=> tutorial.published);
+				res.send(result);
 			}
-			res.send(result);
 		});
 	}
-});
-
-// get info about the specific tutorial used by the user
-app.get('/users/:username/:tutorial', (req, res) => {
-
-	db.collection("users").find({username: req.params.username}).toArray((err, result) => {
-		if (err) {
-			console.log("shit");
-		}
-
-		let userObj = result[0],
-			tutorialObj, tutorialIndex;
-
-		userObj.tutorialsUsed.forEach((item, index) => {
-			if (item._id == req.params.tutorial) {
-				tutorialObj = item;
-				tutorialIndex = index;
-			}
-		});
-
-		if (tutorialObj) {
-			res.send(tutorialObj);
-
-		} else {
-
-			db.collection("tutorials").find({_id: new ObjectID(req.params.tutorial)}).toArray((err, result) => {
-				if (err) {
-					console.log(err);
-				}
-				let originalTutorial = result[0];
-				originalTutorial.js = originalTutorial.stages[0].code.js;
-				originalTutorial.html = originalTutorial.stages[0].code.html;
-				originalTutorial.css = originalTutorial.stages[0].code.css;
-				originalTutorial.currentStage = 0;
-
-				db.collection("users").findOneAndUpdate(
-					{ username: req.params.username },
-					{ $push: { tutorialsUsed: originalTutorial }},
-					{returnOriginal: false},
-      		(err, result) => {
-						if (err) {
-							console.log(err);
-						}
-
-						let storedTutorials = result.value.tutorialsUsed;
-
-						res.send(storedTutorials[storedTutorials.length-1]);
-					}
-				);
-			});
-		}
-	});
 });
 
 // get the info about the users
@@ -165,29 +199,7 @@ app.post('/tutorials', (req, res) =>{
 	});
 });
 
-// create a new user
-app.post('/users', (req, res) =>{
-	let newUser = req.body;
-	// avoid duplicate usernames
-	db.collection("users").find({username: newUser.username}).toArray((err, result) => {
-		if (err) {
-			console.log(err);
-		}
-		if (result.length > 0) {
-			res.sendStatus(500);
-		} else {
-			db.collection("users").insert(newUser, (err, storedUser) => {
-				if (err) {
-					console.log(err);
-				}
-
-				res.send(storedUser.ops);
-			});
-		}
-	});
-});
-
-// create a new tutorial
+// deletes a tutorial
 app.delete('/tutorials/:id', (req, res) => {
 	db.collection("tutorials").remove({_id: new ObjectID(req.params.id)}, (err) => {
 		if (err) {
@@ -199,7 +211,7 @@ app.delete('/tutorials/:id', (req, res) => {
 	});
 });
 
-// create a new user
+// delete a user
 app.delete('/users/:id', (req, res) => {
 	db.collection("users").remove({_id: new ObjectID(req.params.id)}, (err) => {
 		if (err) {
@@ -231,22 +243,81 @@ app.put('/tutorials/:id', (req, res) => {
 	);
 });
 
-// update a specific user's account
-app.put('/users/:id', (req, res) => {
-	let updatedUser = req.body;
-	updatedUser._id = ObjectID.createFromHexString(updatedUser._id);
-
-	db.collection("users").findOneAndUpdate(
-		{_id: updatedUser._id},
-		{$set: updatedUser},
-		{returnOriginal: false},
-		(err, result) => {
-			if (err) {
-				console.log(err);
-				res.sendStatus(500);
-			} else {
-				res.send(result.value);
-			}
-		}
-	);
+//adds newly created tutorial to tutorials and tutorialsOwned
+app.post('/users/owner/',
+	jwtMiddleware({secret: passphrase}),
+	(req,res) => {
+		db.collection("tutorials").insert(req.body)
+		.then(insertResponse => {
+			const tutorial = req.body;
+			tutorial._id = new ObjectID(insertResponse.ops[0]._id);
+			db.collection("users").update(
+					{_id: new ObjectID(req.user.id)},
+					{$push: {"tutorialsOwned": tutorial}})
+			.then(() => {
+				res.send(tutorial);
+			}, err => res.send(boom.badImplementation(err)));
+		}, err => res.send(boom.badImplementation(err)));
 });
+
+
+//persisting tutorial edits for owner
+app.put('/users/owner/:tutorialID',
+	jwtMiddleware({secret: passphrase}),
+	(req,res) => {
+		// update tutorial in tutorialsOwned
+		const tutorial = req.body;
+		tutorial._id = new ObjectID(req.params.tutorialID);
+		db.collection("users").update(
+			{_id: new ObjectID(req.user.id), "tutorialsOwned._id": new ObjectID(req.params.tutorialID)},
+			{$set: {"tutorialsOwned.$": tutorial}},
+			(err, result) => {
+				if (err) {
+					res.send(boom.badImplementation(err));
+				} else {
+					res.sendStatus(200);
+				}
+		});
+});
+
+//persisting tutorial code while a user is taking the tutorial, see below commented out.
+//below code will not work for a single tutorial object. Amir is pushing the entire user object again
+app.put('/users/:tutorialID',
+	jwtMiddleware({secret: passphrase}),
+	(req,res) => {
+		//expecting persisting js, html, and css in the body
+		db.collection("users").update(
+			{_id: new ObjectID(req.user.id), "tutorialsUsed._id": new ObjectID(req.params.tutorialID)},
+			{$set: {
+				"tutorialsUsed.$.js": req.body.js,
+				"tutorialsUsed.$.html": req.body.html,
+				"tutorialsUsed.$.css": req.body.css
+			}},
+			(err) => {
+				if (err) {
+					res.send(boom.badImplementation(err));
+				} else {
+					res.sendStatus(200);
+				}
+		});
+});
+
+// update a specific user's account
+// app.put('/users/:id', (req, res) => {
+// 	let updatedUser = req.body;
+// 	updatedUser._id = ObjectID.createFromHexString(updatedUser._id);
+//
+// 	db.collection("users").findOneAndUpdate(
+// 		{_id: updatedUser._id},
+// 		{$set: updatedUser},
+// 		{returnOriginal: false},
+// 		(err, result) => {
+// 			if (err) {
+// 				console.log(err);
+// 				res.sendStatus(500);
+// 			} else {
+// 				res.send(result.value);
+// 			}
+// 		}
+// 	);
+// });
