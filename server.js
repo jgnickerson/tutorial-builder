@@ -259,45 +259,43 @@ app.put('/tutorials/:id', (req, res) => {
 	);
 });
 
+//adds newly created tutorial to tutorials and tutorialsUsed
+app.post('/users/owner/', 
+	jwtMiddleware({secret: passphrase}),
+	(req,res) => {
+		db.collection("tutorials").insert(req.body)
+		.then(insertResponse => {
+			let tutorial = req.body;
+			tutorial._id = new ObjectID(insertResponse.ops[0]._id);
+			tutorial = hack(tutorial);
+			db.collection("users").update(
+					{_id: new ObjectID(req.user.id)},
+					{$push: {"tutorialsOwned": tutorial}})
+			.then(() => {
+				res.send(tutorial);
+			}, err => res.send(boom.badImplementation(err)));
+		}, err => res.send(boom.badImplementation(err)));
+});
+
+
 //persisting tutorial edits for owner
 app.put('/users/owner/:tutorialID*?', 
 	jwtMiddleware({secret: passphrase}),
 	(req,res) => {
-		if (req.user) {
-			// if the tutorial has no ID
-			if (!req.params.id) {
-				db.collection("tutorials").insert(req.body)
-				.then(insertResponse => {
-					let tutorial = req.body;
-					tutorial._id = new ObjectID(insertResponse.ops[0]._id);
-					tutorial = hack(tutorial);
-					db.collection("users").update(
-							{_id: new ObjectID(req.user.id)},
-							{$push: {"tutorialsOwned": tutorial}})
-					.then(() => {
-						res.send(tutorial);
-					}, err => res.send(boom.badImplementation(err)));
-				}, err => res.send(boom.badImplementation(err)));
-			// if the tutorial has an ID
-			} else {
-				// update tutorial in tutorialsOwned
-				let tutorial = req.body;
-				tutorial._id = new ObjectID(req.params.tutorialID);
-				tutorial = hack(tutorial);
-				db.collection("users").update(
-					{_id: new ObjectID(req.user.id), "tutorialsOwned._id": new ObjectID(req.params.tutorialID)},
-					{$set: {"tutorialsOwned.$": hack(tutorial)}},
-					{returnOriginal: false},
-					(err, result) => {
-						if (err) {
-							res.send(boom.badImplementation(err));
-							res.sendStatus(500);
-						} else {
-							res.send(result.value);
-						}
-				});
-			}
-		}
+		// update tutorial in tutorialsOwned
+		let tutorial = req.body;
+		tutorial._id = new ObjectID(req.params.tutorialID);
+		tutorial = hack(tutorial);
+		db.collection("users").update(
+			{_id: new ObjectID(req.user.id), "tutorialsOwned._id": new ObjectID(req.params.tutorialID)},
+			{$set: {"tutorialsOwned.$": hack(tutorial)}},
+			(err, result) => {
+				if (err) {
+					res.send(boom.badImplementation(err));
+				} else {
+					res.sendStatus(200);
+				}
+		});
 });
 
 //persisting tutorial code while a user is taking the tutorial, see below commented out.
@@ -306,22 +304,20 @@ app.put('/users/:tutorialID',
 	jwtMiddleware({secret: passphrase}),
 	(req,res) => {
 		//expecting persisting js, html, and css in the body
-		if (req.user) {
-			db.collection("users").findOneAndUpdate(
-				{_id: new ObjectID(req.user.id), "tutorialsUsed._id": new ObjectID(req.params.tutorialID)},
-				{$set: {
-					"tutorialsUsed.$.js": req.body.js,
-					"tutorialsUsed.$.html": req.body.html,
-					"tutorialsUsed.$.css": req.body.css
-				}},
-				{returnOriginal: false},
-				(err) => {
-					if (err) {
-						res.send(boom.badImplementation(err));
-						res.sendStatus(500);
-					}
-			});
-		}
+		db.collection("users").findOneAndUpdate(
+			{_id: new ObjectID(req.user.id), "tutorialsUsed._id": new ObjectID(req.params.tutorialID)},
+			{$set: {
+				"tutorialsUsed.$.js": req.body.js,
+				"tutorialsUsed.$.html": req.body.html,
+				"tutorialsUsed.$.css": req.body.css
+			}},
+			{returnOriginal: false},
+			(err) => {
+				if (err) {
+					res.send(boom.badImplementation(err));
+					res.sendStatus(500);
+				}
+		});
 });
 
 // update a specific user's account
