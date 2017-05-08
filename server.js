@@ -136,8 +136,6 @@ app.get('/tutorials/:id*?',
 				} else {
 					db.collection("tutorials").findOne({_id: new ObjectID(req.params.id)})
 					.then(tutorial => {
-						//TODO remove hack(tutorial)
-						tutorial = hack(tutorial);
 						db.collection("users").update(
 							{_id: new ObjectID(req.user.id)},
 							{$push: {tutorialsUsed: tutorial}})
@@ -147,36 +145,20 @@ app.get('/tutorials/:id*?',
 			}, err => res.send(boom.badImplementation(err)));
 		} else {
 			db.collection("tutorials").findOne({_id: new ObjectID(req.params.id)})
-			//TODO remove hack(tutorial)
-			.then(tutorial => res.send(hack(tutorial)), err => res.send(boom.badImplementation(err)));
+			.then(tutorial => res.send(tutorial), err => res.send(boom.badImplementation(err)));
 		}
 	// otherwise send all entries
 	} else {
 		db.collection("tutorials").find().toArray((err, result) => {
 			if (err) {
 				res.send(boom.badImplementation(err));
+			} else {
+				result = result.filter(tutorial=> tutorial.published);
+				res.send(result);
 			}
-			res.send(result);
 		});
 	}
 });
-
-//TODO disappear when we remove stages from a tutorial
-function hack(tutorial) {
-	return {
-		_id: tutorial._id,
-		title: tutorial.title,
-		creator: tutorial.creator,
-		description: tutorial.description,
-		stages: tutorial.stages,
-		js: tutorial.stages[0].code.js,
-		html: tutorial.stages[0].code.html,
-		css: tutorial.stages[0].code.css,
-		lastUpdate: tutorial.lastUpdate,
-		rating: tutorial.rating,
-		currentStage: 0
-	}
-}
 
 // get the info about the users
 app.get('/users/:username*?', (req, res) => {
@@ -267,9 +249,8 @@ app.post('/users/owner/',
 	(req,res) => {
 		db.collection("tutorials").insert(req.body)
 		.then(insertResponse => {
-			let tutorial = req.body;
+			const tutorial = req.body;
 			tutorial._id = new ObjectID(insertResponse.ops[0]._id);
-			tutorial = hack(tutorial);
 			db.collection("users").update(
 					{_id: new ObjectID(req.user.id)},
 					{$push: {"tutorialsOwned": tutorial}})
@@ -281,16 +262,15 @@ app.post('/users/owner/',
 
 
 //persisting tutorial edits for owner
-app.put('/users/owner/:tutorialID*?',
+app.put('/users/owner/:tutorialID',
 	jwtMiddleware({secret: passphrase}),
 	(req,res) => {
 		// update tutorial in tutorialsOwned
-		let tutorial = req.body;
+		const tutorial = req.body;
 		tutorial._id = new ObjectID(req.params.tutorialID);
-		tutorial = hack(tutorial);
 		db.collection("users").update(
 			{_id: new ObjectID(req.user.id), "tutorialsOwned._id": new ObjectID(req.params.tutorialID)},
-			{$set: {"tutorialsOwned.$": hack(tutorial)}},
+			{$set: {"tutorialsOwned.$": tutorial}},
 			(err, result) => {
 				if (err) {
 					res.send(boom.badImplementation(err));

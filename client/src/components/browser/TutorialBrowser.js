@@ -28,7 +28,6 @@ class TutorialBrowser extends Component {
       }
     })
     .then(data=>{
-      console.log(data);
       this.setState({tutorials:data})
     })
     // // if browser mode is specified

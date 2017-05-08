@@ -3,36 +3,28 @@
     "title": "Getting Started with Tutorials",
     "creator": "amir",
     "description":"In this tutorial you will use very basic Javascript, HTML, and CSS to create and format some text.",
-    "stages": [
-      {
-        "instructions": [
-          {"type": "text", "data": "Welcome to your very first web coding tutorial! Let's get started. To begin, we'll log some text to your browser's console using JavaScript."},
-          {"type": "text", "data": "Below is an example of a console log command in JavaScript. Navigate to the JavaScript selection on the right, and using the below format, log \"Hello, World!\" on your console."},
-          {"type": "code", "data": "console.log(\"sample text\")"},
-          {"type": "text", "data": "Now, click run. Then, right click anywhere on this page, click inspect, and then click console. You should see your text logged. It will also show up in the lowermost box on the right."},
-          {"type": "text", "data": "Next, we will work with HTML to actually create text to be displayed on this page, using a basic HTML element called a heading. Below is an example of the largest kind of heading, an h1 element."},
-          {"type": "code", "data": "<h1>This is a heading!</h1>"},
-          {"type": "text", "data": "Try making your own heading, this time with the text \"Don't Panic!\". Remember to navigate to the HTML tab first. If all goes well, you should see your text in heading form in the box immediately below your code editor."},
-          {"type": "text", "data": "To finish up, let's spruce up that HTML heading a bit using CSS. Below is some example CSS code showing you how to set the color of a h1 element."},
-          {"type": "code", "data": "h1 { color: Aqua }"},
-          {"type": "text", "data": "Now, check out this list of colors: https://www.w3schools.com/cssref/css_colors.asp. Using any of these, edit the CSS to the right to change your heading's color. The result should be apparent."},
-          {"type": "text", "data": "If all that worked, then congratulations! You've completed your first tutorial."}
-        ],
-        "code":
-          {
-            "js": "// javascript",
-            "html": "<!--html-->",
-            "css": "/* css */"
-          },
-        "solution":
-          {
-            "js": "const x = 3 + 4; console.log(x);",
-            "html": "<h1>This is a heading!</h1>",
-            "css": "h1 { color: Aqua }"
-          },
-        "hints": "test1"
-      }
+    "published": true,
+    "instructions": [
+      {"type": "text", "data": "Welcome to your very first web coding tutorial! Let's get started. To begin, we'll log some text to your browser's console using JavaScript."},
+      {"type": "text", "data": "Below is an example of a console log command in JavaScript. Navigate to the JavaScript selection on the right, and using the below format, log \"Hello, World!\" on your console."},
+      {"type": "code", "data": "console.log(\"sample text\")"},
+      {"type": "text", "data": "Now, click run. Then, right click anywhere on this page, click inspect, and then click console. You should see your text logged. It will also show up in the lowermost box on the right."},
+      {"type": "text", "data": "Next, we will work with HTML to actually create text to be displayed on this page, using a basic HTML element called a heading. Below is an example of the largest kind of heading, an h1 element."},
+      {"type": "code", "data": "<h1>This is a heading!</h1>"},
+      {"type": "text", "data": "Try making your own heading, this time with the text \"Don't Panic!\". Remember to navigate to the HTML tab first. If all goes well, you should see your text in heading form in the box immediately below your code editor."},
+      {"type": "text", "data": "To finish up, let's spruce up that HTML heading a bit using CSS. Below is some example CSS code showing you how to set the color of a h1 element."},
+      {"type": "code", "data": "h1 { color: Aqua }"},
+      {"type": "text", "data": "Now, check out this list of colors: https://www.w3schools.com/cssref/css_colors.asp. Using any of these, edit the CSS to the right to change your heading's color. The result should be apparent."},
+      {"type": "text", "data": "If all that worked, then congratulations! You've completed your first tutorial."}
     ],
+    "js": "// javascript",
+    "html": "<!--html-->",
+    "css": "/* css */",
+    "solution": {
+      "js": "const x = 3 + 4; console.log(x);",
+      "html": "<h1>This is a heading!</h1>",
+      "css": "h1 { color: Aqua }"
+    },
     "lastUpdate": "2017-04-18T05:00:00",
     "rating": 4.5
   },
@@ -40,26 +32,20 @@
     "title": "Awesome Tutorial 1",
     "creator": "Kayla",
     "description":"This is the description for tutorial 1",
-    "stages": [
-      {
-        "instructions": [{"type": "text", "data": "This is text explaining the first step of the tutorial."},
-                         {"type": "code", "data": "//This is a code snippet for Kayla's"},
-                         {"type": "text", "data": "This is text explaining the second step of the tutorial."}],
-        "code":
-          {
-            "js": "//javascript",
-            "html": "<!--html-->",
-            "css": "/* css */"
-          },
-        "solution":
-          {
-            "js": "//js solution",
-            "html": "<!--html solution-->",
-            "css": "/* css solution */"
-          },
-        "hints": "test"
-      }
+    "published": true,
+    "instructions": [
+      {"type": "text", "data": "This is text explaining the first step of the tutorial."},
+      {"type": "code", "data": "//This is a code snippet for Kayla's"},
+      {"type": "text", "data": "This is text explaining the second step of the tutorial."}
     ],
+    "js": "//javascript",
+    "html": "<!--html-->",
+    "css": "/* css */",
+    "solution": {
+      "js": "//js solution",
+      "html": "<!--html solution-->",
+      "css": "/* css solution */"
+    },
     "lastUpdate": "2017-04-17T05:00:00",
     "rating": 4
   }

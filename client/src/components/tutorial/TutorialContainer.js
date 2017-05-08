@@ -14,8 +14,8 @@ class TutorialContainer extends Component {
       jsCode: "",
       htmlCode: "",
       cssCode: "",
-      currentStage: null,
       instructions: null,
+      solution: {},
       mode: 'javascript'
     }
 
@@ -39,8 +39,8 @@ class TutorialContainer extends Component {
           jsCode: data.js,
           htmlCode: data.html,
           cssCode: data.css,
-          currentStage: data.currentStage,
-          instructions: data.stages[data.currentStage].instructions
+          solution: data.solution,
+          instructions: data.instructions
         });
 
         this.persistInterval = setInterval(() => this.persistTutorial(), 1000);
