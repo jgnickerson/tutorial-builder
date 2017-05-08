@@ -9,7 +9,7 @@ function Login(props) {
     <div>
       <input placeholder="username" value={props.username} onChange={props.setUsername}/>
       <br/>
-      <input placeholder="password" value={props.password} onChange={props.setPassword}/>
+      <input placeholder="password" type="password" value={props.password} onChange={props.setPassword}/>
       <br/>
       <button onClick={props.attemptLogin}>Log in</button>
       <button onClick={props.switchToRegister}>Sign up</button>

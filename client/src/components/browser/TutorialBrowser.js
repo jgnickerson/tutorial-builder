@@ -14,18 +14,54 @@ class TutorialBrowser extends Component {
       tutorials:[]
     };
 
+    this.onSelect = this.onSelect.bind(this);
+    this.fetchTutorials = this.fetchTutorials.bind(this);
+
+    this.fetchTutorials(props);
+  }
+
+  fetchTutorials(props) {
     fetch('/tutorials/')
     .then((response)=>{
       if (response.ok) {
         return response.json();
       }
     })
-    .then((data)=>{
+    .then(data=>{
+      console.log(data);
       this.setState({tutorials:data})
     })
-    //would fetch tutorials from browser, and keep track of state like expanded tutorials here
+    // // if browser mode is specified
+    // if (props.browserMode) {
+    //   // fetch user-specific data
+    //   fetch('/users/'+props.username)
+    //   .then((response)=>{
+    //     if (response.ok) {
+    //       return response.json();
+    //     }
+    //   })
+    //   .then((userData)=>{
+    //     let tutorials;
+    //     if (props.browserMode === 'used') {
+    //       // only the tutorials used by the user
+    //       tutorials = userData.tutorialsUsed;
+    //     } else {
+    //       // browserMode === 'owned'
+    //       // only the tutorials owned by the user
+    //       tutorials = userData.tutorialsOwned;
+    //     }
+    //     this.setState({tutorials: tutorials});
+    //
+    //   });
+    //
+    // // otherwise fetch all tutorials
+    // } else {
+    //
+    // }
+  }
 
-    this.onSelect = this.onSelect.bind(this);
+  componentWillReceiveProps(nextProps){
+    this.fetchTutorials(nextProps);
   }
 
   onSelect(tutorialId) {

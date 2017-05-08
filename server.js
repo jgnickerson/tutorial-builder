@@ -205,7 +205,9 @@ app.get('/users/:username*?', (req, res) => {
 
 // create a new tutorial
 app.post('/tutorials', (req, res) =>{
-	let newTutorial = req.body;
+	const newTutorial = req.body;
+	newTutorial.lastUpdate = Date().toString();
+
 	db.collection("tutorials").insert(newTutorial, (err, storedTutorial) => {
 		if (err) {
 			console.log(err);
@@ -260,7 +262,7 @@ app.put('/tutorials/:id', (req, res) => {
 });
 
 //adds newly created tutorial to tutorials and tutorialsOwned
-app.post('/users/owner/', 
+app.post('/users/owner/',
 	jwtMiddleware({secret: passphrase}),
 	(req,res) => {
 		db.collection("tutorials").insert(req.body)
@@ -279,7 +281,7 @@ app.post('/users/owner/',
 
 
 //persisting tutorial edits for owner
-app.put('/users/owner/:tutorialID*?', 
+app.put('/users/owner/:tutorialID*?',
 	jwtMiddleware({secret: passphrase}),
 	(req,res) => {
 		// update tutorial in tutorialsOwned
@@ -300,22 +302,22 @@ app.put('/users/owner/:tutorialID*?',
 
 //persisting tutorial code while a user is taking the tutorial, see below commented out.
 //below code will not work for a single tutorial object. Amir is pushing the entire user object again
-app.put('/users/:tutorialID', 
+app.put('/users/:tutorialID',
 	jwtMiddleware({secret: passphrase}),
 	(req,res) => {
 		//expecting persisting js, html, and css in the body
-		db.collection("users").findOneAndUpdate(
+		db.collection("users").update(
 			{_id: new ObjectID(req.user.id), "tutorialsUsed._id": new ObjectID(req.params.tutorialID)},
 			{$set: {
 				"tutorialsUsed.$.js": req.body.js,
 				"tutorialsUsed.$.html": req.body.html,
 				"tutorialsUsed.$.css": req.body.css
 			}},
-			{returnOriginal: false},
 			(err) => {
 				if (err) {
 					res.send(boom.badImplementation(err));
-					res.sendStatus(500);
+				} else {
+					res.sendStatus(200);
 				}
 		});
 });

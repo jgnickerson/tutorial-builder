@@ -60,13 +60,11 @@ class TutorialContainer extends Component {
         headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt},
         body: JSON.stringify({js: this.state.jsCode, html: this.state.htmlCode, css: this.state.cssCode})
       })
-      .then(response=> { if (response.ok) return response.json() })
-      .then(data=> {
-        if (data.isBoom) {
-          console.log(data);
+      .then(response=> {
+        if (response.isBoom) {
           //TODO handle error
         }
-      })
+       })
     }
   }
 
@@ -115,6 +113,7 @@ class TutorialContainer extends Component {
           onCodeChange={this.handleCodeChange}
           mode={this.state.mode}
           onModeChange={onModeChange}
+          solution={this.state.solution}
         />
       </div>
     )

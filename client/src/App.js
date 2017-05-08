@@ -4,6 +4,7 @@ import AuthContainer from './components/account/AuthContainer.js';
 import TutorialBrowser from './components/browser/TutorialBrowser.js';
 import TutorialContainer from './components/tutorial/TutorialContainer.js';
 import MenuBar from './components/MenuBar.js';
+import CreateContainer from './components/tutorial/CreateContainer.js'
 
 class App extends Component {
   constructor(props){
@@ -18,6 +19,7 @@ class App extends Component {
     //ES6 Class/React thing we have to do to make sure this is bound properly...
     this.handleTutorialSelect = this.handleTutorialSelect.bind(this);
     this.handleTutorialExit = this.handleTutorialExit.bind(this);
+    //his.handleCreateNew = this.handleCreateNew.bind(this);
     this.switchMode = this.switchMode.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
   }
@@ -26,9 +28,25 @@ class App extends Component {
     this.setState({ mode: 'tutorial', activeTutorial: tutorialId });
   }
 
-  handleTutorialExit() {
-    this.setState({ mode: 'browser', activeTutorial: null, errorMessage: "" })
+  handleTutorialExit(browserMode) {
+    if (!(browserMode === 'used' || browserMode === 'owned')) {
+      browserMode = null;
+    }
+
+    this.setState({
+      mode: 'browser',
+      activeTutorial: null,
+      browserMode: browserMode
+    });
   }
+
+  // handleCreateNew() {
+  //   this.setState({
+  //     mode: 'createNew',
+  //     activeTutorial: null
+  //   });
+  // }
+
 
   switchMode(mode) {
     this.setState({ mode: mode, errorMessage: "" });
@@ -37,6 +55,30 @@ class App extends Component {
   handleLogout() {
     window.sessionStorage.removeItem('jwt');
     this.setState({ mode: 'login', activeTutorial: null })
+  }
+
+  updateUserInfo(tutorial) {
+    let userObj = Object.assign({}, this.state.activeUser);
+
+    let alreadyUsed = false;
+
+    userObj.tutorialsUsed.map((item) => {
+      if (item._id == tutorial._id) {
+        alreadyUsed = true;
+        return tutorial;
+      } else {
+        return item;
+      }
+    });
+
+    if (!alreadyUsed) {
+      userObj.tutorialsUsed.push(tutorial);
+    }
+
+    this.setState({
+      activeUser: userObj
+    });
+
   }
 
   render() {
@@ -56,9 +98,21 @@ class App extends Component {
       case 'browser':
         activeComponent = (
           <div>
-            <MenuBar logout={this.handleLogout} browse={this.handleTutorialExit}/>
+            <MenuBar createNew={() => this.switchMode('createNew')} logout={this.handleLogout} browse={this.handleTutorialExit}/>
             <TutorialBrowser onSelect={this.handleTutorialSelect}/>
           </div>
+        );
+        break;
+
+      case 'createNew':
+        activeComponent = (
+          <div>
+          <MenuBar createNew={() => this.switchMode('createNew')} logout={this.changeAccount} browse={this.handleTutorialExit}/>
+          <CreateContainer
+            onExit={this.handleTutorialExit}
+            save={this.handleSaveNewTutorial}
+          />;
+        </div>
         );
         break;
 
@@ -66,7 +120,7 @@ class App extends Component {
       default:
         activeComponent = (
           <div>
-            <MenuBar logout={this.handleLogout} browse={this.handleTutorialExit}/>
+            <MenuBar createNew={() => this.switchMode('createNew')} logout={this.handleLogout} browse={this.handleTutorialExit}/>
             <TutorialContainer onExit={this.handleTutorialExit} activeTutorial={this.state.activeTutorial}/>;
           </div>
         );
