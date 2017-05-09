@@ -8,6 +8,10 @@ import Tutorial from './Tutorial.js';
 import CreateTutorial from './CreateTutorial.js';
 import InstructionWriter from './InstructionWriter.js';
 import arrayMove from 'react-sortable-hoc';
+import ListGroup from 'react-bootstrap/lib/ListGroup';
+import ListGroupItem from 'react-bootstrap/lib/ListGroupItem';
+
+
 
 class CreateContainer extends Component {
   constructor(props) {
@@ -21,7 +25,9 @@ class CreateContainer extends Component {
       htmlCode: "",
       cssCode: "",
       instructions: [],
-      mode: 'javascript'
+      mode: 'javascript',
+      newInstructionText:"",
+      newInstructionType:true
     }
 
     //if someone is editing this tutorial
@@ -30,7 +36,7 @@ class CreateContainer extends Component {
     if (props.tutorialID) {
       this.persistInterval = setInterval(()=> this.persistTutorial(), 1000);
 
-    //someone is creating a completely new tutorial
+      //someone is creating a completely new tutorial
     } else {
       const jwt = window.localStorage.getItem('jwt');
       if (jwt) {
@@ -58,6 +64,9 @@ class CreateContainer extends Component {
     this.handleInstructionAdd = this.handleInstructionAdd.bind(this);
     this.handleSaveNewTutorial = this.handleSaveNewTutorial.bind(this);
     this.onSortEnd = this.onSortEnd.bind(this);
+    this.handleNewInstructionChange = this.handleNewInstructionChange.bind(this);
+    this.handleChangeType = this.handleChangeType.bind(this);
+
   }
 
   persistTutorial() {
@@ -106,22 +115,43 @@ class CreateContainer extends Component {
     this.setState({description: e.target.value});
   }
 
-  handleInstructionAdd(instruction) {
+  handleInstructionAdd() {
+    var type = "";
+    if(this.state.newInstructionType === true){
+      type = "text";
+    }
+    else{
+      type = "code";
+    }
+    const newInstruction = {type: type, data: this.state.newInstructionText}
     const newInstructions = this.state.instructions.slice();
-    newInstructions.push(instruction);
+    newInstructions.push(newInstruction);
 
+    console.log(type);
     this.setState({
-      instructions: newInstructions
+      instructions: newInstructions,
+      newInstructionText:""
     });
   }
-
+  handleNewInstructionChange(e){
+    this.setState({newInstructionText: e.target.value});
+  }
+  handleChangeType(){
+    console.log("hit");
+    if(this.state.newInstructionType === true){
+      this.setState({newInstructionType: false})
+    }
+    else{
+      this.setState({newInstructionType: true})
+    }
+  }
   handleSaveNewTutorial() {
     /*
-      TODO when this called, it should hit a route on the server that flips tutorial.published
-      in the tutorials db, and updates that tutorial with the latest from users.tutoraialsOwnder.
-      This route hasn't been written yet.
-      Right now, when you create a new tutorial, it's automatically added to db.tutorials.
-      This is so we can get an _id on the tutorial before putting it in db.users.tutorialsOwned.
+    TODO when this called, it should hit a route on the server that flips tutorial.published
+    in the tutorials db, and updates that tutorial with the latest from users.tutoraialsOwnder.
+    This route hasn't been written yet.
+    Right now, when you create a new tutorial, it's automatically added to db.tutorials.
+    This is so we can get an _id on the tutorial before putting it in db.users.tutorialsOwned.
     */
     console.log("add a new tutorial");
   }
@@ -151,8 +181,8 @@ class CreateContainer extends Component {
         <label>Description</label>
         <input onChange={this.handleDescriptionChange}></input>
         <br/>
-        <CreateTutorial instructions={this.state.instructions} onSortEnd={this.onSortEnd}/>
-        <InstructionWriter addInstruction={this.handleInstructionAdd}/>
+        <CreateTutorial changeType={this.handleChangeType} newInstructionText={this.state.newInstructionText} onNewInstructionChange={this.handleNewInstructionChange}
+        addInstruction={this.handleInstructionAdd} instructions={this.state.instructions} onSortEnd={this.onSortEnd}/>
         <br/>
         <br/>
         <button onClick={this.handleSaveNewTutorial}>Save Tutorial</button>

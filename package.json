@@ -12,7 +12,8 @@
     "express": "^4.15.2",
     "express-jwt": "^5.3.0",
     "jsonwebtoken": "^7.4.0",
-    "mongodb": "^2.2.25"
+    "mongodb": "^2.2.25",
+    "react-bootstrap-switch": "^15.5.0-a"
   },
   "devDependencies": {
     "concurrently": "^3.4.0",

@@ -15,7 +15,8 @@ function CreateTutorial(props) {
         <Row className="show-grid">
         <EqualHeightDiv>
           <Col md={4}>
-            <CreateInstructions instructions={props.instructions} onSortEnd={props.onSortEnd}/>
+            <CreateInstructions addInstruction={props.addInstruction} newInstructionText={props.newInstructionText} changeType={props.changeType}
+            onNewInstructionChange={props.onNewInstructionChange} instructions={props.instructions} onSortEnd={props.onSortEnd}/>
           </Col>
           <Col md={4}>
             <label>"HELLO SAM2"</label>
