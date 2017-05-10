@@ -5,26 +5,42 @@ import StarRating from './StarRating.js';
 
 const Summary = styled.div`
 margin: 20px;
+background-color: #F5F5F5;
+border-radius: 15px;
+width: Title.width;
+height: Title.height;
 `;
 
 const Title = styled.p`
 font-weight:bold;
 margin:0px;
+padding-left: 15px;
+padding-top: 10px;
+color: #000080;
 `;
 
 const Description = styled.p`
 margin:10px;
+padding-left: 15px;
 `;
 
 const Created = styled.p`
 margin: 0px;
-padding-left: 1em;
+padding-left: 20px;
 color: #999999;
+padding-bottom: 10px;
+
 `;
 const Author = styled.p`
 font-weight:itallic;
 margin:0px;
+padding-left: 20px;
+
 `
+const Open = styled.button`
+margin-left: 22px;
+margin-top: 5px;
+`;
 
 /**
 TutorialSummary creates the basic structure of an individual tutorial
@@ -37,11 +53,14 @@ class TutorialSummary extends Component{
       showDescription:false
     }
   }
+
+
+
   render(){
     const tutorialSummary = this.state.showDescription === true ? (
       <Summary onClick={() => {this.setState({showDescription:false})}}>
       <Title>{this.props.title}</Title>
-      <button type="button" onClick={() => {this.props.onClick(this.props.id)}}>Open Tutorial</button>
+      <Open onClick={() => {this.props.onClick(this.props.id)}}>Open Tutorial</Open>
       <Description>{this.props.description}</Description>
       <Author>{this.props.author}</Author>
       <StarRating rating={this.props.rating} setRating={(rating)=>{this.props.setRatingFor(this.props.id, rating)}}/>

@@ -12,35 +12,37 @@ function onSelectAlert(eventKey) {
   alert(`Alert from menu item.\neventKey: ${eventKey}`);
 }
 
+
+
 function MenuBar(props) {
     return (
       <Navbar inverse collapseOnSelect>
-        <Navbar.Header>
-          <Navbar.Brand onSelect={()=>{props.browse()}}>
-            <a href="#">Tutorial Builder</a>
-          </Navbar.Brand>
-          <Navbar.Toggle />
-        </Navbar.Header>
+        <Navbar.Toggle />
+
         <Navbar.Collapse>
           <Nav>
-            <NavItem onSelect={() => {props.browse()}} href="#">All Tutorials</NavItem>
+            <NavItem onSelect={() => {props.browse()}} href="#">CodePanthr</NavItem>
             <NavItem onSelect={props.createNew}>Build a new tutorial</NavItem>
-            <NavDropdown eventKey={1} title="Account" id="basic-nav-dropdown">
-              <MenuItem eventKey={1.1} onSelect={() => props.browse('used')}>Tutorials used</MenuItem>
-              <MenuItem eventKey={1.2} onSelect={() => props.browse('owned')}>Tutorials owned</MenuItem>
-              <MenuItem eventKey={1.3}>Change account info</MenuItem>
-            </NavDropdown>
           </Nav>
           <Nav pullRight>
-            <NavItem onSelect={() => {props.logout()}} href="#">Log out</NavItem>
+              <NavDropdown eventKey={1} title={props.name} id="basic-nav-dropdown">
+                <MenuItem eventKey={1.1} onSelect={() => props.browse('used')}>Tutorials used</MenuItem>
+                <MenuItem eventKey={1.2} onSelect={() => props.browse('owned')}>Tutorials owned</MenuItem>
+                <MenuItem onSelect={props.changePassword} eventKey={1.3}>Change account info</MenuItem>
+                <MenuItem onSelect={() => {props.logout()}} href="#">Log out</MenuItem>
+              </NavDropdown>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
     );
 }
 
-// MenuBar.propTypes = {
-//
-// }
+MenuBar.propTypes = {
+    name: React.PropTypes.string,
+    changePassword: React.PropTypes.func,
+    createNew: React.PropTypes.func,
+    logout: React.PropTypes.func,
+    browse: React.PropTypes.func
+}
 
 export default MenuBar;

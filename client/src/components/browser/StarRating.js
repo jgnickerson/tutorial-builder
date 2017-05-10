@@ -10,6 +10,10 @@ const EmptyStar=styled.span`
   color:rgb(200,200,200);
 `;
 
+const Container=styled.div`
+    padding-left: 20px;
+`;
+
 function StarRating(props){
   let stars = [];
   const rating=props.rating | 0;
@@ -21,7 +25,11 @@ function StarRating(props){
     stars.push(<EmptyStar key={i} onClick={()=>{props.setRating(i)}}>★</EmptyStar>);
   }
 
-  return(<span>{stars}</span>);
+  return(
+      <Container>
+        <span>{stars}</span>
+      </Container>
+        );
 }
 
 

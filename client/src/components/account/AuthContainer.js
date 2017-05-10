@@ -41,7 +41,7 @@ class AuthContainer extends Component {
       .then((data) => {
         if (data.token) {
           localStorage.setItem('jwt', data.token);
-          this.props.switchMode('browser');
+          this.props.handleLogin(data.username);
         } else {
           //TODO handle error messages
           console.log(data);
@@ -72,7 +72,7 @@ class AuthContainer extends Component {
         })
         .then((data) => {
           localStorage.setItem('jwt', data.token);
-          this.props.switchMode('signupSuccess');
+          this.props.handleRegister(data.username);
         });
       } else {
         error = "The passwords do not match."
