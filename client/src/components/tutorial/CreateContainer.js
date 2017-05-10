@@ -27,7 +27,7 @@ class CreateContainer extends Component {
       instructions: [],
       mode: 'javascript',
       newInstructionText:"",
-      newInstructionType:true
+      newInstructionType:"text"
     }
 
     //if someone is editing this tutorial
@@ -66,7 +66,7 @@ class CreateContainer extends Component {
     this.onSortEnd = this.onSortEnd.bind(this);
     this.handleNewInstructionChange = this.handleNewInstructionChange.bind(this);
     this.handleChangeType = this.handleChangeType.bind(this);
-
+    this.removeInstruction = this.removeInstruction.bind(this);
   }
 
   persistTutorial() {
@@ -116,18 +116,11 @@ class CreateContainer extends Component {
   }
 
   handleInstructionAdd() {
-    var type = "";
-    if(this.state.newInstructionType === true){
-      type = "text";
-    }
-    else{
-      type = "code";
-    }
-    const newInstruction = {type: type, data: this.state.newInstructionText}
+
+    const newInstruction = {type: this.state.newInstructionType, data: this.state.newInstructionText}
     const newInstructions = this.state.instructions.slice();
     newInstructions.push(newInstruction);
 
-    console.log(type);
     this.setState({
       instructions: newInstructions,
       newInstructionText:""
@@ -136,14 +129,8 @@ class CreateContainer extends Component {
   handleNewInstructionChange(e){
     this.setState({newInstructionText: e.target.value});
   }
-  handleChangeType(){
-    console.log("hit");
-    if(this.state.newInstructionType === true){
-      this.setState({newInstructionType: false})
-    }
-    else{
-      this.setState({newInstructionType: true})
-    }
+  handleChangeType(type){
+    this.setState({newInstructionType: type});
   }
   handleSaveNewTutorial() {
     /*
@@ -154,6 +141,12 @@ class CreateContainer extends Component {
     This is so we can get an _id on the tutorial before putting it in db.users.tutorialsOwned.
     */
     console.log("add a new tutorial");
+  }
+
+  removeInstruction(index) {
+    const instructions = this.state.instructions;
+    instructions.splice(index, 1);
+    this.setState({instructions: instructions});
   }
 
   onSortEnd = ({oldIndex, newIndex}) => {
@@ -181,8 +174,8 @@ class CreateContainer extends Component {
         <label>Description</label>
         <input onChange={this.handleDescriptionChange}></input>
         <br/>
-        <CreateTutorial changeType={this.handleChangeType} newInstructionText={this.state.newInstructionText} onNewInstructionChange={this.handleNewInstructionChange}
-        addInstruction={this.handleInstructionAdd} instructions={this.state.instructions} onSortEnd={this.onSortEnd}/>
+        <CreateTutorial changeType={this.handleChangeType} newInstructionText={this.state.newInstructionText} newInstructionType={this.state.newInstructionType} onNewInstructionChange={this.handleNewInstructionChange}
+        addInstruction={this.handleInstructionAdd} instructions={this.state.instructions} onSortEnd={this.onSortEnd} removeInstruction={this.removeInstruction}/>
         <br/>
         <br/>
         <button onClick={this.handleSaveNewTutorial}>Save Tutorial</button>

@@ -15,14 +15,14 @@ function CreateTutorial(props) {
         <Row className="show-grid">
         <EqualHeightDiv>
           <Col md={4}>
-            <CreateInstructions addInstruction={props.addInstruction} newInstructionText={props.newInstructionText} changeType={props.changeType}
-            onNewInstructionChange={props.onNewInstructionChange} instructions={props.instructions} onSortEnd={props.onSortEnd}/>
+            <CreateInstructions addInstruction={props.addInstruction} newInstructionText={props.newInstructionText} newInstructionType={props.newInstructionType} changeType={props.changeType}
+            onNewInstructionChange={props.onNewInstructionChange} instructions={props.instructions} onSortEnd={props.onSortEnd} removeInstruction={props.removeInstruction}/>
           </Col>
           <Col md={4}>
-            <label>"HELLO SAM2"</label>
+            <h4>Code:</h4>
           </Col>
           <Col md={4}>
-            <label>"HELLO SAM3"</label>
+            <h4>Output:</h4>
           </Col>
         </EqualHeightDiv>
         </Row>

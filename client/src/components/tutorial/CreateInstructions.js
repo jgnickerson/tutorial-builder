@@ -14,16 +14,36 @@ import FormControl from 'react-bootstrap/lib/FormControl';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
 import InputGroup from 'react-bootstrap/lib/InputGroup';
 import Button from 'react-bootstrap/lib/Button';
+import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 
-import Switch from 'react-bootstrap-switch';
+import {Grid, Row, Col} from 'react-bootstrap';
+
+//import Switch from 'react-bootstrap-switch';
 
 
 import {SortableContainer, SortableElement, arrayMove} from 'react-sortable-hoc';
 
-const DraggableDiv = styled.div`
+const StyledP = styled.p`
+  display: inline-block;
+  width: 80%;
+  padding-right: 5%;
+  word-break: break-all;
 `;
 
-const SortableItem = SortableElement(({value}) => {
+const StyledDiv = styled.div`
+  display: inline-block;
+  width: 80%;
+  padding-right: 5%;
+`;
+
+const StyledUL = styled.ul`
+  padding: 0;
+  list-style-type: none;
+`;
+
+const SortableItem = SortableElement((props) => {
+  let value = props.value;
+  let index = props.i;
 
   // create CodeMirror props
   const options = {
@@ -33,26 +53,38 @@ const SortableItem = SortableElement(({value}) => {
     viewportMargin: Infinity
   };
 
+  let item;
+  let deleteButton = <Button style={{float: "right"}} onClick={() => props.removeInstruction(index)}>delete</Button>;
+
   if (value.type === 'text') {
-    return <DraggableDiv><p>{value.data}</p></DraggableDiv>
+    item = (
+      <ListGroupItem>
+          <StyledP>{value.data}</StyledP>
+          {deleteButton}
+      </ListGroupItem>
+    );
   } else {
-    return (
-      <DraggableDiv>
-        <CodeMirror value={value.data} options={options}/>
-      </DraggableDiv>
-    )
+    item = (
+      <ListGroupItem>
+        <StyledDiv>
+          <CodeMirror value={value.data} options={options}/>
+        </StyledDiv>
+        {deleteButton}
+      </ListGroupItem>
+    );
   }
+
+  return item;
 });
 
-const SortableList = SortableContainer(({items}) => {
+const SortableList = SortableContainer((props) => {
+  let items = props.items;
   return (
-    <ul>
+    <StyledUL>
       {items.map((value, index) => (
-        <ListGroupItem>
-          <SortableItem key={`item-${index}`} index={index} value={value} />
-        </ListGroupItem>
+          <SortableItem key={`item-${index}`} index={index} value={value} i={index} removeInstruction={props.removeInstruction}/>
       ))}
-    </ul>
+    </StyledUL>
   );
 });
 
@@ -67,20 +99,26 @@ function CreateInstructions(props) {
     viewportMargin: Infinity
   };
 
-
-
   return(
     <div>
-    <ListGroup>
-      <SortableList items={props.instructions} onSortEnd={props.onSortEnd}/>
-    <FormGroup>
-      <InputGroup.Button>
-        <FormControl type="text" value={props.newInstructionText} onChange={props.onNewInstructionChange}/>
-        <Button onClick={props.addInstruction}>Add</Button>
-      </InputGroup.Button>
-    </FormGroup>
-    </ListGroup>
-    <Switch onText={"text"} offText={"code"} animate={true} onColor={"primary"} onChange={props.changeType} name='test'/>
+      <h4>Instructions:</h4>
+      <SortableList items={props.instructions} onSortEnd={props.onSortEnd} removeInstruction={props.removeInstruction}/>
+      <FormGroup>
+        <InputGroup>
+          <InputGroup.Button>
+            <DropdownButton id="input-dropdown-addon"
+                            title={props.newInstructionType}
+                            onSelect={(type) => props.changeType(type)}>
+              <MenuItem eventKey="text">text</MenuItem>
+              <MenuItem eventKey="code">code</MenuItem>
+            </DropdownButton>
+          </InputGroup.Button>
+          <FormControl type="text" value={props.newInstructionText} onChange={props.onNewInstructionChange}/>
+          <InputGroup.Button>
+            <Button onClick={props.addInstruction}>add</Button>
+          </InputGroup.Button>
+        </InputGroup>
+      </FormGroup>
     </div>
   );
 }
