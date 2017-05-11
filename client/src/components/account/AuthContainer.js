@@ -41,6 +41,7 @@ class AuthContainer extends Component {
       .then((data) => {
         if (data.token) {
           localStorage.setItem('jwt', data.token);
+          localStorage.setItem('user', data.username);
           this.props.handleLogin(data.username);
         } else {
           //TODO handle error messages
@@ -72,6 +73,7 @@ class AuthContainer extends Component {
         })
         .then((data) => {
           localStorage.setItem('jwt', data.token);
+          localStorage.setItem('user', data.username);
           this.props.handleRegister(data.username);
         });
       } else {

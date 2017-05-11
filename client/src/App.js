@@ -10,17 +10,17 @@ class App extends Component {
   constructor(props){
     super(props);
 
+    let username = window.localStorage.getItem('user');
     this.state = {
-      mode: 'login',
+      mode: 'browser',
       activeTutorial: null,
       errorMessage: "",
-      username: ""
+      username: username
     };
 
     //ES6 Class/React thing we have to do to make sure this is bound properly...
     this.handleTutorialSelect = this.handleTutorialSelect.bind(this);
     this.handleTutorialExit = this.handleTutorialExit.bind(this);
-    //his.handleCreateNew = this.handleCreateNew.bind(this);
     this.switchMode = this.switchMode.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
   }
@@ -42,21 +42,14 @@ class App extends Component {
     });
   }
 
-  // handleCreateNew() {
-  //   this.setState({
-  //     mode: 'createNew',
-  //     activeTutorial: null
-  //   });
-  // }
-
-
   switchMode(mode) {
     this.setState({ mode: mode, errorMessage: "" });
   }
 
   handleLogout() {
-    window.sessionStorage.removeItem('jwt');
-    this.setState({ mode: 'login', activeTutorial: null })
+    window.localStorage.removeItem('jwt');
+    window.localStorage.removeItem('user');
+    this.setState({ mode: 'login', activeTutorial: null, username: '' })
   }
 
   updateUserInfo(tutorial) {
@@ -92,6 +85,7 @@ class App extends Component {
       case 'signupSuccess':
         activeComponent = (
           <div>
+            <MenuBar name={this.state.username} switchMode={this.switchMode} logout={this.handleLogout} browse={this.handleTutorialExit}/>
             <AuthContainer
                 mode={this.state.mode}
                 switchMode={this.switchMode}
@@ -104,7 +98,7 @@ class App extends Component {
       case 'browser':
         activeComponent = (
           <div>
-            <MenuBar name={this.state.username} changePassword={() => this.switchMode('changePassword')} createNew={() => this.switchMode('createNew')} logout={this.handleLogout} browse={this.handleTutorialExit}/>
+            <MenuBar name={this.state.username} switchMode={this.switchMode} logout={this.handleLogout} browse={this.handleTutorialExit}/>
             <TutorialBrowser onSelect={this.handleTutorialSelect}/>
           </div>
         );
@@ -113,7 +107,7 @@ class App extends Component {
       case 'createNew':
         activeComponent = (
           <div>
-          <MenuBar name={this.state.username} changePassword={() => this.switchMode('changePassword')} createNew={() => this.switchMode('createNew')} logout={this.changeAccount} browse={this.handleTutorialExit}/>
+          <MenuBar name={this.state.username} switchMode={this.switchMode} logout={this.handleLogout} browse={this.handleTutorialExit}/>
           <CreateContainer
             onExit={this.handleTutorialExit}
             save={this.handleSaveNewTutorial}
@@ -125,7 +119,7 @@ class App extends Component {
         case 'changePassword':
           activeComponent = (
             <div>
-            <MenuBar name={this.state.username} changePassword={() => this.switchMode('changePassword')} createNew={() => this.switchMode('createNew')} logout={this.changeAccount} browse={this.handleTutorialExit}/>
+            <MenuBar name={this.state.username} switchMode={this.switchMode} logout={this.handleLogout} browse={this.handleTutorialExit}/>
             <input placeholder="Enter A New Password"></input>
             <input placeholder="Re-enter Your password"></input>
           </div>
@@ -136,7 +130,7 @@ class App extends Component {
       default:
         activeComponent = (
           <div>
-            <MenuBar name={this.state.username} changePassword={() => this.switchMode('changePassword')} createNew={() => this.switchMode('createNew')} logout={this.handleLogout} browse={this.handleTutorialExit}/>
+            <MenuBar name={this.state.username} switchMode={this.switchMode} logout={this.handleLogout} browse={this.handleTutorialExit}/>
             <TutorialContainer onExit={this.handleTutorialExit} activeTutorial={this.state.activeTutorial}/>;
           </div>
         );
