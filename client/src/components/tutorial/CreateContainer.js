@@ -4,8 +4,10 @@ Will handle fetching of tutorial and manage state of Tutorial (e.g. current step
 */
 
 import React, { Component } from 'react';
+import HelpModals from './HelpModals.js';
 import Tutorial from './Tutorial.js';
 import InstructionWriter from './InstructionWriter.js';
+import { Button } from 'react-bootstrap';
 
 const SERVER = 'http://localhost:4200';
 
@@ -21,7 +23,8 @@ class CreateContainer extends Component {
       cssCode: "",
       currentStage: 0,
       instructions: [],
-      mode: 'javascript'
+      mode: 'javascript',
+      showModal: false
     }
 
     // console.log(props.activeTutorial);
@@ -155,8 +158,20 @@ class CreateContainer extends Component {
       this.setState({mode: mode});
     });
 
+    let helpModal;
+    if (this.state.showModal) {
+      helpModal = <HelpModals onClose={() => this.setState({showModal: false})}/>;  
+    } 
+    console.log(helpModal);
+
     return (
       <div>
+      <Button
+        bsStyle="primary"
+        bsSize="large"
+        onClick={() => this.setState({showModal: true})}
+      >Help</Button>
+      {helpModal} 
       <label>Tutorial Title</label>
       <input onChange={this.handleTitleChange}></input>
       <br/>

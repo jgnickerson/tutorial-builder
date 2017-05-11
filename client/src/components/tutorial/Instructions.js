@@ -40,16 +40,15 @@ class Instructions extends Component{
     // ];
 
     var instructions = this.props.instructions;
-    if(instructions){
+    if (instructions) {
      instructions = instructions.map((item, index) => {
       return item.type === 'text' ?
         <p key={index}>{item.data}</p> :
         <CodeMirror key={index} ref="editor" value={item.data} options={options}/>
-    });
-  } else{
-      instructions = <CodeMirror ref="editor" value={null} options={options}/>
-
-  }
+      });
+    } else{
+        instructions = <CodeMirror ref="editor" value={null} options={options}/>
+    }
 
     return (
       <InstructionContainer>{instructions}</InstructionContainer>
