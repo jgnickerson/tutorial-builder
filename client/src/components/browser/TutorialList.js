@@ -51,9 +51,12 @@ function TutorialList(props){
 	}
 
 	return (
-		<Grid>
-			{rows}
-		</Grid>
+		<div>
+			<br /><br /><br />
+			<Grid>
+				{rows}
+			</Grid>
+		</div>
 	);
 }
 

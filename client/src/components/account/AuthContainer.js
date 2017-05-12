@@ -147,7 +147,7 @@ class AuthContainer extends Component {
 
     return (
       <div>
-        <CenteredTitle>Tutorial Builder</CenteredTitle>
+        <br /> <br /> <br />
         {active}
       </div>
     );

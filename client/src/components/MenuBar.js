@@ -15,35 +15,36 @@ function onSelectAlert(eventKey) {
 function MenuBar(props) {
   let navbar;
   if (props.name) {
-    navbar = (<Navbar inverse collapseOnSelect>
-                <Navbar.Toggle />
-                <Navbar.Collapse>
-                  <Nav>
-                    <NavItem onSelect={() => {props.browse('all')}} href="#">CodePanthr</NavItem>
-                    <NavItem onSelect={()=>props.switchMode('createNew')}>Build a new tutorial</NavItem>
-                  </Nav>
-                  <Nav pullRight>
-                      <NavDropdown eventKey={1} title={props.name} id="basic-nav-dropdown">
-                        <MenuItem eventKey={1.1} onSelect={() => props.browse('used')}>Tutorials used</MenuItem>
-                        <MenuItem eventKey={1.2} onSelect={() => props.browse('owned')}>Tutorials owned</MenuItem>
-                        <MenuItem onSelect={()=>props.switchMode('changePassword')} eventKey={1.3}>Change Password</MenuItem>
-                        <MenuItem onSelect={() => props.logout()} href="#">Log out</MenuItem>
-                      </NavDropdown>
-                  </Nav>
-                </Navbar.Collapse>
+    navbar = (<Navbar inverse fixedTop>
+                <Navbar.Header>
+                  <Navbar.Brand>
+                    <a onClick={() => props.browse('all')}>CodePanthr</a>
+                  </Navbar.Brand>
+                </Navbar.Header>
+                <Nav>
+                  <NavItem onSelect={()=>props.switchMode('createNew')}>Build a new tutorial</NavItem>
+                </Nav>
+                <Nav pullRight>
+                    <NavDropdown eventKey={1} title={props.name} id="basic-nav-dropdown">
+                      <MenuItem eventKey={1.1} onSelect={() => props.browse('used')}>Tutorials used</MenuItem>
+                      <MenuItem eventKey={1.2} onSelect={() => props.browse('owned')}>Tutorials owned</MenuItem>
+                      <MenuItem onSelect={()=>props.switchMode('changePassword')} eventKey={1.3}>Change Password</MenuItem>
+                      <MenuItem divider />
+                      <MenuItem onSelect={() => props.logout()}>Log out</MenuItem>
+                    </NavDropdown>
+                </Nav>
               </Navbar>)
   } else {
-    navbar = (<Navbar inverse collapseOnSelect>
-                <Navbar.Toggle />
-                <Navbar.Collapse>
-                  <Nav>
-                    <NavItem onSelect={() => {props.browse('all')}} href="#">CodePanthr</NavItem>
-                  </Nav>
-                  <Nav pullRight>
-                    <NavItem onSelect={() => props.switchMode('login')}>Login</NavItem>
-                    <NavItem onSelect={() => props.switchMode('signup')}>Signup</NavItem>
-                  </Nav>
-                </Navbar.Collapse>
+    navbar = (<Navbar inverse fixedTop>
+                <Navbar.Header>
+                  <Navbar.Brand>
+                    <a onClick={() => props.browse('all')}>CodePanthr</a>
+                  </Navbar.Brand>
+                </Navbar.Header>
+                <Nav pullRight>
+                  <NavItem onSelect={() => props.switchMode('login')}>Login</NavItem>
+                  <NavItem onSelect={() => props.switchMode('signup')}>Signup</NavItem>
+                </Nav>
               </Navbar>)
   }
     return navbar
