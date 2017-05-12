@@ -13,6 +13,7 @@ class App extends Component {
     let username = window.localStorage.getItem('user');
     this.state = {
       mode: 'browser',
+      browse: 'all',
       activeTutorial: null,
       errorMessage: "",
       username: username
@@ -31,14 +32,10 @@ class App extends Component {
   }
 
   handleTutorialExit(browserMode) {
-    if (!(browserMode === 'used' || browserMode === 'owned')) {
-      browserMode = null;
-    }
-
     this.setState({
       mode: 'browser',
       activeTutorial: null,
-      browserMode: browserMode
+      browse: browserMode ? browserMode : this.state.browse
     });
   }
 
@@ -99,7 +96,7 @@ class App extends Component {
         activeComponent = (
           <div>
             <MenuBar name={this.state.username} switchMode={this.switchMode} logout={this.handleLogout} browse={this.handleTutorialExit}/>
-            <TutorialBrowser onSelect={this.handleTutorialSelect}/>
+            <TutorialBrowser mode={this.state.browse} onSelect={this.handleTutorialSelect}/>
           </div>
         );
         break;

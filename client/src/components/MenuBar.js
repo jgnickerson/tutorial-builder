@@ -12,8 +12,6 @@ function onSelectAlert(eventKey) {
   alert(`Alert from menu item.\neventKey: ${eventKey}`);
 }
 
-
-
 function MenuBar(props) {
   let navbar;
   if (props.name) {
@@ -21,7 +19,7 @@ function MenuBar(props) {
                 <Navbar.Toggle />
                 <Navbar.Collapse>
                   <Nav>
-                    <NavItem onSelect={() => {props.browse()}} href="#">CodePanthr</NavItem>
+                    <NavItem onSelect={() => {props.browse('all')}} href="#">CodePanthr</NavItem>
                     <NavItem onSelect={()=>props.switchMode('createNew')}>Build a new tutorial</NavItem>
                   </Nav>
                   <Nav pullRight>
@@ -39,7 +37,7 @@ function MenuBar(props) {
                 <Navbar.Toggle />
                 <Navbar.Collapse>
                   <Nav>
-                    <NavItem onSelect={() => {props.browse()}} href="#">CodePanthr</NavItem>
+                    <NavItem onSelect={() => {props.browse('all')}} href="#">CodePanthr</NavItem>
                   </Nav>
                   <Nav pullRight>
                     <NavItem onSelect={() => props.switchMode('login')}>Login</NavItem>

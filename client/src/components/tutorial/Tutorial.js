@@ -19,7 +19,7 @@ function Tutorial(props) {
     if (props.mode){
       return (
         <div>
-          <button onClick={props.onExit}>Exit</button>
+          <button onClick={()=> props.onExit('')}>Exit</button>
             <Grid>
               <Row className="show-grid">
               <EqualHeightDiv>
