@@ -45,8 +45,15 @@ class AuthContainer extends Component {
           localStorage.setItem('user', data.username);
           this.props.handleLogin(data.username);
         } else {
-          //TODO handle error messages
-          console.log(data);
+          if (data.isBoom) {
+            let err;
+            if (data.output.payload.message === "invalid username" || data.output.payload.message === "invalid password")
+              err = "Invalid Username or Password";
+            else
+              err = "Something went wrong. Please Try Again.";
+
+            this.setState({errorMessage: err})
+          }
         }
       });
     } else {
