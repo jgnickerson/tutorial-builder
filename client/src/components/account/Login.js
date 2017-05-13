@@ -12,7 +12,7 @@ function Login(props) {
       <br/>
       <Col xs={6} xsOffset={4}><PageHeader>Sign In</PageHeader></Col>
       <Form horizontal>
-      <FormGroup>
+      <FormGroup validationState={props.errorMessage ? "error" : null}>
         <Col componentClass={ControlLabel} xs={2} xsOffset={2}>
           Username
         </Col>
@@ -21,12 +21,18 @@ function Login(props) {
         </Col>
       </FormGroup>
 
-      <FormGroup>
+      <FormGroup validationState={props.errorMessage ? "error" : null}>
         <Col componentClass={ControlLabel} xs={2} xsOffset={2}>
           Password
         </Col>
         <Col xs={6} >
           <FormControl type="password" placeholder="Password" value={props.password} onChange={props.setPassword}/>
+        </Col>
+      </FormGroup>
+
+      <FormGroup>
+        <Col xsOffset={4} xs={6}>
+          {props.errorMessage ? <ControlLabel type="error">{props.errorMessage}</ControlLabel> : null}
         </Col>
       </FormGroup>
 
