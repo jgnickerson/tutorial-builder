@@ -20,19 +20,22 @@ function MenuBar(props) {
                   <Navbar.Brand>
                     <a onClick={() => props.browse('all')}>CodePanthr</a>
                   </Navbar.Brand>
+                  <Navbar.Toggle />
                 </Navbar.Header>
-                <Nav>
-                  <NavItem onSelect={()=>props.switchMode('createNew')}>Build a new tutorial</NavItem>
-                </Nav>
-                <Nav pullRight>
-                    <NavDropdown eventKey={1} title={props.name} id="basic-nav-dropdown">
-                      <MenuItem eventKey={1.1} onSelect={() => props.browse('used')}>Tutorials used</MenuItem>
-                      <MenuItem eventKey={1.2} onSelect={() => props.browse('owned')}>Tutorials owned</MenuItem>
-                      <MenuItem onSelect={()=>props.switchMode('changePassword')} eventKey={1.3}>Change Password</MenuItem>
-                      <MenuItem divider />
-                      <MenuItem onSelect={() => props.logout()}>Log out</MenuItem>
-                    </NavDropdown>
-                </Nav>
+                <Navbar.Collapse>
+                  <Nav>
+                    <NavItem onSelect={()=>props.switchMode('createNew')}>Build a new tutorial</NavItem>
+                  </Nav>
+                  <Nav pullRight>
+                      <NavDropdown eventKey={1} title={props.name} id="basic-nav-dropdown">
+                        <MenuItem eventKey={1.1} onSelect={() => props.browse('used')}>Tutorials used</MenuItem>
+                        <MenuItem eventKey={1.2} onSelect={() => props.browse('owned')}>Tutorials owned</MenuItem>
+                        <MenuItem onSelect={()=>props.switchMode('changePassword')} eventKey={1.3}>Change Password</MenuItem>
+                        <MenuItem divider />
+                        <MenuItem onSelect={() => props.logout()}>Log out</MenuItem>
+                      </NavDropdown>
+                  </Nav>
+                </Navbar.Collapse>
               </Navbar>)
   } else {
     navbar = (<Navbar inverse fixedTop>
@@ -40,11 +43,14 @@ function MenuBar(props) {
                   <Navbar.Brand>
                     <a onClick={() => props.browse('all')}>CodePanthr</a>
                   </Navbar.Brand>
+                  <Navbar.Toggle />
                 </Navbar.Header>
-                <Nav pullRight>
-                  <NavItem onSelect={() => props.switchMode('login')}>Login</NavItem>
-                  <NavItem onSelect={() => props.switchMode('signup')}>Signup</NavItem>
-                </Nav>
+                <Navbar.Collapse>
+                  <Nav pullRight>
+                    <NavItem onSelect={() => props.switchMode('login')}>Sign In</NavItem>
+                    <NavItem onSelect={() => props.switchMode('signup')}>Register</NavItem>
+                  </Nav>
+                </Navbar.Collapse>
               </Navbar>)
   }
     return navbar

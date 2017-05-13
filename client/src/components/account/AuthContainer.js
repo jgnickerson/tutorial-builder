@@ -22,8 +22,9 @@ class AuthContainer extends Component {
     this.attemptRegister = this.attemptRegister.bind(this);
   }
 
-  attemptLogin() {
+  attemptLogin(e) {
     //TODO check for empty password
+    e.preventDefault()
     if (this.state.username) {
       fetch('/login/', {
         method: 'POST',

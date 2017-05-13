@@ -3,18 +3,41 @@
  */
 
 import React from 'react';
+import style from 'bootstrap/dist/css/bootstrap.css';
+import {Grid, Row, Col, PageHeader, ControlLabel, Form, FormGroup, FormControl, ButtonToolbar, Button} from 'react-bootstrap';
 
 function Login(props) {
   return (
     <div>
-      <input placeholder="username" value={props.username} onChange={props.setUsername}/>
       <br/>
-      <input placeholder="password" type="password" value={props.password} onChange={props.setPassword}/>
-      <br/>
-      <button onClick={props.attemptLogin}>Log in</button>
-      <button onClick={props.switchToRegister}>Sign up</button>
-      <br/>
-      <label>{props.errorMessage}</label>
+      <Col xs={6} xsOffset={4}><PageHeader>Sign In</PageHeader></Col>
+      <Form horizontal>
+      <FormGroup>
+        <Col componentClass={ControlLabel} xs={2} xsOffset={2}>
+          Username
+        </Col>
+        <Col xs={6} >
+          <FormControl type="username" placeholder="Username" value={props.username} onChange={props.setUsername}/>
+        </Col>
+      </FormGroup>
+
+      <FormGroup>
+        <Col componentClass={ControlLabel} xs={2} xsOffset={2}>
+          Password
+        </Col>
+        <Col xs={6} >
+          <FormControl type="password" placeholder="Password" value={props.password} onChange={props.setPassword}/>
+        </Col>
+      </FormGroup>
+
+      <FormGroup>
+        <Col xsOffset={4} xs={6}>
+          <Button type="submit" onClick={props.attemptLogin}>
+            Sign in
+          </Button>
+        </Col>
+      </FormGroup>
+    </Form>
     </div>)
 }
 
