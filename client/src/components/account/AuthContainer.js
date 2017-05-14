@@ -1,13 +1,8 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
 import Login from './Login.js';
 import Signup from './Signup.js';
-import style from 'bootstrap/dist/css/bootstrap.css';
 import {Col, PageHeader, Button} from 'react-bootstrap';
-
-const CenteredTitle=styled.h1`
-  text-align: center;
-`;
+import 'bootstrap/dist/css/bootstrap.css';
 
 class AuthContainer extends Component {
   constructor() {
@@ -140,7 +135,17 @@ class AuthContainer extends Component {
         );
         break;
 
+      case 'signupSuccess':
+        active = (
+          <div>
+            <Col xs={6} xsOffset={3}><PageHeader>You have successfully registered!</PageHeader></Col>
+            <Col xs={1} xsOffset={3}><Button onClick={() => this.props.switchMode('browser')}>Browse Tutorials!</Button></Col>
+          </div>
+        );
+        break;
+
       case 'signup':
+      default:
         active = (
           <Signup username={this.state.username}
                   password={this.state.password}
@@ -151,16 +156,6 @@ class AuthContainer extends Component {
                   attemptRegister={this.attemptRegister}
                   errorMessage={this.state.errorMessage}/>
         );
-        break;
-
-      case 'signupSuccess':
-        active = (
-          <div>
-            <Col xs={6} xsOffset={3}><PageHeader>You have successfully registered!</PageHeader></Col>
-            <Col xs={1} xsOffset={3}><Button onClick={() => this.props.switchMode('browser')}>Browse Tutorials!</Button></Col>
-          </div>
-        );
-      default:
     }
 
     return (

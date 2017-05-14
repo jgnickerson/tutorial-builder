@@ -3,8 +3,8 @@
  */
 
  import React from 'react';
- import style from 'bootstrap/dist/css/bootstrap.css';
- import {Col, PageHeader, ControlLabel, Form, FormGroup, FormControl, ButtonToolbar, Button} from 'react-bootstrap';
+ import {Col, PageHeader, ControlLabel, Form, FormGroup, FormControl, Button} from 'react-bootstrap';
+  import 'bootstrap/dist/css/bootstrap.css';
 
 function Signup(props) {
   return (
