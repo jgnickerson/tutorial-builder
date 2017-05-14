@@ -26,11 +26,13 @@ function Tutorial(props) {
         <br />
         <br />
         <br />
-          <button onClick={()=> props.onExit('')}>Exit</button>
             <Grid display= "flex">
               <Row className="show-grid">
               <EqualHeightDiv>
-                <Col md={4}><Instructions instructions={props.instructions}/></Col>
+                <Col md={4}><Instructions instructions={props.instructions}/>
+                <p />
+                <Button onClick={()=> props.onExit('')}>Exit</Button>
+                </Col>
                 <Col md={4}>
                 <PanelGroup defaultActiveKey="1" accordion>
                   <Panel header="My Code" eventKey="1">
