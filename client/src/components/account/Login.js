@@ -4,7 +4,7 @@
 
 import React from 'react';
 import style from 'bootstrap/dist/css/bootstrap.css';
-import {Grid, Row, Col, PageHeader, ControlLabel, Form, FormGroup, FormControl, ButtonToolbar, Button} from 'react-bootstrap';
+import { Col, PageHeader, ControlLabel, Form, FormGroup, FormControl, ButtonToolbar, Button} from 'react-bootstrap';
 
 function Login(props) {
   return (
@@ -54,7 +54,6 @@ Login.propTypes = {
   setPassword: React.PropTypes.func.isRequired,
   attemptLogin: React.PropTypes.func.isRequired,
   errorMessage: React.PropTypes.string,
-  switchToRegister: React.PropTypes.func.isRequired
 }
 
 export default Login;

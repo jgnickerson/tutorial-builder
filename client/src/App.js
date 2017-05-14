@@ -15,7 +15,6 @@ class App extends Component {
       mode: 'browser',
       browse: 'all',
       activeTutorial: null,
-      errorMessage: "",
       username: username
     };
 
@@ -40,37 +39,13 @@ class App extends Component {
   }
 
   switchMode(mode) {
-    this.setState({ mode: mode, errorMessage: "" });
+    this.setState({ mode: mode });
   }
 
   handleLogout() {
     window.localStorage.removeItem('jwt');
     window.localStorage.removeItem('user');
     this.setState({ mode: 'login', activeTutorial: null, username: '' })
-  }
-
-  updateUserInfo(tutorial) {
-    let userObj = Object.assign({}, this.state.activeUser);
-
-    let alreadyUsed = false;
-
-    userObj.tutorialsUsed.map((item) => {
-      if (item._id == tutorial._id) {
-        alreadyUsed = true;
-        return tutorial;
-      } else {
-        return item;
-      }
-    });
-
-    if (!alreadyUsed) {
-      userObj.tutorialsUsed.push(tutorial);
-    }
-
-    this.setState({
-      activeUser: userObj
-    });
-
   }
 
   render() {
