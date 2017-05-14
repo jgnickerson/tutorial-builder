@@ -10,8 +10,17 @@ import InstructionWriter from './InstructionWriter.js';
 import arrayMove from 'react-sortable-hoc';
 import ListGroup from 'react-bootstrap/lib/ListGroup';
 import ListGroupItem from 'react-bootstrap/lib/ListGroupItem';
+import Button from 'react-bootstrap/lib/Button';
+import ButtonGroup from 'react-bootstrap/lib/ButtonGroup';
+import FormGroup from 'react-bootstrap/lib/FormGroup';
+import FormControl from 'react-bootstrap/lib/FormControl';
+import styled from 'styled-components';
 
 
+const InitialDiv = styled.div`
+  margin-left: 20%;
+  margin-right: 20%;
+`;
 
 class CreateContainer extends Component {
   constructor(props) {
@@ -32,9 +41,10 @@ class CreateContainer extends Component {
         css: ""
       },
       instructions: [],
-      mode: 'javascript',
+      mode: 'titlePage',
       newInstructionText:"",
-      newInstructionType:"text"
+      newInstructionType:"text",
+      errorMessage:"",
     }
 
     //if someone is editing this tutorial
@@ -65,7 +75,6 @@ class CreateContainer extends Component {
     // }
 
     this.handleCodeChange = this.handleCodeChange.bind(this);
-    this.getCodeToDisplay = this.getCodeToDisplay.bind(this);
     this.handleTitleChange = this.handleTitleChange.bind(this);
     this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
     this.handleInstructionAdd = this.handleInstructionAdd.bind(this);
@@ -74,6 +83,7 @@ class CreateContainer extends Component {
     this.handleNewInstructionChange = this.handleNewInstructionChange.bind(this);
     this.handleChangeType = this.handleChangeType.bind(this);
     this.removeInstruction = this.removeInstruction.bind(this);
+    this.handleNext = this.handleNext.bind(this);
   }
 
   persistTutorial() {
@@ -84,18 +94,6 @@ class CreateContainer extends Component {
         headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt},
         body: JSON.stringify({title: this.state.title, description: this.state.description, js: this.state.jsCode, html: this.state.htmlCode, css: this.state.cssCode, instructions: this.state.instructions})
       }).then(response=> { if (!response.ok) console.log(response) }) //TODO handle error
-    }
-  }
-
-  getCodeToDisplay() {
-    if (this.state.mode === 'javascript') {
-      return this.state.jsCode;
-    } else if (this.state.mode === 'html') {
-      return this.state.htmlCode;
-    } else if (this.state.mode === 'css') {
-      return this.state.cssCode;
-    } else {
-      return "Unknown mode";
     }
   }
 
@@ -175,32 +173,55 @@ class CreateContainer extends Component {
     });
   };
 
+  handleNext() {
+    if (!this.state.title) {
+      this.setState({errorMessage: "Please enter a title."})
+    } else if (!this.state.description) {
+      this.setState({errorMessage: "Please type in a description."})
+    } else {
+      this.setState({mode: "detailsPage"});
+    }
+  }
+
   render() {
-    return (
-      <div>
-        <label>Tutorial Title</label>
-        <input onChange={this.handleTitleChange}></input>
-        <br/>
-        <label>Description</label>
-        <input onChange={this.handleDescriptionChange}></input>
-        <br/>
-        <CreateTutorial changeType={this.handleChangeType}
-                        newInstructionText={this.state.newInstructionText}
-                        newInstructionType={this.state.newInstructionType}
-                        onNewInstructionChange={this.handleNewInstructionChange}
-                        addInstruction={this.handleInstructionAdd}
-                        instructions={this.state.instructions}
-                        onSortEnd={this.onSortEnd}
-                        removeInstruction={this.removeInstruction}
-                        solutionCode={this.state.solutionCode}
-                        starterCode={this.state.starterCode}
-                        onCodeChange={this.handleCodeChange}
-                        />
-        <br/>
-        <br/>
-        <button onClick={this.handleSaveNewTutorial}>Save Tutorial</button>
-      </div>
-    )
+    let renderedElement;
+    if (this.state.mode === 'titlePage') {
+      renderedElement = (
+        <InitialDiv>
+          <FormGroup>
+            <FormControl placeholder="Enter a title..." value={this.state.title} onChange={this.handleTitleChange}/>
+            <br/>
+            <FormControl componentClass="textarea"  placeholder="Enter a description..." value={this.state.description} onChange={this.handleDescriptionChange}/>
+            <br/>
+            <ButtonGroup>
+              <Button type="submit" onClick={this.props.onExit}>Cancel</Button>
+              <Button type="submit" onClick={this.handleNext}>Next</Button>
+            </ButtonGroup>
+          </FormGroup>
+          <p>{this.state.errorMessage}</p>
+        </InitialDiv>
+      );
+
+    } else {
+      renderedElement = (
+        <div>
+          <CreateTutorial changeType={this.handleChangeType}
+                          newInstructionText={this.state.newInstructionText}
+                          newInstructionType={this.state.newInstructionType}
+                          onNewInstructionChange={this.handleNewInstructionChange}
+                          addInstruction={this.handleInstructionAdd}
+                          instructions={this.state.instructions}
+                          onSortEnd={this.onSortEnd}
+                          removeInstruction={this.removeInstruction}
+                          solutionCode={this.state.solutionCode}
+                          starterCode={this.state.starterCode}
+                          onCodeChange={this.handleCodeChange}
+                          />
+       </div>
+      );
+    }
+
+    return renderedElement;
   }
 }
 

@@ -60,7 +60,7 @@ class CreateCode extends Component {
 
     return (
       <PanelGroup activeKey={this.state.activeKey} onSelect={this.handleSelect} accordion>
-        <Panel header="Starter" eventKey="1">
+        <Panel header="Starter Code" eventKey="1">
           <Tabs defaultActiveKey={1} id="uncontrolled-tab-example1">
             <Tab eventKey={1} title="JS">
               <CodeMirror value={this.props.starterCode.js} onChange={(value) => this.props.onCodeChange(value, 'starter', 'js')} options={jsOptions} />
@@ -73,7 +73,7 @@ class CreateCode extends Component {
             </Tab>
           </Tabs>
         </Panel>
-        <Panel header="Solution" eventKey="2">
+        <Panel header="Solution Code" eventKey="2">
           <Tabs defaultActiveKey={2} id="uncontrolled-tab-example2">
             <Tab eventKey={1} title="JS">
               <CodeMirror value={this.props.solutionCode.js} onChange={(value) => this.props.onCodeChange(value, 'solution', 'js')} options={jsOptions} />
