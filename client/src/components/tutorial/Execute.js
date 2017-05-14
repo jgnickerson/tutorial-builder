@@ -67,7 +67,7 @@ function executeCode(js, rawHtml, css, showIframe) {
 
 
     let code = consoleLogRewrite + js + endBufferCode;
-    let html = '<html><head>' + '<style>' + css + '</style></head><body>' + rawHtml + '<script type="text/javascript">' + code + '</script></body></html>';
+    let html = '<html><head><style>' + css + '</style></head><body>' + rawHtml + '<script type="text/javascript">' + code + '</script></body></html>';
 
     //writing file in the iframe and compiling
     iframe.contentDocument.open();

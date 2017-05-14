@@ -15,7 +15,6 @@ class App extends Component {
       mode: 'browser',
       browse: 'all',
       activeTutorial: null,
-      errorMessage: "",
       username: username
     };
 
@@ -40,7 +39,7 @@ class App extends Component {
   }
 
   switchMode(mode) {
-    this.setState({ mode: mode, errorMessage: "" });
+    this.setState({ mode: mode });
   }
 
   handleLogout() {

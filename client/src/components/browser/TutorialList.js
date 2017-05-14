@@ -15,7 +15,7 @@ function TutorialList(props){
 		const items = [];
 
 		items.push(
-			<Col md={6}>
+			<Col md={6} key={i}>
 				<TutorialSummary
 				key={props.tutorials[i]._id}
 				id={props.tutorials[i]._id}
@@ -31,7 +31,7 @@ function TutorialList(props){
 		)
 		if (props.tutorials[i+1]) {
 			items.push(
-				<Col md={6}>
+				<Col md={6} key={i+1}>
 					<TutorialSummary
 					key={props.tutorials[i+1]._id}
 					id={props.tutorials[i+1]._id}
@@ -47,7 +47,7 @@ function TutorialList(props){
 			)
 		}
 
-		rows.push(<Row>{items}</Row>);
+		rows.push(<Row key={"row" + i}>{items}</Row>);
 	}
 
 	return (
