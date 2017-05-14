@@ -188,6 +188,9 @@ class CreateContainer extends Component {
     if (this.state.mode === 'titlePage') {
       renderedElement = (
         <InitialDiv>
+          <br />
+          <br />
+          <br />
           <FormGroup>
             <FormControl placeholder="Enter a title..." value={this.state.title} onChange={this.handleTitleChange}/>
             <br/>
@@ -205,6 +208,9 @@ class CreateContainer extends Component {
     } else {
       renderedElement = (
         <div>
+          <br />
+          <br />
+          <br />
           <CreateTutorial changeType={this.handleChangeType}
                           newInstructionText={this.state.newInstructionText}
                           newInstructionType={this.state.newInstructionType}
