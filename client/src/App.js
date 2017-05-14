@@ -10,10 +10,13 @@ class App extends Component {
   constructor(props){
     super(props);
 
+    let username = window.localStorage.getItem('user');
     this.state = {
-      mode: 'login',
+      mode: 'browser',
+      browse: 'all',
       activeTutorial: null,
-      errorMessage: ""
+      errorMessage: "",
+      username: username
     };
 
     //ES6 Class/React thing we have to do to make sure this is bound properly...
@@ -23,37 +26,27 @@ class App extends Component {
     this.handleLogout = this.handleLogout.bind(this);
   }
 
+
   handleTutorialSelect(tutorialId) {
     this.setState({ mode: 'tutorial', activeTutorial: tutorialId });
   }
 
   handleTutorialExit(browserMode) {
-    if (!(browserMode === 'used' || browserMode === 'owned')) {
-      browserMode = null;
-    }
-
     this.setState({
       mode: 'browser',
       activeTutorial: null,
-      browserMode: browserMode
+      browse: browserMode ? browserMode : this.state.browse
     });
   }
-
-  // handleCreateNew() {
-  //   this.setState({
-  //     mode: 'createNew',
-  //     activeTutorial: null
-  //   });
-  // }
-
 
   switchMode(mode) {
     this.setState({ mode: mode, errorMessage: "" });
   }
 
   handleLogout() {
-    window.sessionStorage.removeItem('jwt');
-    this.setState({ mode: 'login', activeTutorial: null })
+    window.localStorage.removeItem('jwt');
+    window.localStorage.removeItem('user');
+    this.setState({ mode: 'login', activeTutorial: null, username: '' })
   }
 
   render() {
@@ -65,7 +58,12 @@ class App extends Component {
       case 'signupSuccess':
         activeComponent = (
           <div>
-            <AuthContainer mode={this.state.mode} switchMode={this.switchMode}/>
+            <MenuBar name={this.state.username} switchMode={this.switchMode} logout={this.handleLogout} browse={this.handleTutorialExit}/>
+            <AuthContainer
+                mode={this.state.mode}
+                switchMode={this.switchMode}
+                handleLogin={(username)=>this.setState({username: username, mode: 'browser'})}
+                handleRegister={(username)=>this.setState({username: username, mode: 'signupSuccess'})}/>
           </div>
         );
         break;
@@ -73,8 +71,8 @@ class App extends Component {
       case 'browser':
         activeComponent = (
           <div>
-            <MenuBar createNew={() => this.switchMode('createNew')} logout={this.handleLogout} browse={this.handleTutorialExit}/>
-            <TutorialBrowser onSelect={this.handleTutorialSelect}/>
+            <MenuBar name={this.state.username} switchMode={this.switchMode} logout={this.handleLogout} browse={this.handleTutorialExit}/>
+            <TutorialBrowser mode={this.state.browse} onSelect={this.handleTutorialSelect}/>
           </div>
         );
         break;
@@ -82,7 +80,7 @@ class App extends Component {
       case 'createNew':
         activeComponent = (
           <div>
-          <MenuBar createNew={() => this.switchMode('createNew')} logout={this.changeAccount} browse={this.handleTutorialExit}/>
+          <MenuBar name={this.state.username} switchMode={this.switchMode} logout={this.handleLogout} browse={this.handleTutorialExit}/>
           <CreateContainer
             onExit={this.handleTutorialExit}
           />
@@ -90,11 +88,21 @@ class App extends Component {
         );
         break;
 
+        case 'changePassword':
+          activeComponent = (
+            <div>
+            <MenuBar name={this.state.username} switchMode={this.switchMode} logout={this.handleLogout} browse={this.handleTutorialExit}/>
+            <input placeholder="Enter A New Password"></input>
+            <input placeholder="Re-enter Your password"></input>
+          </div>
+          );
+          break;
+
       //mode === 'tutorial'
       default:
         activeComponent = (
           <div>
-            <MenuBar createNew={() => this.switchMode('createNew')} logout={this.handleLogout} browse={this.handleTutorialExit}/>
+            <MenuBar name={this.state.username} switchMode={this.switchMode} logout={this.handleLogout} browse={this.handleTutorialExit}/>
             <TutorialContainer onExit={this.handleTutorialExit} activeTutorial={this.state.activeTutorial}/>
           </div>
         );

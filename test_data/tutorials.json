@@ -48,5 +48,152 @@
     },
     "lastUpdate": "2017-04-17T05:00:00",
     "rating": 4
+  },
+  {
+    "title": "Another Cool Tutorial",
+    "creator": "EKK",
+    "description":"This is the description for tutorial 2",
+    "published": true,
+    "instructions": [
+      {"type": "text", "data": "This is text explaining the first step of the tutorial."},
+      {"type": "code", "data": "//This is a code snippet for Kayla's"},
+      {"type": "text", "data": "This is text explaining the second step of the tutorial."}
+    ],
+    "js": "//javascript",
+    "html": "<!--html-->",
+    "css": "/* css */",
+    "solution": {
+      "js": "//js solution",
+      "html": "<!--html solution-->",
+      "css": "/* css solution */"
+    },
+    "lastUpdate": "2017-04-17T05:00:00",
+    "rating": 4
+  },
+  {
+    "title": "Great Tutorial for Doing Stuff",
+    "creator": "JGN",
+    "description":"This is the description for tutorial 3",
+    "published": true,
+    "instructions": [
+      {"type": "text", "data": "This is text explaining the first step of the tutorial."},
+      {"type": "code", "data": "//This is a code snippet for Kayla's"},
+      {"type": "text", "data": "This is text explaining the second step of the tutorial."}
+    ],
+    "js": "//javascript",
+    "html": "<!--html-->",
+    "css": "/* css */",
+    "solution": {
+      "js": "//js solution",
+      "html": "<!--html solution-->",
+      "css": "/* css solution */"
+    },
+    "lastUpdate": "2017-04-17T05:00:00",
+    "rating": 4
+  },
+  {
+    "title": "Super Tutorial for Doing Things",
+    "creator": "CL",
+    "description":"This is the description for tutorial 4",
+    "published": true,
+    "instructions": [
+      {"type": "text", "data": "This is text explaining the first step of the tutorial."},
+      {"type": "code", "data": "//This is a code snippet for Kayla's"},
+      {"type": "text", "data": "This is text explaining the second step of the tutorial."}
+    ],
+    "js": "//javascript",
+    "html": "<!--html-->",
+    "css": "/* css */",
+    "solution": {
+      "js": "//js solution",
+      "html": "<!--html solution-->",
+      "css": "/* css solution */"
+    },
+    "lastUpdate": "2017-04-17T05:00:00",
+    "rating": 4
+  },
+  {
+    "title": "Tutorial to complete X",
+    "creator": "LK",
+    "description":"This is the description for tutorial 1",
+    "published": true,
+    "instructions": [
+      {"type": "text", "data": "This is text explaining the first step of the tutorial."},
+      {"type": "code", "data": "//This is a code snippet for Kayla's"},
+      {"type": "text", "data": "This is text explaining the second step of the tutorial."}
+    ],
+    "js": "//javascript",
+    "html": "<!--html-->",
+    "css": "/* css */",
+    "solution": {
+      "js": "//js solution",
+      "html": "<!--html solution-->",
+      "css": "/* css solution */"
+    },
+    "lastUpdate": "2017-04-17T05:00:00",
+    "rating": 4
+  },
+  {
+    "title": "Tutorial to complete Y",
+    "creator": "EP",
+    "description":"This is the description for tutorial 1",
+    "published": true,
+    "instructions": [
+      {"type": "text", "data": "This is text explaining the first step of the tutorial."},
+      {"type": "code", "data": "//This is a code snippet for Kayla's"},
+      {"type": "text", "data": "This is text explaining the second step of the tutorial."}
+    ],
+    "js": "//javascript",
+    "html": "<!--html-->",
+    "css": "/* css */",
+    "solution": {
+      "js": "//js solution",
+      "html": "<!--html solution-->",
+      "css": "/* css solution */"
+    },
+    "lastUpdate": "2017-04-17T05:00:00",
+    "rating": 4
+  },
+  {
+    "title": "Another sweet Thing",
+    "creator": "SF",
+    "description":"This is the description for tutorial 1",
+    "published": true,
+    "instructions": [
+      {"type": "text", "data": "This is text explaining the first step of the tutorial."},
+      {"type": "code", "data": "//This is a code snippet for Kayla's"},
+      {"type": "text", "data": "This is text explaining the second step of the tutorial."}
+    ],
+    "js": "//javascript",
+    "html": "<!--html-->",
+    "css": "/* css */",
+    "solution": {
+      "js": "//js solution",
+      "html": "<!--html solution-->",
+      "css": "/* css solution */"
+    },
+    "lastUpdate": "2017-04-17T05:00:00",
+    "rating": 4
+  },
+  {
+    "title": "More Cool Tutorial Goodness",
+    "creator": "FW",
+    "description":"This is the description for tutorial 1",
+    "published": true,
+    "instructions": [
+      {"type": "text", "data": "This is text explaining the first step of the tutorial."},
+      {"type": "code", "data": "//This is a code snippet for Kayla's"},
+      {"type": "text", "data": "This is text explaining the second step of the tutorial."}
+    ],
+    "js": "//javascript",
+    "html": "<!--html-->",
+    "css": "/* css */",
+    "solution": {
+      "js": "//js solution",
+      "html": "<!--html solution-->",
+      "css": "/* css solution */"
+    },
+    "lastUpdate": "2017-04-17T05:00:00",
+    "rating": 4
   }
 ]

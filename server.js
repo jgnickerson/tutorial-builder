@@ -160,31 +160,6 @@ app.get('/tutorials/:id*?',
 	}
 });
 
-// get the info about the users
-app.get('/users/:username*?', (req, res) => {
-	// if we have a specific username to look up
-	if (req.params.username) {
-		db.collection("users").find({username: req.params.username}).toArray((err, result) =>{
-			if (err) {
-				console.log(err);
-			}
-
-			if (result[0]) {
-				res.send(result[0]);
-			} else {
-				res.sendStatus(500);
-			}
-		});
-	} else {
-		db.collection("users").find().toArray((err, result) => {
-			if (err) {
-				console.log(err);
-			}
-			res.send(result);
-		});
-	}
-});
-
 // create a new tutorial
 app.post('/tutorials', (req, res) =>{
 	const newTutorial = req.body;
@@ -302,22 +277,18 @@ app.put('/users/:tutorialID',
 		});
 });
 
-// update a specific user's account
-// app.put('/users/:id', (req, res) => {
-// 	let updatedUser = req.body;
-// 	updatedUser._id = ObjectID.createFromHexString(updatedUser._id);
-//
-// 	db.collection("users").findOneAndUpdate(
-// 		{_id: updatedUser._id},
-// 		{$set: updatedUser},
-// 		{returnOriginal: false},
-// 		(err, result) => {
-// 			if (err) {
-// 				console.log(err);
-// 				res.sendStatus(500);
-// 			} else {
-// 				res.send(result.value);
-// 			}
-// 		}
-// 	);
-// });
+app.get('/users/owner',
+	jwtMiddleware({secret: passphrase}),
+	(req, res) => {
+		db.collection('users').findOne({_id: new ObjectID(req.user.id)}).then(
+			user=> res.send(user.tutorialsOwned),
+			err => res.send(boom.badImplementation(err)));
+});
+
+app.get('/users/tutorials',
+	jwtMiddleware({secret: passphrase}),
+	(req, res) => {
+		db.collection('users').findOne({_id: new ObjectID(req.user.id)}).then(
+			user=> res.send(user.tutorialsUsed),
+			err => res.send(boom.badImplementation(err)));
+});

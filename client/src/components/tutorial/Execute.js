@@ -3,12 +3,21 @@
 */
 import React from 'react';
 import styled from 'styled-components';
+import Button from 'react-bootstrap/lib/Button';
+import ButtonGroup from 'react-bootstrap/lib/ButtonGroup';
+import Panel from 'react-bootstrap/lib/Panel';
 
 const Console = styled.div`
-  height: 100%;
-  background-color: #d1d1d1;
+  height: 300px;
+  width: 304px;
+  background-color: #f7f7f7;
   margin-bottom: 2px;
   border: 1px black solid;
+`;
+
+const ExecuteDiv = styled.div `
+  width: 304px;
+  height: 300px;
 `;
 
 //Execute Component
@@ -18,14 +27,17 @@ function Execute(props) {
     executeCode(props.solution.js, props.solution.html, props.solution.css, true);
   });
   return (
-    <div className="execution-body">
-      <div className="execution-iframe-div" id="execution-iframe-div">
-        <iframe id="execution-iframe"></iframe>
+    <ExecuteDiv className="execution-body">
+      <div className="execution-iframe-div" id="execution-iframe-div" width="100%" height="300px">
+        <iframe width="100%" height="300px" id="execution-iframe" ></iframe>
       </div>
       <Console className="execution-console-div" id="execution-console-div"></Console>
-      <button onClick={()=>executeCode(props.js, props.html, props.css, true)}>Run</button>
-      <button onClick={onShow}>Show Solution</button>
-    </div>)
+      <p />
+      <ButtonGroup>
+        <Button onClick={()=>executeCode(props.js, props.html, props.css, true)}>Run My Code</Button>
+        <Button onClick={onShow}>Run Solution Code</Button>
+      </ButtonGroup>
+    </ExecuteDiv>)
 }
 
 function executeCode(js, rawHtml, css, showIframe) {
@@ -73,7 +85,9 @@ function refreshIframe(showIframe) {
   //create a new iframe
   const iframeNode = document.getElementById("execution-iframe-div");
   const iframe = document.createElement('iframe');
-  iframe.setAttribute("id","execution-iframe")
+  iframe.setAttribute("id","execution-iframe");
+  iframe.setAttribute("width","100%");
+  iframe.setAttribute("height","300px");
   iframeNode.appendChild(iframe);
 
   if (!showIframe) {

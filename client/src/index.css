@@ -4,7 +4,7 @@ body {
   font-family: sans-serif;
 }
 
-.CodeMirror {
-	height: auto;
+.CodeMirror{
+  height: auto;
 	border: 1px solid #eee;
 }
