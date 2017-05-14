@@ -21,9 +21,16 @@ class CreateContainer extends Component {
       tutorialID: props.tutorialID ? props.tutorialID : null,
       title: "",
       description: "",
-      jsCode: "",
-      htmlCode: "",
-      cssCode: "",
+      starterCode: {
+        js: "\n\n\n\n\n\n\n\n",
+        html: "\n\n\n\n\n\n\n\n",
+        css: "\n\n\n\n\n\n\n\n"
+      },
+      solutionCode: {
+        js: "",
+        html: "",
+        css: ""
+      },
       instructions: [],
       mode: 'javascript',
       newInstructionText:"",
@@ -33,29 +40,29 @@ class CreateContainer extends Component {
     //if someone is editing this tutorial
     //TODO AMIR, this prop doesn't exist yet.
     //you may want to do it this way, you may not
-    if (props.tutorialID) {
-      this.persistInterval = setInterval(()=> this.persistTutorial(), 1000);
-
-      //someone is creating a completely new tutorial
-    } else {
-      const jwt = window.localStorage.getItem('jwt');
-      if (jwt) {
-        fetch('/users/owner', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt},
-          body: JSON.stringify({title: this.state.title, description: this.state.description, js: this.state.jsCode, html: this.state.htmlCode, css: this.state.cssCode, instructions: this.state.instructions, published: false})
-        }).then(response=> { if (response.ok) return response.json()
-        }).then(data=>{
-          if (!data.isBoom) {
-            this.setState({tutorialID: data._id});
-            this.persistInterval = setInterval(() => this.persistTutorial(), 1000);
-          } else {
-            //TODO handle error
-            console.log(data);
-          }
-        });
-      }
-    }
+    // if (props.tutorialID) {
+    //   this.persistInterval = setInterval(()=> this.persistTutorial(), 1000);
+    //
+    //   //someone is creating a completely new tutorial
+    // } else {
+    //   const jwt = window.localStorage.getItem('jwt');
+    //   if (jwt) {
+    //     fetch('/users/owner', {
+    //       method: 'POST',
+    //       headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt},
+    //       body: JSON.stringify({title: this.state.title, description: this.state.description, js: this.state.jsCode, html: this.state.htmlCode, css: this.state.cssCode, instructions: this.state.instructions, published: false})
+    //     }).then(response=> { if (response.ok) return response.json()
+    //     }).then(data=>{
+    //       if (!data.isBoom) {
+    //         this.setState({tutorialID: data._id});
+    //         this.persistInterval = setInterval(() => this.persistTutorial(), 1000);
+    //       } else {
+    //         //TODO handle error
+    //         console.log(data);
+    //       }
+    //     });
+    //   }
+    // }
 
     this.handleCodeChange = this.handleCodeChange.bind(this);
     this.getCodeToDisplay = this.getCodeToDisplay.bind(this);
@@ -97,13 +104,16 @@ class CreateContainer extends Component {
     clearInterval(this.persistInterval);
   }
 
-  handleCodeChange(code) {
-    if (this.state.mode === 'javascript') {
-      this.setState({jsCode: code});
-    } else if (this.state.mode === 'html') {
-      this.setState({htmlCode: code});
-    } else if (this.state.mode === 'css') {
-      this.setState({cssCode: code});
+  handleCodeChange(code, which, type) {
+    if (which === 'starter') {
+      let starterCode = this.state.starterCode;
+      starterCode[type] = code;
+      this.setState({starterCode : starterCode});
+
+    } else {
+      let solutionCode = this.state.solutionCode;
+      solutionCode[type] = code;
+      this.setState({solutionCode : solutionCode});
     }
   }
 
@@ -174,8 +184,18 @@ class CreateContainer extends Component {
         <label>Description</label>
         <input onChange={this.handleDescriptionChange}></input>
         <br/>
-        <CreateTutorial changeType={this.handleChangeType} newInstructionText={this.state.newInstructionText} newInstructionType={this.state.newInstructionType} onNewInstructionChange={this.handleNewInstructionChange}
-        addInstruction={this.handleInstructionAdd} instructions={this.state.instructions} onSortEnd={this.onSortEnd} removeInstruction={this.removeInstruction}/>
+        <CreateTutorial changeType={this.handleChangeType}
+                        newInstructionText={this.state.newInstructionText}
+                        newInstructionType={this.state.newInstructionType}
+                        onNewInstructionChange={this.handleNewInstructionChange}
+                        addInstruction={this.handleInstructionAdd}
+                        instructions={this.state.instructions}
+                        onSortEnd={this.onSortEnd}
+                        removeInstruction={this.removeInstruction}
+                        solutionCode={this.state.solutionCode}
+                        starterCode={this.state.starterCode}
+                        onCodeChange={this.handleCodeChange}
+                        />
         <br/>
         <br/>
         <button onClick={this.handleSaveNewTutorial}>Save Tutorial</button>

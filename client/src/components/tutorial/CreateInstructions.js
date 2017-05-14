@@ -101,7 +101,6 @@ function CreateInstructions(props) {
 
   return(
     <div>
-      <h4>Instructions:</h4>
       <SortableList items={props.instructions} onSortEnd={props.onSortEnd} removeInstruction={props.removeInstruction}/>
       <FormGroup>
         <InputGroup>
