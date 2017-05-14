@@ -5,8 +5,9 @@ import React from 'react';
 import styled from 'styled-components';
 
 const Console = styled.div`
-  height: 100%;
-  background-color: #d1d1d1;
+  height: 300px;
+  width: 304px;
+  background-color: #f5f5f5;
   margin-bottom: 2px;
   border: 1px black solid;
 `;
@@ -20,7 +21,7 @@ function Execute(props) {
   return (
     <div className="execution-body">
       <div className="execution-iframe-div" id="execution-iframe-div">
-        <iframe id="execution-iframe"></iframe>
+        <iframe style={{"width":"100%"}} style={{"height":"300px"}} id="execution-iframe" ></iframe>
       </div>
       <Console className="execution-console-div" id="execution-console-div"></Console>
       <button onClick={()=>executeCode(props.js, props.html, props.css, true)}>Run</button>
@@ -73,7 +74,8 @@ function refreshIframe(showIframe) {
   //create a new iframe
   const iframeNode = document.getElementById("execution-iframe-div");
   const iframe = document.createElement('iframe');
-  iframe.setAttribute("id","execution-iframe")
+  iframe.setAttribute("id","execution-iframe");
+  iframe.setAttribute("style", "height: 300px; width: 100%");
   iframeNode.appendChild(iframe);
 
   if (!showIframe) {
