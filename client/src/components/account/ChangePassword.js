@@ -12,14 +12,6 @@ function ChangePassword(props) {
       <br/>
       <Col xs={6} xsOffset={4}><PageHeader>Change Password</PageHeader></Col>
       <Form horizontal>
-      <FormGroup validationState={props.errorMessage ? "error" : null}>
-        <Col componentClass={ControlLabel} xs={2} xsOffset={2}>
-          Username
-        </Col>
-        <Col xs={6} >
-          <FormControl type="username" placeholder="Username" value={props.username} onChange={props.setUsername}/>
-        </Col>
-      </FormGroup>
 
       <FormGroup validationState={props.errorMessage ? "error" : null}>
         <Col componentClass={ControlLabel} xs={2} xsOffset={2}>

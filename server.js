@@ -62,16 +62,22 @@ MongoClient.connect('mongodb://localhost:4201/tutorial-builder', (err, database)
 SERVER Routes
 
 */
-app.put('/changepass', (req, res) => {
-	db.collection('users').findOne({username: req.body.username}).then(user => {
+app.put('/changepass', jwtMiddleware({secret: passphrase}), (req, res) => {
+	db.collection('users').findOne({_id: new ObjectID(req.user.id)}).then(user => {
 		if (!user) {
 			return res.send(boom.unauthorized('invalid username'));
 		}
 
 		return bcrypt.compare(req.body.password, user.password, function(err, resp) {
+			if(err) {
+				return res.send(boom.badImplementation(err));
+			}
+
 			if(resp) {
 			  	bcrypt.hash(req.body.newPass, saltRounds, function(err, hash) {
-					if(hash) {
+					if(err) {
+						res.send(boom.badImplementation(err));
+					} else {
 						const updatedUser = {
 							username: user.username,
 							password: hash,
@@ -80,7 +86,7 @@ app.put('/changepass', (req, res) => {
 						}
 
 						db.collection("users").findOneAndUpdate(
-							{username: req.body.username},
+							{_id: new ObjectID(req.user.id)},
 							{$set: updatedUser},
 							{returnOriginal: false},
 							(err, result) => {
@@ -90,14 +96,10 @@ app.put('/changepass', (req, res) => {
 								}
 							}
 						);
-					} else {
-						// WHAT TO PUT HERE
 					}
 				});
-			   	return res.json(buildJwtResponse(user));
 
-			} else {
-				return res.send(boom.unauthorized('invalid password'));
+				return res.json(buildJwtResponse(user));
 			}
 		});
 	});
@@ -110,10 +112,14 @@ app.post('/login',(req, res) => {
 		}
 
 		return bcrypt.compare(req.body.password, user.password, function(err, resp) {
+		  if(err) {
+		  	return res.send(boom.badImplementation(err));
+		  }
+
 		  if(resp) {
 		   	return res.json(buildJwtResponse(user));
 		  } else {
-		   	return res.send(boom.unauthorized('invalid password'));
+		   	return res.send(boom.unauthorized('Invalid password'));
 		  } 
 		});
 
@@ -129,6 +135,10 @@ app.post('/users', (req, res) =>{
 		return new Promise((resolve, reject) => {
 			if (!user) {
 				bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
+					if(err) {
+						res.send(boom.badImplementation(err));
+					}
+
 					if(hash) {
 						const user = {
 							username: req.body.username,

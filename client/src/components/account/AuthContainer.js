@@ -25,40 +25,46 @@ class AuthContainer extends Component {
 
   attemptPassChange(e) {
     e.preventDefault()
-    if (this.state.username && this.state.password && this.state.newPass && this.state.newPassCheck) {
-      if (this.state.newPass === this.state.newPassCheck) {
-        fetch('/changepass/', {
-          method: 'PUT',
-          body: JSON.stringify({ username: this.state.username, password: this.state.password, newPass: this.state.newPass}),
-          headers: new Headers({ 'Content-type': 'application/json' })
-        })
-        .then((response) => {
-          if (response.ok) {
-            return response.json();
-          } else {
-            //TODO handle error messages here
-            console.log(response);
-          }
-        })
-        .then((data) => {
-          if (data.token) {
-            localStorage.setItem('jwt', data.token);
-            localStorage.setItem('user', data.username);
-            this.props.handleLogin(data.username);
-          } else {
-            let err;
-            if (data.isBoom && (data.output.payload.message === "invalid username" || data.output.payload.message === "invalid password"))
-                err = "Invalid Username or Password";
+    const jwt = window.localStorage.getItem('jwt');
+    if(jwt) {
+      if (this.state.password && this.state.newPass && this.state.newPassCheck) {
+        if (this.state.newPass === this.state.newPassCheck) {
+          fetch('/changepass/', {
+            method: 'PUT',
+            body: JSON.stringify({password: this.state.password, newPass: this.state.newPass}),
+            headers: new Headers({ 'Content-type': 'application/json', 'Authorization': 'Bearer ' + jwt})
+          })
+          .then((response) => {
+            if (response.ok) {
+              return response.json();
+            } else {
+              //TODO handle error messages here
+              console.log(response);
+            }
+          })
+          .then((data) => {
+            console.log(data);
+            console.log("token");
+            console.log(data.token);
+            if (data.token) {
+              localStorage.setItem('jwt', data.token);
+              localStorage.setItem('user', data.username);
+              this.props.handlePassChange(data.username);
+            } else {
+              let err;
+              if (data.isBoom && (data.output.payload.message === "invalid username" || data.output.payload.message === "invalid password"))
+                  err = "Invalid Username or Password";
 
-            if (!err)
-              err = "Something went wrong. Please Try Again.";
+              if (!err)
+                err = "Something went wrong. Please Try Again.";
 
-            this.setState({errorMessage: err})
-          }
-        });
+              this.setState({errorMessage: err})
+            }
+          });
+        }
+      } else {
+        this.setState({errorMessage: "Please enter your credentials."})
       }
-    } else {
-      this.setState({errorMessage: "Please enter your credentials."})
     }
   }
 
@@ -197,6 +203,15 @@ class AuthContainer extends Component {
         active = (
           <div>
             <Col xs={6} xsOffset={3}><PageHeader>You have successfully registered!</PageHeader></Col>
+            <Col xs={1} xsOffset={3}><Button onClick={() => this.props.switchMode('browser')}>Browse Tutorials!</Button></Col>
+          </div>
+        );
+        break;
+
+      case 'changePassSuccess':
+        active = (
+          <div>
+            <Col xs={6} xsOffset={3}><PageHeader>You have successfully changed your password!</PageHeader></Col>
             <Col xs={1} xsOffset={3}><Button onClick={() => this.props.switchMode('browser')}>Browse Tutorials!</Button></Col>
           </div>
         );
