@@ -5,7 +5,26 @@ import Signup from './Signup.js';
 
 const CenteredTitle=styled.h1`
   text-align: center;
+  color: #000080;
 `;
+const Signupsuccess=styled.div`
+margin-left:10px;
+background-color: #F5F5F5;
+border-radius: 15px;
+width: 500px;
+height: 150px;
+`;
+const Signheader=styled.h2`
+padding: 10px 10px 10px 10px;
+
+`;
+const Signbutt=styled.button`
+padding: 10px 10px 10px 10px;
+margin-left: 5px;
+margin-top: 5px;
+border-radius: 15px;
+`;
+
 
 class AuthContainer extends Component {
   constructor() {
@@ -134,18 +153,18 @@ class AuthContainer extends Component {
 
       case 'signupSuccess':
         active = (
-          <div>
-            <h2>You have successfully registered!</h2>
+          <Signupsuccess>
+            <Signheader>You have successfully registered!</Signheader>
             <br/>
-            <button onClick={() => this.props.switchMode('browser')}>Browse Tutorials!</button>
-          </div>
+            <Signbutt onClick={() => this.props.switchMode('browser')}>Browse Tutorials!</Signbutt>
+          </Signupsuccess>
         );
       default:
     }
 
     return (
       <div>
-        <CenteredTitle>Tutorial Builder</CenteredTitle>
+        <CenteredTitle>CodePanthr</CenteredTitle>
         {active}
       </div>
     );
