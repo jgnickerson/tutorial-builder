@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 
 function SingleModal(props) {
-  // props are header, body, onClose
+  // props are header, body, onClose, onComplete, completeBtnName
 
   return (
     <div>
@@ -18,7 +18,7 @@ function SingleModal(props) {
         	{props.body}
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={props.onClose}>Close</Button>
+          <Button onClick={props.onComplete}>{props.completeBtnName}</Button>
         </Modal.Footer>
       </Modal>
     </div>

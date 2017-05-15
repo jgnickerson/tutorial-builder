@@ -25,6 +25,7 @@ class TutorialContainer extends Component {
       },
       instructions: null,
       showWarningModal: true,
+      showFinishedModal: false,
       mode: 'javascript'
     }
 
@@ -122,7 +123,22 @@ class TutorialContainer extends Component {
     let warningModal;
     const jwt = window.localStorage.getItem('jwt');
     if (!jwt && this.state.showWarningModal) warningModal = (
-      <SingleModal body={warningBody} onClose={()=>this.setState({showWarningModal: false})}/>
+      <SingleModal body={warningBody} completeBtnName="Close"
+        onClose={()=>this.setState({showWarningModal: false})}
+        onComplete={()=>this.setState({showWarningModal: false})}/>
+    );
+
+    const finishedBody = (<div>
+      <Alert bsStyle="success">
+        <strong>Congrats!</strong> You completed the tutorial.
+      </Alert>
+    </div>);
+
+    let finishedModal;
+    if (this.state.showFinishedModal) finishedModal = (
+      <SingleModal body={finishedBody} completeBtnName="Browse Tutorials"
+        onClose={()=>this.setState({showFinishedModal: false})}
+        onComplete={this.props.onExit}/>
     );
 
     return (
@@ -135,7 +151,9 @@ class TutorialContainer extends Component {
           onExit={this.props.onExit}
           onCodeChange={this.handleCodeChange}
           mode={this.state.mode}
+          onFinish={()=>this.setState({showFinishedModal:true})}
         />
+        {finishedModal}
       </div>
     )
   }
