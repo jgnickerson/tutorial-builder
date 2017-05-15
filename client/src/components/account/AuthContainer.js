@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Login from './Login.js';
 import Signup from './Signup.js';
+import ChangePassword from './ChangePassword.js';
 import {Col, PageHeader, Button} from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.css';
 
@@ -12,11 +13,53 @@ class AuthContainer extends Component {
       username: '',
       password: '',
       passwordCheck: '',
+      newPass: '',
+      newPassCheck: '',
       errorMessage: ''
     }
 
     this.attemptLogin = this.attemptLogin.bind(this);
     this.attemptRegister = this.attemptRegister.bind(this);
+    this.attemptPassChange = this.attemptPassChange.bind(this);
+  }
+
+  attemptPassChange(e) {
+    e.preventDefault()
+    if (this.state.username && this.state.password && this.state.newPass && this.state.newPassCheck) {
+      if (this.state.newPass === this.state.newPassCheck) {
+        fetch('/changepass/', {
+          method: 'PUT',
+          body: JSON.stringify({ username: this.state.username, password: this.state.password, newPass: this.state.newPass}),
+          headers: new Headers({ 'Content-type': 'application/json' })
+        })
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            //TODO handle error messages here
+            console.log(response);
+          }
+        })
+        .then((data) => {
+          if (data.token) {
+            localStorage.setItem('jwt', data.token);
+            localStorage.setItem('user', data.username);
+            this.props.handleLogin(data.username);
+          } else {
+            let err;
+            if (data.isBoom && (data.output.payload.message === "invalid username" || data.output.payload.message === "invalid password"))
+                err = "Invalid Username or Password";
+
+            if (!err)
+              err = "Something went wrong. Please Try Again.";
+
+            this.setState({errorMessage: err})
+          }
+        });
+      }
+    } else {
+      this.setState({errorMessage: "Please enter your credentials."})
+    }
   }
 
   attemptLogin(e) {
@@ -124,6 +167,21 @@ class AuthContainer extends Component {
     let active;
 
     switch (this.props.mode) {
+      case 'changePassword':
+        active = (
+          <ChangePassword username={this.state.username}
+                  password={this.state.password}
+                  newPass={this.state.newPass}
+                  newPassCheck={this.state.newPassCheck}
+                  setUsername={(e) => this.setState({username: e.target.value})}
+                  setPassword={(e) => this.setState({password: e.target.value})}
+                  setNewPass={(e) => this.setState({newPass: e.target.value})}
+                  setNewPassCheck={(e) => this.setState({newPassCheck: e.target.value})}
+                  attemptPassChange={this.attemptPassChange}
+                  errorMessage={this.state.errorMessage} />
+        );
+        break;
+
       case 'login':
         active = (
           <Login username={this.state.username}
@@ -131,7 +189,7 @@ class AuthContainer extends Component {
                  setUsername={(e) => this.setState({username: e.target.value})}
                  setPassword={(e) => this.setState({password: e.target.value})}
                  attemptLogin={this.attemptLogin}
-                 errorMessage={this.state.errorMessage}/>
+                 errorMessage={this.state.errorMessage} />
         );
         break;
 
