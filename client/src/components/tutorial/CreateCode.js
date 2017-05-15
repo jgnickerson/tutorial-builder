@@ -1,8 +1,3 @@
-/*
-  Editor.js
-
-  imports and formats CodeMirror component to allow for editing of code and updating state.code
-*/
 import React, { Component } from 'react';
 import style from 'bootstrap/dist/css/bootstrap.css';
 import styled from 'styled-components';
@@ -20,7 +15,7 @@ const CodeContainer = styled.li`
 `;
 
 
-class Editor extends Component {
+class CreateCode extends Component {
 
   constructor(props) {
     super(props);
@@ -71,7 +66,7 @@ class Editor extends Component {
 
     return (
       <PanelGroup style={{height: "490px"}} activeKey={this.state.activeKey} onSelect={this.handleSelect} accordion>
-        <Panel header="My Code" eventKey="1">
+        <Panel header="Starter Code" eventKey="1">
           <CodeContainer>
             <Tabs defaultActiveKey={1} id="uncontrolled-tab-example1">
               <Tab eventKey={1} title="JS">
@@ -90,13 +85,13 @@ class Editor extends Component {
           <CodeContainer>
             <Tabs defaultActiveKey={2} id="uncontrolled-tab-example2">
               <Tab eventKey={1} title="JS">
-                <CodeMirror ref="editor3" value={this.props.solutionCode.js} onChange={(value) => this.props.onCodeChange(value, 'solution', 'js')} options={Object.assign({readOnly: true}, jsOptions)} />
+                <CodeMirror ref="editor3" value={this.props.solutionCode.js} onChange={(value) => this.props.onCodeChange(value, 'solution', 'js')} options={jsOptions} />
               </Tab>
               <Tab eventKey={2} title="HTML">
-                <CodeMirror ref="editor4" value={this.props.solutionCode.html} onChange={(value) => this.props.onCodeChange(value, 'solution', 'html')} options={Object.assign({readOnly: true}, htmlOptions)} />
+                <CodeMirror ref="editor4" value={this.props.solutionCode.html} onChange={(value) => this.props.onCodeChange(value, 'solution', 'html')} options={htmlOptions} />
               </Tab>
               <Tab eventKey={3} title="CSS">
-                <CodeMirror ref="editor5" value={this.props.solutionCode.css} onChange={(value) => this.props.onCodeChange(value, 'solution', 'css')} options={Object.assign({readOnly: true}, cssOptions)} />
+                <CodeMirror ref="editor5" value={this.props.solutionCode.css} onChange={(value) => this.props.onCodeChange(value, 'solution', 'css')} options={cssOptions} />
               </Tab>
             </Tabs>
           </CodeContainer>
@@ -106,8 +101,8 @@ class Editor extends Component {
   }
 }
 
-// Editor.propTypes = {
+// CreateCode.propTypes = {
 //   onExit: React.PropTypes.func.isRequired
 // }
 
-export default Editor;
+export default CreateCode;

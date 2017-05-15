@@ -4,10 +4,19 @@ Will handle fetching of tutorial and manage state of Tutorial (e.g. current step
 */
 
 import React, { Component } from 'react';
-import HelpModals from './HelpModals.js';
 import Tutorial from './Tutorial.js';
+import CreateTutorial from './CreateTutorial.js';
 import InstructionWriter from './InstructionWriter.js';
-import { Button } from 'react-bootstrap';
+import HelpModals from './HelpModals.js';
+import arrayMove from 'react-sortable-hoc';
+import styled from 'styled-components';
+
+import { ListGroup, ListGroupItem, Button, PageHeader, Form, Col, ControlLabel, FormControl, FormGroup, ButtonGroup } from 'react-bootstrap';
+
+const InitialDiv = styled.div`
+  margin-left: 20%;
+  margin-right: 20%;
+`;
 
 class CreateContainer extends Component {
   constructor(props) {
@@ -17,28 +26,36 @@ class CreateContainer extends Component {
       tutorialID: props.tutorialID ? props.tutorialID : null,
       title: "",
       description: "",
-      jsCode: "",
-      htmlCode: "",
-      cssCode: "",
+      starterCode: {
+        js: "",
+        html: "",
+        css: ""
+      },
+      solutionCode: {
+        js: "",
+        html: "",
+        css: ""
+      },
       instructions: [],
-      mode: 'javascript',
-      showModal: false
+      showHelpModals: false,
+      mode: 'titlePage',
+      newInstructionText:"",
+      newInstructionType:"text",
+      errorMessage:"",
     }
 
     //if someone is editing this tutorial
-    //TODO AMIR, this prop doesn't exist yet.
-    //you may want to do it this way, you may not
     if (props.tutorialID) {
       this.persistInterval = setInterval(()=> this.persistTutorial(), 1000);
 
-    //someone is creating a completely new tutorial
+      //someone is creating a completely new tutorial
     } else {
       const jwt = window.localStorage.getItem('jwt');
       if (jwt) {
         fetch('/users/owner', {
           method: 'POST',
           headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt},
-          body: JSON.stringify({title: this.state.title, description: this.state.description, js: this.state.jsCode, html: this.state.htmlCode, css: this.state.cssCode, instructions: this.state.instructions, published: false})
+          body: JSON.stringify({title: this.state.title, description: this.state.description, js: this.state.starterCode.js, html: this.state.starterCode.html, css: this.state.starterCode.css, solution: this.state.solutionCode, instructions: this.state.instructions, lastUpdate: new Date().toISOString(), published: false})
         }).then(response=> { if (response.ok) return response.json()
         }).then(data=>{
           if (!data.isBoom) {
@@ -53,11 +70,16 @@ class CreateContainer extends Component {
     }
 
     this.handleCodeChange = this.handleCodeChange.bind(this);
-    this.getCodeToDisplay = this.getCodeToDisplay.bind(this);
     this.handleTitleChange = this.handleTitleChange.bind(this);
     this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
     this.handleInstructionAdd = this.handleInstructionAdd.bind(this);
-    this.handleSaveNewTutorial = this.handleSaveNewTutorial.bind(this);
+    this.handlePublish = this.handlePublish.bind(this);
+    this.onSortEnd = this.onSortEnd.bind(this);
+    this.handleNewInstructionChange = this.handleNewInstructionChange.bind(this);
+    this.handleChangeType = this.handleChangeType.bind(this);
+    this.removeInstruction = this.removeInstruction.bind(this);
+    this.handleNext = this.handleNext.bind(this);
+    this.handleGoBack = this.handleGoBack.bind(this);
   }
 
   persistTutorial() {
@@ -66,20 +88,8 @@ class CreateContainer extends Component {
       fetch('/users/owner/' + this.state.tutorialID, {
         method: 'PUT',
         headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt},
-        body: JSON.stringify({title: this.state.title, description: this.state.description, js: this.state.jsCode, html: this.state.htmlCode, css: this.state.cssCode, instructions: this.state.instructions})
+        body: JSON.stringify({title: this.state.title, description: this.state.description, js: this.state.starterCode.js, html: this.state.starterCode.html, css: this.state.starterCode.css, solution: this.state.solutionCode, instructions: this.state.instructions, published: false, lastUpdate: new Date().toISOString()})
       }).then(response=> { if (!response.ok) console.log(response) }) //TODO handle error
-    }
-  }
-
-  getCodeToDisplay() {
-    if (this.state.mode === 'javascript') {
-      return this.state.jsCode;
-    } else if (this.state.mode === 'html') {
-      return this.state.htmlCode;
-    } else if (this.state.mode === 'css') {
-      return this.state.cssCode;
-    } else {
-      return "Unknown mode";
     }
   }
 
@@ -88,13 +98,16 @@ class CreateContainer extends Component {
     clearInterval(this.persistInterval);
   }
 
-  handleCodeChange(code) {
-    if (this.state.mode === 'javascript') {
-      this.setState({jsCode: code});
-    } else if (this.state.mode === 'html') {
-      this.setState({htmlCode: code});
-    } else if (this.state.mode === 'css') {
-      this.setState({cssCode: code});
+  handleCodeChange(code, which, type) {
+    if (which === 'starter') {
+      let starterCode = this.state.starterCode;
+      starterCode[type] = code;
+      this.setState({starterCode : starterCode});
+
+    } else {
+      let solutionCode = this.state.solutionCode;
+      solutionCode[type] = code;
+      this.setState({solutionCode : solutionCode});
     }
   }
 
@@ -106,70 +119,151 @@ class CreateContainer extends Component {
     this.setState({description: e.target.value});
   }
 
-  handleInstructionAdd(instruction) {
+  handleInstructionAdd() {
+
+    const newInstruction = {type: this.state.newInstructionType, data: this.state.newInstructionText}
     const newInstructions = this.state.instructions.slice();
-    newInstructions.push(instruction);
+    newInstructions.push(newInstruction);
 
     this.setState({
-      instructions: newInstructions
+      instructions: newInstructions,
+      newInstructionText:""
     });
   }
-
-  handleSaveNewTutorial() {
+  handleNewInstructionChange(e){
+    this.setState({newInstructionText: e.target.value});
+  }
+  handleChangeType(type){
+    this.setState({newInstructionType: type});
+  }
+  handlePublish() {
     /*
-      TODO when this called, it should hit a route on the server that flips tutorial.published
-      in the tutorials db, and updates that tutorial with the latest from users.tutoraialsOwnder.
-      This route hasn't been written yet.
-      Right now, when you create a new tutorial, it's automatically added to db.tutorials.
-      This is so we can get an _id on the tutorial before putting it in db.users.tutorialsOwned.
+    TODO when this called, it should hit a route on the server that flips tutorial.published
+    in the tutorials db, and updates that tutorial with the latest from users.tutoraialsOwnder.
+    This route hasn't been written yet.
+    Right now, when you create a new tutorial, it's automatically added to db.tutorials.
+    This is so we can get an _id on the tutorial before putting it in db.users.tutorialsOwned.
     */
     console.log("add a new tutorial");
   }
 
-  render() {
+  removeInstruction(index) {
+    const instructions = this.state.instructions;
+    instructions.splice(index, 1);
+    this.setState({instructions: instructions});
+  }
 
-    const onModeChange = ((element) => {
-      const mode = element.target.value;
-      this.setState({mode: mode});
+  onSortEnd = ({oldIndex, newIndex}) => {
+    // thank you Github: https://github.com/clauderic/react-sortable-hoc/blob/master/src/utils.js
+    const instructions = this.state.instructions;
+    if (newIndex >= instructions.length) {
+      let k = newIndex - instructions.length;
+      while (k-- + 1) {
+        instructions.push(undefined);
+      }
+    }
+    instructions.splice(newIndex, 0, instructions.splice(oldIndex, 1)[0]);
+
+    this.setState({
+      instructions: instructions,
     });
+  };
 
-    let helpModal;
-    if (this.state.showModal) {
-      helpModal = <HelpModals onClose={() => this.setState({showModal: false})}/>;  
-    } 
-    console.log(helpModal);
+  handleNext(e) {
+    e.preventDefault()
+    if (!this.state.title) {
+      this.setState({errorMessage: "Please enter a title."})
+    } else if (!this.state.description) {
+      this.setState({errorMessage: "Please type in a description."})
+    } else {
+      this.setState({errorMessage: null, mode: "detailsPage"});
+    }
+  }
 
-    return (
-      <div>
-      <Button
-        bsStyle="primary"
-        bsSize="large"
-        onClick={() => this.setState({showModal: true})}
-      >Help</Button>
-      {helpModal} 
-      <label>Tutorial Title</label>
-      <input onChange={this.handleTitleChange}></input>
-      <br/>
-      <label>Description</label>
-      <input onChange={this.handleDescriptionChange}></input>
-      <br/>
-      <Tutorial
-        code={this.getCodeToDisplay()}
-        js={this.state.jsCode}
-        html={this.state.htmlCode}
-        css={this.state.cssCode}
-        instructions={this.state.instructions}
-        onExit={this.props.onExit}
-        onCodeChange={this.handleCodeChange}
-        mode={this.state.mode}
-        onModeChange={onModeChange}
-      />
-      <InstructionWriter addInstruction={this.handleInstructionAdd}/>
-      <br/>
-      <br/>
-      <button onClick={this.handleSaveNewTutorial}>Save Tutorial</button>
-      </div>
-    )
+  handleGoBack(e) {
+    e.preventDefault();
+    this.setState({mode: "titlePage"});
+  }
+
+  render() {
+    let renderedElement;
+    if (this.state.mode === 'titlePage') {
+      renderedElement = (
+        <div>
+          <br/>
+          <br/>
+          <br/>
+          <Col xs={6} xsOffset={4}><PageHeader>New Tutorial</PageHeader></Col>
+          <Form horizontal>
+          <FormGroup validationState={this.state.errorMessage === "Please enter a title." ? "error" : null}>
+            <Col componentClass={ControlLabel} xs={2} xsOffset={2}>
+              Title
+            </Col>
+            <Col xs={6} >
+              <FormControl placeholder="Enter a title..." value={this.state.title} onChange={this.handleTitleChange}/>
+            </Col>
+          </FormGroup>
+
+          <FormGroup validationState={this.state.errorMessage === "Please type in a description." ? "error" : null}>
+            <Col componentClass={ControlLabel} xs={2} xsOffset={2}>
+              Description
+            </Col>
+            <Col xs={6} >
+              <FormControl componentClass="textarea"  placeholder="Enter a description..." value={this.state.description} onChange={this.handleDescriptionChange}/>
+            </Col>
+          </FormGroup>
+
+          <FormGroup>
+            <Col xsOffset={4} xs={6}>
+              {this.state.errorMessage ? <ControlLabel type="error">{this.state.errorMessage}</ControlLabel> : null}
+            </Col>
+          </FormGroup>
+
+          <FormGroup>
+            <Col xsOffset={4} xs={6}>
+              <ButtonGroup>
+                  <Button type="submit" onClick={this.props.onExit}>Cancel</Button>
+                  <Button type="submit" onClick={this.handleNext}>Next</Button>
+              </ButtonGroup>
+            </Col>
+          </FormGroup>
+
+        </Form>
+        </div>
+      );
+
+    } else {
+
+      let helpModal;
+      if (this.state.showHelpModals) {
+        helpModal = <HelpModals onClose={()=>this.setState({showHelpModals:false})}/>;  
+      } 
+
+      renderedElement = (
+        <div>
+          <br />
+          <br />
+          <br />
+          {helpModal}
+          <CreateTutorial changeType={this.handleChangeType}
+                          newInstructionText={this.state.newInstructionText}
+                          newInstructionType={this.state.newInstructionType}
+                          onNewInstructionChange={this.handleNewInstructionChange}
+                          addInstruction={this.handleInstructionAdd}
+                          instructions={this.state.instructions}
+                          onSortEnd={this.onSortEnd}
+                          removeInstruction={this.removeInstruction}
+                          solutionCode={this.state.solutionCode}
+                          starterCode={this.state.starterCode}
+                          onCodeChange={this.handleCodeChange}
+                          goBack={this.handleGoBack}
+                          onHelp={()=>this.setState({showHelpModals:true})}
+                          />
+       </div>
+      );
+    }
+
+    return renderedElement;
   }
 }
 

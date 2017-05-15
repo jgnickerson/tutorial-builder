@@ -12,10 +12,9 @@ import styled from 'styled-components';
 
 const CodeContainer = styled.li`
   width: 100%;
-  height: 100%;
+  height: 490px;
   display: inline-block;
   vertical-align: top;
-  height: 100%;
   padding-top: 20px;
 `;
 
@@ -59,11 +58,13 @@ class SolutionDisplay extends Component {
     };
     const display = this.state.isShown ? (
       <div>
+      <p />
         <select onChange={onModeChange} defaultValue={this.state.mode}>
           <option value="javascript">JavaScript</option>
           <option value="html">HTML</option>
           <option value="css">CSS</option>
         </select>
+        <p />
         <CodeMirror value={this.getCodeToDisplay()} options={options} />
       </div>
     ):(<div></div>);

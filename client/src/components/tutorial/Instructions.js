@@ -17,6 +17,7 @@ const InstructionContainer = styled.li`
   padding: 5px;
   vertical-align: top;
   border: 1px solid #eee;
+  overflow: scroll;
 `;
 
 
@@ -29,7 +30,7 @@ class Instructions extends Component{
       tabSize: 2,
       readOnly: true,
       lineWrapping: true,
-      viewportMargin: Infinity
+      viewportMargin: Infinity,
     };
 
     // placeholder for instruction data read from server
@@ -44,16 +45,16 @@ class Instructions extends Component{
      instructions = instructions.map((item, index) => {
       return item.type === 'text' ?
         <p key={index}>{item.data}</p> :
-        <CodeMirror key={index} ref="editor" value={item.data} options={options}/>
-      });
-    } else{
-        instructions = <CodeMirror ref="editor" value={null} options={options}/>
-    }
+        <CodeMirror type="instructions" key={index} ref="editor" value={item.data} options={options}/>
+    });
+  } else{
+      instructions = <CodeMirror ref="editor" value={null} options={options}/>
+
+  }
 
     return (
       <InstructionContainer>{instructions}</InstructionContainer>
     );
-
 
   }
 }

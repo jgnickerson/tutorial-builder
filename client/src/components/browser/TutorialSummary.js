@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import StarRating from './StarRating.js';
+import {Button} from 'react-bootstrap';
 
 
 const Summary = styled.div`
@@ -37,10 +38,6 @@ margin:0px;
 padding-left: 20px;
 
 `
-const Open = styled.button`
-margin-left: 22px;
-margin-top: 5px;
-`;
 
 /**
 TutorialSummary creates the basic structure of an individual tutorial
@@ -60,7 +57,7 @@ class TutorialSummary extends Component{
     const tutorialSummary = this.state.showDescription === true ? (
       <Summary onClick={() => {this.setState({showDescription:false})}}>
       <Title>{this.props.title}</Title>
-      <Open onClick={() => {this.props.onClick(this.props.id)}}>Open Tutorial</Open>
+      <Button style={{"margin-left": "22px", "margin-top": "5px"}}onClick={() => {this.props.onClick(this.props.id)}}>Open Tutorial</Button>
       <Description>{this.props.description}</Description>
       <Author>{this.props.author}</Author>
       <StarRating rating={this.props.rating} setRating={(rating)=>{this.props.setRatingFor(this.props.id, rating)}}/>

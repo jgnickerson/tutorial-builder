@@ -5,8 +5,12 @@ body {
   font-family: sans-serif;
 }
 
-.CodeMirror {
-	height: auto;
+.CodeMirror{
+  height: auto;
 	border: 1px solid #eee;
+}
+
+.CodeMirror-scroll {
+  max-height: 445px;
 }
 

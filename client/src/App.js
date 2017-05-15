@@ -82,8 +82,7 @@ class App extends Component {
           <MenuBar name={this.state.username} switchMode={this.switchMode} logout={this.handleLogout} browse={this.handleTutorialExit}/>
           <CreateContainer
             onExit={this.handleTutorialExit}
-            save={this.handleSaveNewTutorial}
-          />;
+          />
         </div>
         );
         break;
@@ -103,7 +102,7 @@ class App extends Component {
         activeComponent = (
           <div>
             <MenuBar name={this.state.username} switchMode={this.switchMode} logout={this.handleLogout} browse={this.handleTutorialExit}/>
-            <TutorialContainer onExit={this.handleTutorialExit} activeTutorial={this.state.activeTutorial}/>;
+            <TutorialContainer onExit={this.handleTutorialExit} activeTutorial={this.state.activeTutorial}/>
           </div>
         );
     }
