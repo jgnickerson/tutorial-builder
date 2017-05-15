@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import StarRating from './StarRating.js';
 import {Button} from 'react-bootstrap';
 
 
@@ -60,14 +59,12 @@ class TutorialSummary extends Component{
       <Button style={{"margin-left": "22px", "margin-top": "5px"}}onClick={() => {this.props.onClick(this.props.id)}}>Open Tutorial</Button>
       <Description>{this.props.description}</Description>
       <Author>{this.props.author}</Author>
-      <StarRating rating={this.props.rating} setRating={(rating)=>{this.props.setRatingFor(this.props.id, rating)}}/>
       <Created>({this.props.lastUpdate})</Created>
       </Summary>
     ):
     (<Summary onClick={() => {this.setState({showDescription:true})}}>
     <Title>{this.props.title}</Title>
     <Author>{this.props.author}</Author>
-    <StarRating rating={this.props.rating} setRating={(rating)=>{this.props.setRatingFor(this.props.id, rating)}}/>
     <Created>({this.props.lastUpdate})</Created>
     </Summary>)
     return tutorialSummary;
@@ -80,7 +77,6 @@ TutorialSummary.propTypes = {
   description:React.PropTypes.string,
   author:React.PropTypes.string.isRequired,
   lastUpdate:React.PropTypes.string.isRequired,
-  rating:React.PropTypes.number.isRequired,
   onClick:React.PropTypes.func.isRequired,
 };
 

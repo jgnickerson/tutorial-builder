@@ -58,12 +58,6 @@ class TutorialBrowser extends Component {
     this.fetchTutorials(nextProps.mode);
   }
 
-  setRating(tutorialId, rating){
-    console.log("should update rating");
-    //update rating -- I need to be able to work with the server in order to update the rating.
-    //Right now I only access the temporary data and so there is no way to store a new rating
-  }
-
   render() {
     return (
       <div>

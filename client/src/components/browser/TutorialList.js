@@ -23,9 +23,7 @@ function TutorialList(props){
 				author={props.tutorials[i].creator}
 					description={props.tutorials[i].description}
 				lastUpdate={props.tutorials[i].lastUpdate}
-				rating={props.tutorials[i].rating}
 				onClick={props.onSelect}
-				// setRatingFor={(id, rating)=>this.setRating(id, rating)}
 				/>
 			</Col>
 		)
@@ -39,9 +37,7 @@ function TutorialList(props){
 					author={props.tutorials[i+1].creator}
 						description={props.tutorials[i+1].description}
 					lastUpdate={props.tutorials[i+1].lastUpdate}
-					rating={props.tutorials[i+1].rating}
 					onClick={props.onSelect}
-					// setRatingFor={(id, rating)=>this.setRating(id, rating)}
 					/>
 				</Col>
 			)
