@@ -59,7 +59,7 @@ class CreateCode extends Component {
     };
 
     return (
-      <PanelGroup activeKey={this.state.activeKey} onSelect={this.handleSelect} accordion>
+      <PanelGroup style={{"height": "100%"}} activeKey={this.state.activeKey} onSelect={this.handleSelect} accordion>
         <Panel header="Starter Code" eventKey="1">
           <Tabs defaultActiveKey={1} id="uncontrolled-tab-example1">
             <Tab eventKey={1} title="JS">

@@ -8,13 +8,9 @@ import Tutorial from './Tutorial.js';
 import CreateTutorial from './CreateTutorial.js';
 import InstructionWriter from './InstructionWriter.js';
 import arrayMove from 'react-sortable-hoc';
-import ListGroup from 'react-bootstrap/lib/ListGroup';
-import ListGroupItem from 'react-bootstrap/lib/ListGroupItem';
-import Button from 'react-bootstrap/lib/Button';
-import ButtonGroup from 'react-bootstrap/lib/ButtonGroup';
-import FormGroup from 'react-bootstrap/lib/FormGroup';
-import FormControl from 'react-bootstrap/lib/FormControl';
 import styled from 'styled-components';
+
+import { ListGroup, ListGroupItem, Button, PageHeader, Form, Col, ControlLabel, FormControl, FormGroup, ButtonGroup } from 'react-bootstrap';
 
 
 const InitialDiv = styled.div`
@@ -187,22 +183,47 @@ class CreateContainer extends Component {
     let renderedElement;
     if (this.state.mode === 'titlePage') {
       renderedElement = (
-        <InitialDiv>
-          <br />
-          <br />
-          <br />
-          <FormGroup>
-            <FormControl placeholder="Enter a title..." value={this.state.title} onChange={this.handleTitleChange}/>
-            <br/>
-            <FormControl componentClass="textarea"  placeholder="Enter a description..." value={this.state.description} onChange={this.handleDescriptionChange}/>
-            <br/>
-            <ButtonGroup>
-              <Button type="submit" onClick={this.props.onExit}>Cancel</Button>
-              <Button type="submit" onClick={this.handleNext}>Next</Button>
-            </ButtonGroup>
+        <div>
+          <br/>
+          <br/>
+          <br/>
+          <Col xs={6} xsOffset={4}><PageHeader>New Tutorial</PageHeader></Col>
+          <Form horizontal>
+          <FormGroup validationState={this.state.errorMessage === "Please enter a title." ? "error" : null}>
+            <Col componentClass={ControlLabel} xs={2} xsOffset={2}>
+              Title
+            </Col>
+            <Col xs={6} >
+              <FormControl placeholder="Enter a title..." value={this.state.title} onChange={this.handleTitleChange}/>
+            </Col>
           </FormGroup>
-          <p>{this.state.errorMessage}</p>
-        </InitialDiv>
+
+          <FormGroup validationState={this.state.errorMessage === "Please type in a description." ? "error" : null}>
+            <Col componentClass={ControlLabel} xs={2} xsOffset={2}>
+              Description
+            </Col>
+            <Col xs={6} >
+              <FormControl componentClass="textarea"  placeholder="Enter a description..." value={this.state.description} onChange={this.handleDescriptionChange}/>
+            </Col>
+          </FormGroup>
+
+          <FormGroup>
+            <Col xsOffset={4} xs={6}>
+              {this.state.errorMessage ? <ControlLabel type="error">{this.state.errorMessage}</ControlLabel> : null}
+            </Col>
+          </FormGroup>
+
+          <FormGroup>
+            <Col xsOffset={4} xs={6}>
+              <ButtonGroup>
+                  <Button type="submit" onClick={this.props.onExit}>Cancel</Button>
+                  <Button type="submit" onClick={this.handleNext}>Next</Button>
+              </ButtonGroup>
+            </Col>
+          </FormGroup>
+
+        </Form>
+        </div>
       );
 
     } else {

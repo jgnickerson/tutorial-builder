@@ -7,6 +7,7 @@ import CreateCode from './CreateCode.js';
 import CreateExecute from './CreateExecute.js';
 
 const EqualHeightDiv = styled.div`
+  height: 605px;
   display: flex;
 `;
 

@@ -23,18 +23,19 @@ const InstructionContainer = styled.li`
   padding: 5px;
   vertical-align: top;
   border: 1px solid #eee;
+  position: relative;
 `;
 
 const StyledP = styled.p`
   display: inline-block;
-  width: 80%;
+  width: 87%;
   padding-right: 5%;
   word-break: break-all;
 `;
 
 const StyledDiv = styled.div`
   display: inline-block;
-  width: 80%;
+  width: 87%;
   padding-right: 5%;
 `;
 
@@ -56,7 +57,7 @@ const SortableItem = SortableElement((props) => {
   };
 
   let item;
-  let deleteButton = <Button style={{float: "right"}} onClick={() => props.removeInstruction(index)}>delete</Button>;
+  let deleteButton = <Button style={{float: "right"}} onClick={() => props.removeInstruction(index)}>✖</Button>;
 
   if (value.type === 'text') {
     item = (
@@ -104,8 +105,8 @@ function CreateInstructions(props) {
   return(
       <InstructionContainer>
         <SortableList items={props.instructions} onSortEnd={props.onSortEnd} removeInstruction={props.removeInstruction}/>
-        <FormGroup>
-          <FormControl componentClass="textarea" placeholder="New instruction text..." value={props.newInstructionText} onChange={props.onNewInstructionChange}/>
+        <FormGroup style={{position: "absolute", bottom: 0}}>
+          <FormControl componentClass="textarea" style={{"resize": "none", "rows": "5"}} placeholder="New instruction text..." value={props.newInstructionText} onChange={props.onNewInstructionChange}/>
           <br/>
           <ButtonGroup>
             <DropdownButton id="input-dropdown-addon"

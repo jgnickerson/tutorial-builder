@@ -9,6 +9,7 @@ import ButtonGroup from 'react-bootstrap/lib/ButtonGroup';
 
 const ExecuteDiv = styled.div`
   width: 350px;
+  height: 100%;
 `;
 
 //Execute Component
