@@ -14,58 +14,48 @@ class TutorialBrowser extends Component {
       tutorials:[]
     };
 
-    this.onSelect = this.onSelect.bind(this);
-    this.fetchTutorials = this.fetchTutorials.bind(this);
-
-    this.fetchTutorials(props);
+    this.fetchTutorials(props.mode);
   }
 
-  fetchTutorials(props) {
-    fetch('/tutorials/')
-    .then((response)=>{
-      if (response.ok) {
-        return response.json();
+  fetchTutorials(mode) {
+    const jwt = window.localStorage.getItem('jwt');
+    let request;
+    switch (mode) {
+      case 'used':
+        request = new Request('/users/tutorials', {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt}
+        });
+        break;
+
+      case 'owned':
+        request = new Request('/users/owner', {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt}
+        });
+        break;
+
+      case 'all':
+      default:
+        request = new Request('/tutorials', {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json'}
+        });
+    }
+    fetch(request)
+    .then(response=>{ if (response.ok) return response.json() })
+    .then(data=>{
+      if (data && !data.isBoom) {
+        this.setState({tutorials:data})
+      } else {
+        //TODO handle errs
+        console.log(data);
       }
     })
-    .then(data=>{
-      console.log(data);
-      this.setState({tutorials:data})
-    })
-    // // if browser mode is specified
-    // if (props.browserMode) {
-    //   // fetch user-specific data
-    //   fetch('/users/'+props.username)
-    //   .then((response)=>{
-    //     if (response.ok) {
-    //       return response.json();
-    //     }
-    //   })
-    //   .then((userData)=>{
-    //     let tutorials;
-    //     if (props.browserMode === 'used') {
-    //       // only the tutorials used by the user
-    //       tutorials = userData.tutorialsUsed;
-    //     } else {
-    //       // browserMode === 'owned'
-    //       // only the tutorials owned by the user
-    //       tutorials = userData.tutorialsOwned;
-    //     }
-    //     this.setState({tutorials: tutorials});
-    //
-    //   });
-    //
-    // // otherwise fetch all tutorials
-    // } else {
-    //
-    // }
   }
 
   componentWillReceiveProps(nextProps){
-    this.fetchTutorials(nextProps);
-  }
-
-  onSelect(tutorialId) {
-    this.props.onSelect(tutorialId);
+    this.fetchTutorials(nextProps.mode);
   }
 
   setRating(tutorialId, rating){
@@ -77,7 +67,7 @@ class TutorialBrowser extends Component {
   render() {
     return (
       <div>
-        <TutorialList tutorials={this.state.tutorials} onSelect={this.onSelect}/>
+        <TutorialList tutorials={this.state.tutorials} onSelect={this.props.onSelect}/>
       </div>
     )
   }

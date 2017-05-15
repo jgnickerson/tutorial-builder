@@ -7,9 +7,10 @@ import Instructions from './Instructions.js';
 import Editor from './Editor.js';
 import SolutionDisplay from './SolutionDisplay.js';
 import Execute from './Execute.js';
-import style from 'bootstrap/dist/css/bootstrap.css';
-import {Grid, Row, Col} from 'react-bootstrap';
+
 import styled from 'styled-components';
+import {Grid, Row, Col} from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.css';
 
 const EqualHeightDiv = styled.div`
   display: flex;
@@ -19,7 +20,7 @@ function Tutorial(props) {
     if (props.mode){
       return (
         <div>
-          <button onClick={props.onExit}>Exit</button>
+          <button onClick={()=> props.onExit('')}>Exit</button>
             <Grid>
               <Row className="show-grid">
               <EqualHeightDiv>

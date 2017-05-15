@@ -136,8 +136,6 @@ app.get('/tutorials/:id*?',
 				} else {
 					db.collection("tutorials").findOne({_id: new ObjectID(req.params.id)})
 					.then(tutorial => {
-						//TODO remove hack(tutorial)
-						tutorial = hack(tutorial);
 						db.collection("users").update(
 							{_id: new ObjectID(req.user.id)},
 							{$push: {tutorialsUsed: tutorial}})
@@ -147,58 +145,17 @@ app.get('/tutorials/:id*?',
 			}, err => res.send(boom.badImplementation(err)));
 		} else {
 			db.collection("tutorials").findOne({_id: new ObjectID(req.params.id)})
-			//TODO remove hack(tutorial)
-			.then(tutorial => res.send(hack(tutorial)), err => res.send(boom.badImplementation(err)));
+			.then(tutorial => res.send(tutorial), err => res.send(boom.badImplementation(err)));
 		}
 	// otherwise send all entries
 	} else {
 		db.collection("tutorials").find().toArray((err, result) => {
 			if (err) {
 				res.send(boom.badImplementation(err));
-			}
-			res.send(result);
-		});
-	}
-});
-
-//TODO disappear when we remove stages from a tutorial
-function hack(tutorial) {
-	return {
-		_id: tutorial._id,
-		title: tutorial.title,
-		creator: tutorial.creator,
-		description: tutorial.description,
-		stages: tutorial.stages,
-		js: tutorial.stages[0].code.js,
-		html: tutorial.stages[0].code.html,
-		css: tutorial.stages[0].code.css,
-		lastUpdate: tutorial.lastUpdate,
-		rating: tutorial.rating,
-		currentStage: 0
-	}
-}
-
-// get the info about the users
-app.get('/users/:username*?', (req, res) => {
-	// if we have a specific username to look up
-	if (req.params.username) {
-		db.collection("users").find({username: req.params.username}).toArray((err, result) =>{
-			if (err) {
-				console.log(err);
-			}
-
-			if (result[0]) {
-				res.send(result[0]);
 			} else {
-				res.sendStatus(500);
+				result = result.filter(tutorial=> tutorial.published);
+				res.send(result);
 			}
-		});
-	} else {
-		db.collection("users").find().toArray((err, result) => {
-			if (err) {
-				console.log(err);
-			}
-			res.send(result);
 		});
 	}
 });
@@ -267,9 +224,8 @@ app.post('/users/owner/',
 	(req,res) => {
 		db.collection("tutorials").insert(req.body)
 		.then(insertResponse => {
-			let tutorial = req.body;
+			const tutorial = req.body;
 			tutorial._id = new ObjectID(insertResponse.ops[0]._id);
-			tutorial = hack(tutorial);
 			db.collection("users").update(
 					{_id: new ObjectID(req.user.id)},
 					{$push: {"tutorialsOwned": tutorial}})
@@ -281,16 +237,15 @@ app.post('/users/owner/',
 
 
 //persisting tutorial edits for owner
-app.put('/users/owner/:tutorialID*?',
+app.put('/users/owner/:tutorialID',
 	jwtMiddleware({secret: passphrase}),
 	(req,res) => {
 		// update tutorial in tutorialsOwned
-		let tutorial = req.body;
+		const tutorial = req.body;
 		tutorial._id = new ObjectID(req.params.tutorialID);
-		tutorial = hack(tutorial);
 		db.collection("users").update(
 			{_id: new ObjectID(req.user.id), "tutorialsOwned._id": new ObjectID(req.params.tutorialID)},
-			{$set: {"tutorialsOwned.$": hack(tutorial)}},
+			{$set: {"tutorialsOwned.$": tutorial}},
 			(err, result) => {
 				if (err) {
 					res.send(boom.badImplementation(err));
@@ -322,22 +277,18 @@ app.put('/users/:tutorialID',
 		});
 });
 
-// update a specific user's account
-// app.put('/users/:id', (req, res) => {
-// 	let updatedUser = req.body;
-// 	updatedUser._id = ObjectID.createFromHexString(updatedUser._id);
-//
-// 	db.collection("users").findOneAndUpdate(
-// 		{_id: updatedUser._id},
-// 		{$set: updatedUser},
-// 		{returnOriginal: false},
-// 		(err, result) => {
-// 			if (err) {
-// 				console.log(err);
-// 				res.sendStatus(500);
-// 			} else {
-// 				res.send(result.value);
-// 			}
-// 		}
-// 	);
-// });
+app.get('/users/owner',
+	jwtMiddleware({secret: passphrase}),
+	(req, res) => {
+		db.collection('users').findOne({_id: new ObjectID(req.user.id)}).then(
+			user=> res.send(user.tutorialsOwned),
+			err => res.send(boom.badImplementation(err)));
+});
+
+app.get('/users/tutorials',
+	jwtMiddleware({secret: passphrase}),
+	(req, res) => {
+		db.collection('users').findOne({_id: new ObjectID(req.user.id)}).then(
+			user=> res.send(user.tutorialsUsed),
+			err => res.send(boom.badImplementation(err)));
+});

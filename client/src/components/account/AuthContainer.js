@@ -1,11 +1,8 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
 import Login from './Login.js';
 import Signup from './Signup.js';
-
-const CenteredTitle=styled.h1`
-  text-align: center;
-`;
+import {Col, PageHeader, Button} from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.css';
 
 class AuthContainer extends Component {
   constructor() {
@@ -22,8 +19,9 @@ class AuthContainer extends Component {
     this.attemptRegister = this.attemptRegister.bind(this);
   }
 
-  attemptLogin() {
+  attemptLogin(e) {
     //TODO check for empty password
+    e.preventDefault()
     if (this.state.username) {
       fetch('/login/', {
         method: 'POST',
@@ -41,10 +39,17 @@ class AuthContainer extends Component {
       .then((data) => {
         if (data.token) {
           localStorage.setItem('jwt', data.token);
-          this.props.switchMode('browser');
+          localStorage.setItem('user', data.username);
+          this.props.handleLogin(data.username);
         } else {
-          //TODO handle error messages
-          console.log(data);
+          let err;
+          if (data.isBoom && (data.output.payload.message === "invalid username" || data.output.payload.message === "invalid password"))
+              err = "Invalid Username or Password";
+
+          if (!err)
+            err = "Something went wrong. Please Try Again.";
+
+          this.setState({errorMessage: err})
         }
       });
     } else {
@@ -52,7 +57,8 @@ class AuthContainer extends Component {
     }
   }
 
-  attemptRegister() {
+  attemptRegister(e) {
+    e.preventDefault();
     let error;
     if (this.state.password && this.state.username) {
       if (this.state.password === this.state.passwordCheck) {
@@ -65,23 +71,35 @@ class AuthContainer extends Component {
         .then((response)=>{
           if (response.ok){
             return response.json();
-          } else {
-            console.log(response);
-            //TODO handle various server errors here
           }
         })
         .then((data) => {
-          localStorage.setItem('jwt', data.token);
-          this.props.switchMode('signupSuccess');
+          if (data.token) {
+            localStorage.setItem('jwt', data.token);
+            localStorage.setItem('user', data.username);
+            this.props.handleRegister(data.username);
+          } else {
+              let err;
+              if (data.isBoom && data.output.payload.message === "username already exists")
+                  err = "That username is already taken. Please try another one.";
+
+              if (!err)
+                  err = "Something went wrong. Please Try Again.";
+
+              this.setState({errorMessage: err})
+          }
         });
       } else {
         error = "The passwords do not match."
       }
     } else {
-      if (!this.state.activeUser.password) {
+      if (!this.state.password && !this.state.username && !this.state.passwordCheck) {
+        error = "Please enter a username and password."
+      }
+      else if (!this.state.password) {
         error = "Please enter a password."
       }
-      if (!this.state.activeUser.username) {
+      else if (!this.state.username) {
         error = "Please enter a username."
       }
       this.setState({
@@ -113,12 +131,21 @@ class AuthContainer extends Component {
                  setUsername={(e) => this.setState({username: e.target.value})}
                  setPassword={(e) => this.setState({password: e.target.value})}
                  attemptLogin={this.attemptLogin}
-                 errorMessage={this.state.errorMessage}
-                 switchToRegister={() => this.props.switchMode('signup')}/>
+                 errorMessage={this.state.errorMessage}/>
+        );
+        break;
+
+      case 'signupSuccess':
+        active = (
+          <div>
+            <Col xs={6} xsOffset={3}><PageHeader>You have successfully registered!</PageHeader></Col>
+            <Col xs={1} xsOffset={3}><Button onClick={() => this.props.switchMode('browser')}>Browse Tutorials!</Button></Col>
+          </div>
         );
         break;
 
       case 'signup':
+      default:
         active = (
           <Signup username={this.state.username}
                   password={this.state.password}
@@ -127,25 +154,13 @@ class AuthContainer extends Component {
                   setPassword={(e) => this.setState({password: e.target.value})}
                   setPassCheck={(e) => this.setState({passwordCheck: e.target.value})}
                   attemptRegister={this.attemptRegister}
-                  errorMessage={this.state.errorMessage}
-                  backToLogin={() => this.props.switchMode('login')}/>
+                  errorMessage={this.state.errorMessage}/>
         );
-        break;
-
-      case 'signupSuccess':
-        active = (
-          <div>
-            <h2>You have successfully registered!</h2>
-            <br/>
-            <button onClick={() => this.props.switchMode('browser')}>Browse Tutorials!</button>
-          </div>
-        );
-      default:
     }
 
     return (
       <div>
-        <CenteredTitle>Tutorial Builder</CenteredTitle>
+        <br /> <br /> <br />
         {active}
       </div>
     );
