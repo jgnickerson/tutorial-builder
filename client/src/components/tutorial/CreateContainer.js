@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 import Tutorial from './Tutorial.js';
 import CreateTutorial from './CreateTutorial.js';
 import InstructionWriter from './InstructionWriter.js';
+import HelpModals from './HelpModals.js';
 import arrayMove from 'react-sortable-hoc';
 import styled from 'styled-components';
 
@@ -36,6 +37,7 @@ class CreateContainer extends Component {
         css: ""
       },
       instructions: [],
+      showHelpModals: false,
       mode: 'titlePage',
       newInstructionText:"",
       newInstructionType:"text",
@@ -231,11 +233,18 @@ class CreateContainer extends Component {
       );
 
     } else {
+
+      let helpModal;
+      if (this.state.showHelpModals) {
+        helpModal = <HelpModals onClose={()=>this.setState({showHelpModals:false})}/>;  
+      } 
+
       renderedElement = (
         <div>
           <br />
           <br />
           <br />
+          {helpModal}
           <CreateTutorial changeType={this.handleChangeType}
                           newInstructionText={this.state.newInstructionText}
                           newInstructionType={this.state.newInstructionType}
@@ -248,6 +257,7 @@ class CreateContainer extends Component {
                           starterCode={this.state.starterCode}
                           onCodeChange={this.handleCodeChange}
                           goBack={this.handleGoBack}
+                          onHelp={()=>this.setState({showHelpModals:true})}
                           />
        </div>
       );

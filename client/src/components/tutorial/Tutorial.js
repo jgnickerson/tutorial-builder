@@ -8,7 +8,8 @@ import Editor from './Editor.js';
 import SolutionDisplay from './SolutionDisplay.js';
 import Execute from './Execute.js';
 import CreateCode from './CreateCode.js';
-import {Grid, Row, Col, PageHeader, ControlLabel, FormControl, ButtonToolbar, Button, PanelGroup, Panel, BPanel} from 'react-bootstrap';
+import {Grid, Row, Col, PageHeader, ControlLabel, FormControl, ButtonToolbar, 
+  Button, PanelGroup, Panel, BPanel, ButtonGroup} from 'react-bootstrap';
 import styled from 'styled-components';
 import 'bootstrap/dist/css/bootstrap.css';
 
@@ -33,7 +34,10 @@ function Tutorial(props) {
               <EqualHeightDiv>
                 <Col md={4}><Instructions instructions={props.instructions}/>
                 <p />
-                <Button onClick={()=> props.onExit('')}>Exit</Button>
+                <ButtonGroup>
+                  <Button onClick={()=> props.onExit('')}>Exit</Button>
+                  <Button onClick={props.onFinish}>Finish</Button>
+                </ButtonGroup>
                 </Col>
                 <Col md={4}>
                   <Editor starterCode={props.userCode}

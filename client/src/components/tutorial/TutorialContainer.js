@@ -5,6 +5,8 @@
 
 import React, { Component } from 'react';
 import Tutorial from './Tutorial.js';
+import SingleModal from './SingleModal.js';
+import { Alert } from 'react-bootstrap';
 
 class TutorialContainer extends Component {
   constructor(props) {
@@ -22,6 +24,8 @@ class TutorialContainer extends Component {
         css: ""
       },
       instructions: null,
+      showWarningModal: true,
+      showFinishedModal: false,
       mode: 'javascript'
     }
 
@@ -109,8 +113,37 @@ class TutorialContainer extends Component {
       this.setState({mode: mode});
     });
 
+    // modal warns user if they are not logged in that they're changes won't persist
+    const warningBody = (<div>
+      <Alert bsStyle="warning">
+        <strong>You aren't signed in!</strong> Progress made on this tutorial won't be saved.
+      </Alert>
+    </div>);
+
+    let warningModal;
+    const jwt = window.localStorage.getItem('jwt');
+    if (!jwt && this.state.showWarningModal) warningModal = (
+      <SingleModal body={warningBody} completeBtnName="Close"
+        onClose={()=>this.setState({showWarningModal: false})}
+        onComplete={()=>this.setState({showWarningModal: false})}/>
+    );
+
+    const finishedBody = (<div>
+      <Alert bsStyle="success">
+        <strong>Congrats!</strong> You completed the tutorial.
+      </Alert>
+    </div>);
+
+    let finishedModal;
+    if (this.state.showFinishedModal) finishedModal = (
+      <SingleModal body={finishedBody} completeBtnName="Browse Tutorials"
+        onClose={()=>this.setState({showFinishedModal: false})}
+        onComplete={this.props.onExit}/>
+    );
+
     return (
       <div>
+        {warningModal} 
         <Tutorial
           userCode={this.state.userCode}
           solutionCode={this.state.solutionCode}
@@ -118,7 +151,9 @@ class TutorialContainer extends Component {
           onExit={this.props.onExit}
           onCodeChange={this.handleCodeChange}
           mode={this.state.mode}
+          onFinish={()=>this.setState({showFinishedModal:true})}
         />
+        {finishedModal}
       </div>
     )
   }
