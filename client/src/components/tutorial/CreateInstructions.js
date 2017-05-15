@@ -41,7 +41,10 @@ const StyledDiv = styled.div`
 
 const StyledUL = styled.ul`
   padding: 0;
-  list-style-type: none;
+  max-height: 450px;
+  height: 450px;
+  overflow: auto;
+  border: 1px solid #eee;
 `;
 
 const SortableItem = SortableElement((props) => {
@@ -103,22 +106,26 @@ function CreateInstructions(props) {
   };
 
   return(
-      <InstructionContainer>
-        <SortableList items={props.instructions} onSortEnd={props.onSortEnd} removeInstruction={props.removeInstruction}/>
-        <FormGroup style={{position: "absolute", bottom: 0}}>
-          <FormControl componentClass="textarea" style={{"resize": "none", "rows": "5"}} placeholder="New instruction text..." value={props.newInstructionText} onChange={props.onNewInstructionChange}/>
-          <br/>
-          <ButtonGroup>
+    <InstructionContainer>
+      <SortableList items={props.instructions} onSortEnd={props.onSortEnd} removeInstruction={props.removeInstruction}/>
+      <FormGroup style={{position: "absolute", bottom: 0, width:"97%"}}>
+        <Col xs={9} style={{"padding-right": 0, "padding-left":0}}>
+          <FormControl componentClass="textarea" style={{"resize": "none", "height": "100px"}} placeholder="New instruction text..." value={props.newInstructionText} onChange={props.onNewInstructionChange}/>
+        </Col>
+        <Col xs={1} style={{"padding-right": 0, "padding-left":"2%"}}>
+          <ButtonGroup vertical>
+            <Button onClick={props.addInstruction}>Add</Button>
             <DropdownButton id="input-dropdown-addon"
-                            title={"Type: "+props.newInstructionType}
-                            onSelect={(type) => props.changeType(type)}>
-              <MenuItem eventKey="text">text</MenuItem>
-              <MenuItem eventKey="code">code</MenuItem>
+                            title={props.newInstructionType.charAt(0).toUpperCase() + props.newInstructionType.slice(1)}
+                            onSelect={(type) => props.changeType(type)}
+                            style={{width: "80px"}}>
+              <MenuItem eventKey="text">Text</MenuItem>
+              <MenuItem eventKey="code">Code</MenuItem>
             </DropdownButton>
-            <Button onClick={props.addInstruction}>Add Instruction</Button>
           </ButtonGroup>
-        </FormGroup>
-      </InstructionContainer>
+        </Col>
+      </FormGroup>
+    </InstructionContainer>
   );
 }
 

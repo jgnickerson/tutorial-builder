@@ -3,26 +3,36 @@
 */
 import React from 'react';
 import styled from 'styled-components';
-import Panel from 'react-bootstrap/lib/Panel';
 import Button from 'react-bootstrap/lib/Button';
 import ButtonGroup from 'react-bootstrap/lib/ButtonGroup';
+import Panel from 'react-bootstrap/lib/Panel';
 
-const ExecuteDiv = styled.div`
-  width: 350px;
-  height: 100%;
+const Console = styled.div`
+  height: 300px;
+  width: 304px;
+  background-color: #f7f7f7;
+  margin-bottom: 2px;
+  border: 1px black solid;
+`;
+
+const ExecuteDiv = styled.div `
+  width: 304px;
+  height: 300px;
 `;
 
 //Execute Component
 function Execute(props) {
   const onShow = (()=>{
+    console.log(props.solution);
     executeCode(props.solutionCode.js, props.solutionCode.html, props.solutionCode.css, true);
   });
   return (
     <ExecuteDiv className="execution-body">
-      <div className="execution-iframe-div" id="execution-iframe-div" width="100%">
-        <iframe id="execution-iframe" width="100%"></iframe>
+      <div className="execution-iframe-div" id="execution-iframe-div" width="100%" height="300px">
+        <iframe width="100%" height="300px" id="execution-iframe" ></iframe>
       </div>
-      <Panel width="100%" className="execution-console-div" id="execution-console-div"></Panel>
+      <Console className="execution-console-div" id="execution-console-div"></Console>
+      <p />
       <ButtonGroup>
         <Button onClick={()=>executeCode(props.starterCode.js, props.starterCode.html, props.starterCode.css, true)}>Run Starter Code</Button>
         <Button onClick={onShow}>Run Solution Code</Button>
@@ -57,7 +67,7 @@ function executeCode(js, rawHtml, css, showIframe) {
 
 
     let code = consoleLogRewrite + js + endBufferCode;
-    let html = '<html><head>' + '<style>' + css + '</style></head><body>' + rawHtml + '<script type="text/javascript">' + code + '</script></body></html>';
+    let html = '<html><head><style>' + css + '</style></head><body>' + rawHtml + '<script type="text/javascript">' + code + '</script></body></html>';
 
     //writing file in the iframe and compiling
     iframe.contentDocument.open();
@@ -76,7 +86,8 @@ function refreshIframe(showIframe) {
   const iframeNode = document.getElementById("execution-iframe-div");
   const iframe = document.createElement('iframe');
   iframe.setAttribute("id","execution-iframe");
-  iframe.setAttribute("width","100%")
+  iframe.setAttribute("width","100%");
+  iframe.setAttribute("height","300px");
   iframeNode.appendChild(iframe);
 
   if (!showIframe) {

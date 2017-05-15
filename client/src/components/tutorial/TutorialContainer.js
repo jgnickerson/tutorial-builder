@@ -11,11 +11,17 @@ class TutorialContainer extends Component {
     super(props);
 
     this.state = {
-      jsCode: "",
-      htmlCode: "",
-      cssCode: "",
+      userCode: {
+        js: "",
+        html: "",
+        css: ""
+      },
+      solutionCode: {
+        js: "",
+        html: "",
+        css: ""
+      },
       instructions: null,
-      solution: {},
       mode: 'javascript'
     }
 
@@ -35,11 +41,10 @@ class TutorialContainer extends Component {
     }).then(response => { if(response.ok) return response.json() })
     .then(data => {
       if (!data.isBoom) {
+        let userCode = {js: data.js, html: data.html, css: data.css};
         this.setState({
-          jsCode: data.js,
-          htmlCode: data.html,
-          cssCode: data.css,
-          solution: data.solution,
+          userCode: userCode,
+          solutionCode: data.solution,
           instructions: data.instructions
         });
 
@@ -58,7 +63,7 @@ class TutorialContainer extends Component {
       fetch('/users/' + this.props.activeTutorial, {
         method: 'PUT',
         headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt},
-        body: JSON.stringify({js: this.state.jsCode, html: this.state.htmlCode, css: this.state.cssCode})
+        body: JSON.stringify({js: this.state.userCode.js, html: this.state.userCode.html, css: this.state.userCode.css})
       })
       .then(response=> {
         if (response.isBoom) {
@@ -85,13 +90,16 @@ class TutorialContainer extends Component {
     clearInterval(this.persistInterval);
   }
 
-  handleCodeChange(code) {
-    if (this.state.mode === 'javascript') {
-      this.setState({jsCode: code});
-    } else if (this.state.mode === 'html') {
-      this.setState({htmlCode: code});
-    } else if (this.state.mode === 'css') {
-      this.setState({cssCode: code});
+  handleCodeChange(code, which, type) {
+    if (which === 'starter') {
+      let userCode = this.state.userCode;
+      userCode[type] = code;
+      this.setState({userCode : userCode});
+
+    } else {
+      let solutionCode = this.state.solutionCode;
+      solutionCode[type] = code;
+      this.setState({solutionCode : solutionCode});
     }
   }
 
@@ -104,16 +112,12 @@ class TutorialContainer extends Component {
     return (
       <div>
         <Tutorial
-          code={this.getCodeToDisplay()}
-          js={this.state.jsCode}
-          html={this.state.htmlCode}
-          css={this.state.cssCode}
+          userCode={this.state.userCode}
+          solutionCode={this.state.solutionCode}
           instructions={this.state.instructions}
           onExit={this.props.onExit}
           onCodeChange={this.handleCodeChange}
           mode={this.state.mode}
-          onModeChange={onModeChange}
-          solution={this.state.solution}
         />
       </div>
     )

@@ -7,6 +7,7 @@ import Instructions from './Instructions.js';
 import Editor from './Editor.js';
 import SolutionDisplay from './SolutionDisplay.js';
 import Execute from './Execute.js';
+import CreateCode from './CreateCode.js';
 import {Grid, Row, Col, PageHeader, ControlLabel, FormControl, ButtonToolbar, Button, PanelGroup, Panel, BPanel} from 'react-bootstrap';
 import styled from 'styled-components';
 import 'bootstrap/dist/css/bootstrap.css';
@@ -35,16 +36,11 @@ function Tutorial(props) {
                 <Button onClick={()=> props.onExit('')}>Exit</Button>
                 </Col>
                 <Col md={4}>
-                <PanelGroup defaultActiveKey="1" accordion>
-                  <Panel header="My Code" eventKey="1">
-                    <Editor code={props.code} onCodeChange={props.onCodeChange} mode={props.mode} onModeChange={props.onModeChange}/>
-                  </Panel>
-                  <Panel header="Solution Code" eventKey="2">
-                  <SolutionDisplay mode={"javascript"} solution={props.solution}/>
-                  </Panel>
-                </PanelGroup>
+                  <Editor starterCode={props.userCode}
+                              solutionCode={props.solutionCode}
+                              onCodeChange={props.onCodeChange}></Editor>
                 </Col>
-                <Col md={4}><Execute code={props.code} js={props.js} html={props.html} css={props.css} solution={props.solution}/></Col>
+                <Col md={4}><Execute userCode={props.userCode} solutionCode={props.solutionCode}/></Col>
                 </EqualHeightDiv>
               </Row>
             </Grid>

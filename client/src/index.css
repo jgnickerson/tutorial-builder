@@ -8,3 +8,7 @@ body {
   height: auto;
 	border: 1px solid #eee;
 }
+
+.CodeMirror-scroll {
+  max-height: 445px;
+}

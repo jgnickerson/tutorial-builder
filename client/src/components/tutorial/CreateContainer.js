@@ -12,7 +12,6 @@ import styled from 'styled-components';
 
 import { ListGroup, ListGroupItem, Button, PageHeader, Form, Col, ControlLabel, FormControl, FormGroup, ButtonGroup } from 'react-bootstrap';
 
-
 const InitialDiv = styled.div`
   margin-left: 20%;
   margin-right: 20%;
@@ -27,9 +26,9 @@ class CreateContainer extends Component {
       title: "",
       description: "",
       starterCode: {
-        js: "\n\n\n\n\n\n\n\n",
-        html: "\n\n\n\n\n\n\n\n",
-        css: "\n\n\n\n\n\n\n\n"
+        js: "",
+        html: "",
+        css: ""
       },
       solutionCode: {
         js: "",
@@ -44,42 +43,41 @@ class CreateContainer extends Component {
     }
 
     //if someone is editing this tutorial
-    //TODO AMIR, this prop doesn't exist yet.
-    //you may want to do it this way, you may not
-    // if (props.tutorialID) {
-    //   this.persistInterval = setInterval(()=> this.persistTutorial(), 1000);
-    //
-    //   //someone is creating a completely new tutorial
-    // } else {
-    //   const jwt = window.localStorage.getItem('jwt');
-    //   if (jwt) {
-    //     fetch('/users/owner', {
-    //       method: 'POST',
-    //       headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt},
-    //       body: JSON.stringify({title: this.state.title, description: this.state.description, js: this.state.jsCode, html: this.state.htmlCode, css: this.state.cssCode, instructions: this.state.instructions, published: false})
-    //     }).then(response=> { if (response.ok) return response.json()
-    //     }).then(data=>{
-    //       if (!data.isBoom) {
-    //         this.setState({tutorialID: data._id});
-    //         this.persistInterval = setInterval(() => this.persistTutorial(), 1000);
-    //       } else {
-    //         //TODO handle error
-    //         console.log(data);
-    //       }
-    //     });
-    //   }
-    // }
+    if (props.tutorialID) {
+      this.persistInterval = setInterval(()=> this.persistTutorial(), 1000);
+
+      //someone is creating a completely new tutorial
+    } else {
+      const jwt = window.localStorage.getItem('jwt');
+      if (jwt) {
+        fetch('/users/owner', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt},
+          body: JSON.stringify({title: this.state.title, description: this.state.description, js: this.state.starterCode.js, html: this.state.starterCode.html, css: this.state.starterCode.css, solution: this.state.solutionCode, instructions: this.state.instructions, lastUpdate: new Date().toISOString(), published: false})
+        }).then(response=> { if (response.ok) return response.json()
+        }).then(data=>{
+          if (!data.isBoom) {
+            this.setState({tutorialID: data._id});
+            this.persistInterval = setInterval(() => this.persistTutorial(), 1000);
+          } else {
+            //TODO handle error
+            console.log(data);
+          }
+        });
+      }
+    }
 
     this.handleCodeChange = this.handleCodeChange.bind(this);
     this.handleTitleChange = this.handleTitleChange.bind(this);
     this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
     this.handleInstructionAdd = this.handleInstructionAdd.bind(this);
-    this.handleSaveNewTutorial = this.handleSaveNewTutorial.bind(this);
+    this.handlePublish = this.handlePublish.bind(this);
     this.onSortEnd = this.onSortEnd.bind(this);
     this.handleNewInstructionChange = this.handleNewInstructionChange.bind(this);
     this.handleChangeType = this.handleChangeType.bind(this);
     this.removeInstruction = this.removeInstruction.bind(this);
     this.handleNext = this.handleNext.bind(this);
+    this.handleGoBack = this.handleGoBack.bind(this);
   }
 
   persistTutorial() {
@@ -88,7 +86,7 @@ class CreateContainer extends Component {
       fetch('/users/owner/' + this.state.tutorialID, {
         method: 'PUT',
         headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt},
-        body: JSON.stringify({title: this.state.title, description: this.state.description, js: this.state.jsCode, html: this.state.htmlCode, css: this.state.cssCode, instructions: this.state.instructions})
+        body: JSON.stringify({title: this.state.title, description: this.state.description, js: this.state.starterCode.js, html: this.state.starterCode.html, css: this.state.starterCode.css, solution: this.state.solutionCode, instructions: this.state.instructions, published: false, lastUpdate: new Date().toISOString()})
       }).then(response=> { if (!response.ok) console.log(response) }) //TODO handle error
     }
   }
@@ -136,7 +134,7 @@ class CreateContainer extends Component {
   handleChangeType(type){
     this.setState({newInstructionType: type});
   }
-  handleSaveNewTutorial() {
+  handlePublish() {
     /*
     TODO when this called, it should hit a route on the server that flips tutorial.published
     in the tutorials db, and updates that tutorial with the latest from users.tutoraialsOwnder.
@@ -169,14 +167,20 @@ class CreateContainer extends Component {
     });
   };
 
-  handleNext() {
+  handleNext(e) {
+    e.preventDefault()
     if (!this.state.title) {
       this.setState({errorMessage: "Please enter a title."})
     } else if (!this.state.description) {
       this.setState({errorMessage: "Please type in a description."})
     } else {
-      this.setState({mode: "detailsPage"});
+      this.setState({errorMessage: null, mode: "detailsPage"});
     }
+  }
+
+  handleGoBack(e) {
+    e.preventDefault();
+    this.setState({mode: "titlePage"});
   }
 
   render() {
@@ -243,6 +247,7 @@ class CreateContainer extends Component {
                           solutionCode={this.state.solutionCode}
                           starterCode={this.state.starterCode}
                           onCodeChange={this.handleCodeChange}
+                          goBack={this.handleGoBack}
                           />
        </div>
       );

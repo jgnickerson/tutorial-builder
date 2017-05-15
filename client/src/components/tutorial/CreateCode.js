@@ -7,6 +7,14 @@ import Tabs from 'react-bootstrap/lib/Tabs';
 import Tab from 'react-bootstrap/lib/Tab';
 import CodeMirror from 'react-codemirror';
 
+const CodeContainer = styled.li`
+  width: 100%;
+  height: 490px;
+  display: inline-block;
+  vertical-align: top;
+`;
+
+
 class CreateCode extends Component {
 
   constructor(props) {
@@ -16,30 +24,28 @@ class CreateCode extends Component {
     this.handleSelect = this.handleSelect.bind(this);
   }
 
+  // this fixes the weird codeMirror issue...
+  // https://github.com/JedWatson/react-codemirror/issues/6
+  componentDidMount() {
+    this.refs.editor.getCodeMirror().refresh();
+    this.refs.editor1.getCodeMirror().refresh();
+    this.refs.editor2.getCodeMirror().refresh();
+    this.refs.editor3.getCodeMirror().refresh();
+    this.refs.editor4.getCodeMirror().refresh();
+    this.refs.editor5.getCodeMirror().refresh();
+  }
+
   handleSelect(activeKey) {
     this.setState({ activeKey });
   }
 
   render() {
     const jsOptions = {
-      mode: 'js',
+      mode: 'javascript',
       tabSize: 2,
       lineNumbers: true,
       lineWrapping: true,
       fixedGutter: false
-    };
-
-    const options = {
-      lineNumbers: true,
-      lineWrapping : false,
-      autoRefresh:true,
-      theme: 'paraiso-light',
-      styleActiveLine: true,
-      fixedGutter:true,
-      lint:true,
-      coverGutterNextToScrollbar:false,
-      gutters: ['CodeMirror-lint-markers'],
-      mode: 'javascript'
     };
 
     const htmlOptions = {
@@ -59,32 +65,36 @@ class CreateCode extends Component {
     };
 
     return (
-      <PanelGroup style={{"height": "100%"}} activeKey={this.state.activeKey} onSelect={this.handleSelect} accordion>
+      <PanelGroup style={{height: "490px"}} activeKey={this.state.activeKey} onSelect={this.handleSelect} accordion>
         <Panel header="Starter Code" eventKey="1">
-          <Tabs defaultActiveKey={1} id="uncontrolled-tab-example1">
-            <Tab eventKey={1} title="JS">
-              <CodeMirror value={this.props.starterCode.js} onChange={(value) => this.props.onCodeChange(value, 'starter', 'js')} options={jsOptions} />
-            </Tab>
-            <Tab eventKey={2} title="HTML">
-              <CodeMirror value={this.props.starterCode.html} onChange={(value) => this.props.onCodeChange(value, 'starter', 'html')} options={htmlOptions} />
-            </Tab>
-            <Tab eventKey={3} title="CSS">
-              <CodeMirror value={this.props.starterCode.css} onChange={(value) => this.props.onCodeChange(value, 'starter', 'css')} options={cssOptions} />
-            </Tab>
-          </Tabs>
+          <CodeContainer>
+            <Tabs defaultActiveKey={1} id="uncontrolled-tab-example1">
+              <Tab eventKey={1} title="JS">
+                <CodeMirror ref="editor" value={this.props.starterCode.js} onChange={(value) => this.props.onCodeChange(value, 'starter', 'js')} options={jsOptions} />
+              </Tab>
+              <Tab eventKey={2} title="HTML">
+                <CodeMirror ref="editor1" value={this.props.starterCode.html} onChange={(value) => this.props.onCodeChange(value, 'starter', 'html')} options={htmlOptions} />
+              </Tab>
+              <Tab eventKey={3} title="CSS">
+                <CodeMirror ref="editor2" value={this.props.starterCode.css} onChange={(value) => this.props.onCodeChange(value, 'starter', 'css')} options={cssOptions} />
+              </Tab>
+            </Tabs>
+          </CodeContainer>
         </Panel>
         <Panel header="Solution Code" eventKey="2">
-          <Tabs defaultActiveKey={2} id="uncontrolled-tab-example2">
-            <Tab eventKey={1} title="JS">
-              <CodeMirror value={this.props.solutionCode.js} onChange={(value) => this.props.onCodeChange(value, 'solution', 'js')} options={jsOptions} />
-            </Tab>
-            <Tab eventKey={2} title="HTML">
-              <CodeMirror value={this.props.solutionCode.html} onChange={(value) => this.props.onCodeChange(value, 'solution', 'html')} options={htmlOptions} />
-            </Tab>
-            <Tab eventKey={3} title="CSS">
-              <CodeMirror value={this.props.solutionCode.css} onChange={(value) => this.props.onCodeChange(value, 'solution', 'css')} options={cssOptions} />
-            </Tab>
-          </Tabs>
+          <CodeContainer>
+            <Tabs defaultActiveKey={2} id="uncontrolled-tab-example2">
+              <Tab eventKey={1} title="JS">
+                <CodeMirror ref="editor3" value={this.props.solutionCode.js} onChange={(value) => this.props.onCodeChange(value, 'solution', 'js')} options={jsOptions} />
+              </Tab>
+              <Tab eventKey={2} title="HTML">
+                <CodeMirror ref="editor4" value={this.props.solutionCode.html} onChange={(value) => this.props.onCodeChange(value, 'solution', 'html')} options={htmlOptions} />
+              </Tab>
+              <Tab eventKey={3} title="CSS">
+                <CodeMirror ref="editor5" value={this.props.solutionCode.css} onChange={(value) => this.props.onCodeChange(value, 'solution', 'css')} options={cssOptions} />
+              </Tab>
+            </Tabs>
+          </CodeContainer>
         </Panel>
       </PanelGroup>
     );

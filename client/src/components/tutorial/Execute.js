@@ -23,8 +23,7 @@ const ExecuteDiv = styled.div `
 //Execute Component
 function Execute(props) {
   const onShow = (()=>{
-    console.log(props.solution);
-    executeCode(props.solution.js, props.solution.html, props.solution.css, true);
+    executeCode(props.solutionCode.js, props.solutionCode.html, props.solutionCode.css, true);
   });
   return (
     <ExecuteDiv className="execution-body">
@@ -34,7 +33,7 @@ function Execute(props) {
       <Console className="execution-console-div" id="execution-console-div"></Console>
       <p />
       <ButtonGroup>
-        <Button onClick={()=>executeCode(props.js, props.html, props.css, true)}>Run My Code</Button>
+        <Button onClick={()=>executeCode(props.userCode.js, props.userCode.html, props.userCode.css, true)}>Run My Code</Button>
         <Button onClick={onShow}>Run Solution Code</Button>
       </ButtonGroup>
     </ExecuteDiv>)
