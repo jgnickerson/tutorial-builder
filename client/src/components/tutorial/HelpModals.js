@@ -4,7 +4,7 @@ Will show Modals to help user
 */
 
 import React, { Component } from 'react';
-import { Glyphicons, Modal, Button, Popover, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Modal, Button } from 'react-bootstrap';
 
 class HelpModals extends Component {
 	constructor(props) {
@@ -16,29 +16,7 @@ class HelpModals extends Component {
 		};
 	}
 
-	getInitialState() {
-    return { showModal: false };
-  }
-
-  close() {
-    this.setState({ showModal: false });
-  }
-
-  open() {
-    this.setState({ showModal: true });
-  }
-
   render() {
-    const popover = (
-      <Popover id="modal-popover" title="popover">
-        very popover. such engagement
-      </Popover>
-    );
-    const tooltip = (
-      <Tooltip id="modal-tooltip">
-        wow.
-      </Tooltip>
-    );
 
     let modalBody;
     switch (this.state.modalID) {

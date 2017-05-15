@@ -5,6 +5,8 @@
 
 import React, { Component } from 'react';
 import Tutorial from './Tutorial.js';
+import SingleModal from './SingleModal.js';
+import { Alert } from 'react-bootstrap';
 
 class TutorialContainer extends Component {
   constructor(props) {
@@ -16,7 +18,8 @@ class TutorialContainer extends Component {
       cssCode: "",
       instructions: null,
       solution: {},
-      mode: 'javascript'
+      mode: 'javascript',
+      showWarningModal: true
     }
 
     this.getTutorial();
@@ -101,8 +104,22 @@ class TutorialContainer extends Component {
       this.setState({mode: mode});
     });
 
+    // modal warns user if they are not logged in that they're changes won't persist
+    const warningBody = (<div>
+      <Alert bsStyle="warning">
+        <strong>You aren't signed in!</strong> Progress made on this tutorial won't be saved.
+      </Alert>
+    </div>);
+
+    let warningModal;
+    const jwt = window.localStorage.getItem('jwt');
+    if (!jwt && this.state.showWarningModal) warningModal = (
+      <SingleModal body={warningBody} onClose={()=>this.setState({showWarningModal: false})}/>
+    );
+
     return (
       <div>
+        {warningModal} 
         <Tutorial
           code={this.getCodeToDisplay()}
           js={this.state.jsCode}
