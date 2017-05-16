@@ -59,7 +59,9 @@ class App extends Component {
     switch (this.state.mode) {
       case 'login':
       case 'signup':
+      case 'changePassword':
       case 'signupSuccess':
+      case 'changePassSuccess':
         activeComponent = (
           <div>
             <MenuBar name={this.state.username} switchMode={this.switchMode} logout={this.handleLogout} browse={this.handleTutorialExit}/>
@@ -67,7 +69,8 @@ class App extends Component {
                 mode={this.state.mode}
                 switchMode={this.switchMode}
                 handleLogin={(username)=>this.setState({username: username, mode: 'browser'})}
-                handleRegister={(username)=>this.setState({username: username, mode: 'signupSuccess'})}/>
+                handleRegister={(username)=>this.setState({username: username, mode: 'signupSuccess'})}
+                handlePassChange={(username)=>this.setState({username: username, mode : 'changePassSuccess'})} />
           </div>
         );
         break;
@@ -92,16 +95,6 @@ class App extends Component {
         </div>
         );
         break;
-
-        case 'changePassword':
-          activeComponent = (
-            <div>
-            <MenuBar name={this.state.username} switchMode={this.switchMode} logout={this.handleLogout} browse={this.handleTutorialExit}/>
-            <input placeholder="Enter A New Password"></input>
-            <input placeholder="Re-enter Your password"></input>
-          </div>
-          );
-          break;
 
       //mode === 'tutorial'
       default:

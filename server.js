@@ -9,7 +9,11 @@ const http = require('http'),
 	bodyParser = require('body-parser'),
 	jwt = require('jsonwebtoken'),
 	jwtMiddleware = require('express-jwt'),
-	boom = require('boom');
+	boom = require('boom'),
+	bcrypt = require('bcrypt');
+
+// number of rounds of salting
+const saltRounds = 10;
 
 // create the server
 const app = express();
@@ -58,6 +62,48 @@ MongoClient.connect('mongodb://localhost:4201/tutorial-builder', (err, database)
 SERVER Routes
 
 */
+app.put('/changepass', jwtMiddleware({secret: passphrase}), (req, res) => {
+	db.collection('users').findOne({_id: new ObjectID(req.user.id)}).then(user => {
+		if (!user) {
+			return res.send(boom.unauthorized('invalid username'));
+		}
+
+		return bcrypt.compare(req.body.password, user.password, function(err, resp) {
+			if(err) {
+				return res.send(boom.badImplementation(err));
+			}
+
+			if(resp) {
+			  	bcrypt.hash(req.body.newPass, saltRounds, function(err, hash) {
+					if(err) {
+						res.send(boom.badImplementation(err));
+					} else {
+						const updatedUser = {
+							username: user.username,
+							password: hash,
+							tutorialsUsed: user.tutorialsUsed,
+							tutorialsOwned: user.tutorialsOwned
+						}
+
+						db.collection("users").findOneAndUpdate(
+							{_id: new ObjectID(req.user.id)},
+							{$set: updatedUser},
+							{returnOriginal: false},
+							(err, result) => {
+								if (err) {
+									console.log(err);
+									res.sendStatus(500);
+								}
+							}
+						);
+					}
+				});
+
+				return res.json(buildJwtResponse(user));
+			}
+		});
+	});
+});
 
 app.post('/login',(req, res) => {
 	db.collection('users').findOne({username: req.body.username}).then(user => {
@@ -65,12 +111,17 @@ app.post('/login',(req, res) => {
 			return res.send(boom.unauthorized('invalid username'));
 		}
 
-		//TODO add salting/hasing using bcrypt
-		if (req.body.password === user.password) {
-			return res.json(buildJwtResponse(user));
-		} else {
-			return res.send(boom.unauthorized('invalid password'));
-		}
+		return bcrypt.compare(req.body.password, user.password, function(err, resp) {
+		  if(err) {
+		  	return res.send(boom.badImplementation(err));
+		  }
+
+		  if(resp) {
+		   	return res.json(buildJwtResponse(user));
+		  } else {
+		   	return res.send(boom.unauthorized('Invalid password'));
+		  } 
+		});
 
 	//there was some other mongo error
 	}, err => {
@@ -83,16 +134,29 @@ app.post('/users', (req, res) =>{
 	const findOrAddUser = db.collection('users').findOne({username: req.body.username}).then(user => {
 		return new Promise((resolve, reject) => {
 			if (!user) {
-				const user = {
-					username: req.body.username,
-					password: req.body.password,
-					tutorialsUsed: [],
-					tutorialsOwned: []
-				};
-				db.collection("users").insertOne(user, (err, result) => {
-					if (err) { reject(boom.badImplementation(err)) }
-					resolve();
+				bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
+					if(err) {
+						res.send(boom.badImplementation(err));
+					}
+
+					if(hash) {
+						const user = {
+							username: req.body.username,
+							password: hash,
+							tutorialsUsed: [],
+							tutorialsOwned: []
+						};
+
+						db.collection("users").insertOne(user, (err, result) => {
+							if (err) { reject(boom.badImplementation(err)) }
+							resolve();
+						});
+
+					} else {
+						// WHAT TO PUT HERE
+					}
 				});
+
 			} else {
 				reject(boom.badData('username already exists'));
 			}
