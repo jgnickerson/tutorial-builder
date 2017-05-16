@@ -26,7 +26,7 @@ const InstructionContainer = styled.li`
   position: relative;
 `;
 
-const StyledP = styled.p`
+const StyledP = styled.pre`
   display: inline-block;
   width: 87%;
   padding-right: 5%;

@@ -135,14 +135,15 @@ class CreateContainer extends Component {
     this.setState({newInstructionType: type});
   }
   handlePublish() {
-    /*
-    TODO when this called, it should hit a route on the server that flips tutorial.published
-    in the tutorials db, and updates that tutorial with the latest from users.tutoraialsOwnder.
-    This route hasn't been written yet.
-    Right now, when you create a new tutorial, it's automatically added to db.tutorials.
-    This is so we can get an _id on the tutorial before putting it in db.users.tutorialsOwned.
-    */
-    console.log("add a new tutorial");
+    const jwt = window.localStorage.getItem('jwt');
+    if (jwt) {
+      fetch('/users/owner/' + this.state.tutorialID, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt},
+      }).then(response=> { if (!response.ok) console.log(response) }) //TODO handle error
+    }
+    this.props.onExit();
+
   }
 
   removeInstruction(index) {
@@ -248,6 +249,7 @@ class CreateContainer extends Component {
                           starterCode={this.state.starterCode}
                           onCodeChange={this.handleCodeChange}
                           goBack={this.handleGoBack}
+                          publish={this.handlePublish}
                           />
        </div>
       );

@@ -236,6 +236,37 @@ app.post('/users/owner/',
 });
 
 
+//publish tutorial
+app.post('/users/owner/:tutorialID',
+	jwtMiddleware({secret: passphrase}),
+	(req,res) =>{
+		db.collection("users").findOne(
+			{_id: new ObjectID(req.user.id)},
+			{ tutorialsOwned: {$elemMatch: { _id : new ObjectID(req.params.tutorialID)}}},
+			(err, result) =>{
+				if(err)  return res.send(boom.badImplementation(err))
+				const tutorial = result.tutorialsOwned[0]
+				tutorial.published = true;
+				tutorial.lastUpdate = new Date();
+				tutorial.creator = req.user.username;
+				db.collection('tutorials').findOneAndUpdate(
+					{_id: new ObjectID(tutorial._id)},
+					{$set: tutorial},
+					{returnOriginal: false},
+					(err, result) => {
+						if(err){
+							console.log(err)
+							return res.send(boom.badImplementation(err))
+						} else {
+							return res.sendStatus(200)
+						}
+					}
+				)
+			}
+		)
+	}
+);
+
 //persisting tutorial edits for owner
 app.put('/users/owner/:tutorialID',
 	jwtMiddleware({secret: passphrase}),

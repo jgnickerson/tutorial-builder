@@ -23,7 +23,7 @@ function CreateTutorial(props) {
             <p />
             <ButtonGroup>
               <Button onClick={props.goBack}>Go Back</Button>
-              <Button>Publish</Button>
+              <Button onClick={props.publish}>Publish</Button>
             </ButtonGroup>
           </Col>
           <Col md={4}>

@@ -31,6 +31,7 @@ class Instructions extends Component{
       readOnly: true,
       lineWrapping: true,
       viewportMargin: Infinity,
+
     };
 
     // placeholder for instruction data read from server
@@ -44,7 +45,7 @@ class Instructions extends Component{
     if(instructions){
      instructions = instructions.map((item, index) => {
       return item.type === 'text' ?
-        <p key={index}>{item.data}</p> :
+        <pre key={index}>{item.data}</pre> :
         <CodeMirror type="instructions" key={index} ref="editor" value={item.data} options={options}/>
     });
   } else{
