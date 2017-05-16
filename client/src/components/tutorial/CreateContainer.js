@@ -40,7 +40,7 @@ class CreateContainer extends Component {
       showHelpModals: false,
       mode: 'titlePage',
       newInstructionText:"",
-      newInstructionType:"text",
+      newInstructionType:"Text",
       errorMessage:"",
     }
 
@@ -236,8 +236,8 @@ class CreateContainer extends Component {
 
       let helpModal;
       if (this.state.showHelpModals) {
-        helpModal = <HelpModals onClose={()=>this.setState({showHelpModals:false})}/>;  
-      } 
+        helpModal = <HelpModals onClose={()=>this.setState({showHelpModals:false})}/>;
+      }
 
       renderedElement = (
         <div>

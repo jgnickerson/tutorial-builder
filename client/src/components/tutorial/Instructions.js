@@ -20,6 +20,14 @@ const InstructionContainer = styled.li`
   overflow: scroll;
 `;
 
+const StyledH4 = styled.h4`
+  display: inline-block;
+  width: 87%;
+  padding-right: 5%;
+  word-break: break-all;
+  font-weight: bold;
+`;
+
 
 class Instructions extends Component{
 
@@ -33,21 +41,23 @@ class Instructions extends Component{
       viewportMargin: Infinity,
     };
 
-    // placeholder for instruction data read from server
-    // const rawInstructions = [
-    //   { type: 'text', data: 'First do this'},
-    //   { type: 'code', data: '//This is a code snippet'},
-    //   { type: 'text', data: 'Now do this'}
-    // ];
-
     var instructions = this.props.instructions;
     if (instructions) {
+
      instructions = instructions.map((item, index) => {
-      return item.type === 'text' ?
-        <p key={index}>{item.data}</p> :
-        <CodeMirror type="instructions" key={index} ref="editor" value={item.data} options={options}/>
+       if (item.type === "Text") {
+         return (<p key={index}>{item.data}</p>);
+       } else if (item.type === "Header") {
+         return (<StyledH4 key={index}>{item.data}</StyledH4>);
+       } else if (item.type === "CSS") {
+         return (<CodeMirror type="instructions" key={index} ref="editor" value={item.data} options={Object.assign({mode: "css"})}/>);
+       } else if (item.type === "HTML") {
+         return (<CodeMirror type="instructions" key={index} ref="editor" value={item.data} options={Object.assign({mode: "html"})}/>);
+       } else {
+         return (<CodeMirror type="instructions" key={index} ref="editor" value={item.data} options={Object.assign({mode: "javascript"})}/>);
+       }
     });
-  } else{
+    } else{
       instructions = <CodeMirror ref="editor" value={null} options={options}/>
 
   }

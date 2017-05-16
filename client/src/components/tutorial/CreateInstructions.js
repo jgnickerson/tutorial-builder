@@ -26,11 +26,22 @@ const InstructionContainer = styled.li`
   position: relative;
 `;
 
-const StyledP = styled.p`
+const StyledP = styled.pre`
+  display: inline-block;
+  width: 87%;
+  padding-right: 5%;
+  word-break: normal;
+  white-space: pre-wrap;
+  border-style: none;
+  background-color: white;
+`;
+
+const StyledH4 = styled.h4`
   display: inline-block;
   width: 87%;
   padding-right: 5%;
   word-break: break-all;
+  font-weight: bold;
 `;
 
 const StyledDiv = styled.div`
@@ -62,18 +73,47 @@ const SortableItem = SortableElement((props) => {
   let item;
   let deleteButton = <Button style={{float: "right"}} onClick={() => props.removeInstruction(index)}>✖</Button>;
 
-  if (value.type === 'text') {
-    item = (
-      <ListGroupItem>
+  if (value.type === 'Text') {
+    item = (value.data ?
+      (<ListGroupItem>
+        <StyledP>{value.data}</StyledP>
+        {deleteButton}
+      </ListGroupItem>) :
+      (<ListGroupItem style={{height: "50px"}}>
           <StyledP>{value.data}</StyledP>
           {deleteButton}
+      </ListGroupItem>)
+    );
+  } else if (value.type === 'Header') {
+    item = (
+      <ListGroupItem style={{height: "50px"}}>
+          <StyledH4>{value.data}</StyledH4>
+          {deleteButton}
+      </ListGroupItem>
+    );
+  }else if (value.type === 'JS'){
+    item = (
+      <ListGroupItem>
+        <StyledDiv>
+          <CodeMirror value={value.data} options={Object.assign({mode: "javascript"}, options)}/>
+        </StyledDiv>
+        {deleteButton}
+      </ListGroupItem>
+    );
+  } else if (value.type === 'HTML') {
+    item = (
+      <ListGroupItem>
+        <StyledDiv>
+          <CodeMirror value={value.data} options={Object.assign({mode: "html"}, options)}/>
+        </StyledDiv>
+        {deleteButton}
       </ListGroupItem>
     );
   } else {
     item = (
       <ListGroupItem>
         <StyledDiv>
-          <CodeMirror value={value.data} options={options}/>
+          <CodeMirror value={value.data} options={Object.assign({mode: "css"}, options)}/>
         </StyledDiv>
         {deleteButton}
       </ListGroupItem>
@@ -116,11 +156,14 @@ function CreateInstructions(props) {
           <ButtonGroup vertical>
             <Button onClick={props.addInstruction}>Add</Button>
             <DropdownButton id="input-dropdown-addon"
-                            title={props.newInstructionType.charAt(0).toUpperCase() + props.newInstructionType.slice(1)}
+                            title={props.newInstructionType}
                             onSelect={(type) => props.changeType(type)}
                             style={{width: "80px"}}>
-              <MenuItem eventKey="text">Text</MenuItem>
-              <MenuItem eventKey="code">Code</MenuItem>
+              <MenuItem eventKey="Text">Text</MenuItem>
+              <MenuItem eventKey="Header">Header</MenuItem>
+              <MenuItem eventKey="JS">JS</MenuItem>
+              <MenuItem eventKey="HTML">HTML</MenuItem>
+              <MenuItem eventKey="CSS">CSS</MenuItem>
             </DropdownButton>
           </ButtonGroup>
         </Col>
