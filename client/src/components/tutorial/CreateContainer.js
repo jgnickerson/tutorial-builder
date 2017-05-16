@@ -42,31 +42,6 @@ class CreateContainer extends Component {
       errorMessage:"",
     }
 
-    //if someone is editing this tutorial
-    if (props.tutorialID) {
-      this.persistInterval = setInterval(()=> this.persistTutorial(), 1000);
-
-      //someone is creating a completely new tutorial
-    } else {
-      const jwt = window.localStorage.getItem('jwt');
-      if (jwt) {
-        fetch('/users/owner', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt},
-          body: JSON.stringify({title: this.state.title, description: this.state.description, js: this.state.starterCode.js, html: this.state.starterCode.html, css: this.state.starterCode.css, solution: this.state.solutionCode, instructions: this.state.instructions, lastUpdate: new Date().toISOString(), published: false})
-        }).then(response=> { if (response.ok) return response.json()
-        }).then(data=>{
-          if (!data.isBoom) {
-            this.setState({tutorialID: data._id});
-            this.persistInterval = setInterval(() => this.persistTutorial(), 1000);
-          } else {
-            //TODO handle error
-            console.log(data);
-          }
-        });
-      }
-    }
-
     this.handleCodeChange = this.handleCodeChange.bind(this);
     this.handleTitleChange = this.handleTitleChange.bind(this);
     this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
@@ -175,6 +150,30 @@ class CreateContainer extends Component {
     } else if (!this.state.description) {
       this.setState({errorMessage: "Please type in a description."})
     } else {
+      //if someone is editing this tutorial
+      if (this.props.tutorialID) {
+        this.persistInterval = setInterval(()=> this.persistTutorial(), 1000);
+
+        //someone is creating a completely new tutorial
+      } else {
+        const jwt = window.localStorage.getItem('jwt');
+        if (jwt) {
+          fetch('/users/owner', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt},
+            body: JSON.stringify({title: this.state.title, description: this.state.description, js: this.state.starterCode.js, html: this.state.starterCode.html, css: this.state.starterCode.css, solution: this.state.solutionCode, instructions: this.state.instructions, lastUpdate: new Date().toISOString(), published: false})
+          }).then(response=> { if (response.ok) return response.json()
+          }).then(data=>{
+            if (!data.isBoom) {
+              this.setState({tutorialID: data._id});
+              this.persistInterval = setInterval(() => this.persistTutorial(), 1000);
+            } else {
+              //TODO handle error
+              console.log(data);
+            }
+          });
+        }
+      }
       this.setState({errorMessage: null, mode: "detailsPage"});
     }
   }
@@ -221,7 +220,7 @@ class CreateContainer extends Component {
           <FormGroup>
             <Col xsOffset={4} xs={6}>
               <ButtonGroup>
-                  <Button type="submit" onClick={this.props.onExit}>Cancel</Button>
+                  <Button type="button" onClick={this.props.onExit}>Cancel</Button>
                   <Button type="submit" onClick={this.handleNext}>Next</Button>
               </ButtonGroup>
             </Col>
