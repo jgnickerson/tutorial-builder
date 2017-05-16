@@ -26,6 +26,14 @@ const StyledH4 = styled.h4`
   padding-right: 5%;
   word-break: break-all;
   font-weight: bold;
+`
+
+const StyledP = styled.pre`
+  display: inline-block;
+  white-space: pre-wrap;
+  word-break: normal;
+  border-style: none;
+  background-color: white;
 `;
 
 
@@ -39,6 +47,7 @@ class Instructions extends Component{
       readOnly: true,
       lineWrapping: true,
       viewportMargin: Infinity,
+
     };
 
     var instructions = this.props.instructions;
@@ -46,7 +55,7 @@ class Instructions extends Component{
 
      instructions = instructions.map((item, index) => {
        if (item.type === "Text") {
-         return (<p key={index}>{item.data}</p>);
+         return (<StyledP key={index}>{item.data}</StyledP>);
        } else if (item.type === "Header") {
          return (<StyledH4 key={index}>{item.data}</StyledH4>);
        } else if (item.type === "CSS") {

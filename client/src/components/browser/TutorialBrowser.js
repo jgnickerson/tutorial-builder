@@ -61,7 +61,7 @@ class TutorialBrowser extends Component {
   render() {
     return (
       <div>
-        <TutorialList tutorials={this.state.tutorials} onSelect={this.props.onSelect}/>
+        <TutorialList mode={this.props.mode} tutorials={this.state.tutorials} onSelect={this.props.onSelect} onEdit={this.props.onEdit}/>
       </div>
     )
   }

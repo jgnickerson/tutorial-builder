@@ -44,28 +44,24 @@ class CreateContainer extends Component {
       errorMessage:"",
     }
 
-    //if someone is editing this tutorial
     if (props.tutorialID) {
-      this.persistInterval = setInterval(()=> this.persistTutorial(), 1000);
-
-      //someone is creating a completely new tutorial
-    } else {
       const jwt = window.localStorage.getItem('jwt');
       if (jwt) {
-        fetch('/users/owner', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt},
-          body: JSON.stringify({title: this.state.title, description: this.state.description, js: this.state.starterCode.js, html: this.state.starterCode.html, css: this.state.starterCode.css, solution: this.state.solutionCode, instructions: this.state.instructions, lastUpdate: new Date().toISOString(), published: false})
-        }).then(response=> { if (response.ok) return response.json()
-        }).then(data=>{
-          if (!data.isBoom) {
-            this.setState({tutorialID: data._id});
-            this.persistInterval = setInterval(() => this.persistTutorial(), 1000);
-          } else {
-            //TODO handle error
-            console.log(data);
+        fetch('users/owner/' + props.tutorialID, {method: 'GET', headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt}})
+        .then(response=> {
+          if (response.ok) {
+            return response.json();
           }
-        });
+        }).then(data=> {
+          this.setState({
+            title: data.title,
+            description: data.description,
+            starterCode: {js: data.js, html: data.html, css: data.css},
+            solutionCode: data.solution,
+            instructions: data.instructions,
+            mode: 'detailsPage'
+          })
+        })
       }
     }
 
@@ -137,14 +133,15 @@ class CreateContainer extends Component {
     this.setState({newInstructionType: type});
   }
   handlePublish() {
-    /*
-    TODO when this called, it should hit a route on the server that flips tutorial.published
-    in the tutorials db, and updates that tutorial with the latest from users.tutoraialsOwnder.
-    This route hasn't been written yet.
-    Right now, when you create a new tutorial, it's automatically added to db.tutorials.
-    This is so we can get an _id on the tutorial before putting it in db.users.tutorialsOwned.
-    */
-    console.log("add a new tutorial");
+    const jwt = window.localStorage.getItem('jwt');
+    if (jwt) {
+      fetch('/users/owner/' + this.state.tutorialID, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt},
+      }).then(response=> { if (!response.ok) console.log(response) }) //TODO handle error
+    }
+    this.props.onExit();
+
   }
 
   removeInstruction(index) {
@@ -176,6 +173,30 @@ class CreateContainer extends Component {
     } else if (!this.state.description) {
       this.setState({errorMessage: "Please type in a description."})
     } else {
+      //if someone is editing this tutorial
+      if (this.props.tutorialID) {
+        this.persistInterval = setInterval(()=> this.persistTutorial(), 1000);
+
+        //someone is creating a completely new tutorial
+      } else {
+        const jwt = window.localStorage.getItem('jwt');
+        if (jwt) {
+          fetch('/users/owner', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt},
+            body: JSON.stringify({title: this.state.title, description: this.state.description, js: this.state.starterCode.js, html: this.state.starterCode.html, css: this.state.starterCode.css, solution: this.state.solutionCode, instructions: this.state.instructions, lastUpdate: new Date().toISOString(), published: false})
+          }).then(response=> { if (response.ok) return response.json()
+          }).then(data=>{
+            if (!data.isBoom) {
+              this.setState({tutorialID: data._id});
+              this.persistInterval = setInterval(() => this.persistTutorial(), 1000);
+            } else {
+              //TODO handle error
+              console.log(data);
+            }
+          });
+        }
+      }
       this.setState({errorMessage: null, mode: "detailsPage"});
     }
   }
@@ -222,7 +243,7 @@ class CreateContainer extends Component {
           <FormGroup>
             <Col xsOffset={4} xs={6}>
               <ButtonGroup>
-                  <Button type="submit" onClick={this.props.onExit}>Cancel</Button>
+                  <Button type="button" onClick={this.props.onExit}>Cancel</Button>
                   <Button type="submit" onClick={this.handleNext}>Next</Button>
               </ButtonGroup>
             </Col>
@@ -258,6 +279,7 @@ class CreateContainer extends Component {
                           onCodeChange={this.handleCodeChange}
                           goBack={this.handleGoBack}
                           onHelp={()=>this.setState({showHelpModals:true})}
+                          publish={this.handlePublish}
                           />
        </div>
       );

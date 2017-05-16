@@ -28,8 +28,10 @@ function Tutorial(props) {
         <div>
         <br />
         <br />
-        <br />
             <Grid display= "flex">
+              <Row>
+                <PageHeader>{props.title}</PageHeader>
+              </Row>
               <Row className="show-grid">
               <EqualHeightDiv>
                 <Col md={4}><Instructions instructions={props.instructions}/>

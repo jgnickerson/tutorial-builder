@@ -48,6 +48,7 @@ class TutorialContainer extends Component {
         let userCode = {js: data.js, html: data.html, css: data.css};
         this.setState({
           userCode: userCode,
+          title: data.title,
           solutionCode: data.solution,
           instructions: data.instructions
         });
@@ -143,7 +144,7 @@ class TutorialContainer extends Component {
 
     return (
       <div>
-        {warningModal} 
+        {warningModal}
         <Tutorial
           userCode={this.state.userCode}
           solutionCode={this.state.solutionCode}
@@ -152,6 +153,7 @@ class TutorialContainer extends Component {
           onCodeChange={this.handleCodeChange}
           mode={this.state.mode}
           onFinish={()=>this.setState({showFinishedModal:true})}
+          title={this.state.title}
         />
         {finishedModal}
       </div>

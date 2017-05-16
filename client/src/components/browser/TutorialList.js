@@ -23,7 +23,8 @@ function TutorialList(props){
 				author={props.tutorials[i].creator}
 					description={props.tutorials[i].description}
 				lastUpdate={props.tutorials[i].lastUpdate}
-				onClick={props.onSelect}
+				buttonText={props.mode === 'owned' ? 'Edit Tutorial' : 'Open Tutorial'}
+				onClick={props.mode === 'owned' ? props.onEdit : props.onSelect}
 				/>
 			</Col>
 		)
@@ -37,7 +38,8 @@ function TutorialList(props){
 					author={props.tutorials[i+1].creator}
 						description={props.tutorials[i+1].description}
 					lastUpdate={props.tutorials[i+1].lastUpdate}
-					onClick={props.onSelect}
+					buttonText={props.mode === 'owned' ? 'Edit Tutorial' : 'Open Tutorial'}
+					onClick={props.mode === 'owned' ? props.onEdit : props.onSelect}
 					/>
 				</Col>
 			)

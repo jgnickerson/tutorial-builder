@@ -20,6 +20,7 @@ class App extends Component {
 
     //ES6 Class/React thing we have to do to make sure this is bound properly...
     this.handleTutorialSelect = this.handleTutorialSelect.bind(this);
+    this.handleTutorialEdit = this.handleTutorialEdit.bind(this);
     this.handleTutorialExit = this.handleTutorialExit.bind(this);
     this.switchMode = this.switchMode.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
@@ -28,6 +29,10 @@ class App extends Component {
 
   handleTutorialSelect(tutorialId) {
     this.setState({ mode: 'tutorial', activeTutorial: tutorialId });
+  }
+
+  handleTutorialEdit(tutorialId) {
+    this.setState({ mode: 'createNew', activeTutorial: tutorialId});
   }
 
   handleTutorialExit(browserMode) {
@@ -71,7 +76,7 @@ class App extends Component {
         activeComponent = (
           <div>
             <MenuBar name={this.state.username} switchMode={this.switchMode} logout={this.handleLogout} browse={this.handleTutorialExit}/>
-            <TutorialBrowser mode={this.state.browse} onSelect={this.handleTutorialSelect}/>
+            <TutorialBrowser mode={this.state.browse} onSelect={this.handleTutorialSelect} onEdit={this.handleTutorialEdit}/>
           </div>
         );
         break;
@@ -81,6 +86,7 @@ class App extends Component {
           <div>
           <MenuBar name={this.state.username} switchMode={this.switchMode} logout={this.handleLogout} browse={this.handleTutorialExit}/>
           <CreateContainer
+            tutorialID={this.state.activeTutorial}
             onExit={this.handleTutorialExit}
           />
         </div>
