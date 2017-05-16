@@ -30,7 +30,10 @@ const StyledP = styled.pre`
   display: inline-block;
   width: 87%;
   padding-right: 5%;
-  word-break: break-all;
+  word-break: normal;
+  white-space: pre-wrap;
+  border-style: none;
+  background-color: white;
 `;
 
 const StyledDiv = styled.div`

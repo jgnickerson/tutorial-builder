@@ -20,6 +20,14 @@ const InstructionContainer = styled.li`
   overflow: scroll;
 `;
 
+const StyledP = styled.pre`
+  display: inline-block;
+  white-space: pre-wrap;
+  word-break: normal;
+  border-style: none;
+  background-color: white;
+`;
+
 
 class Instructions extends Component{
 
@@ -45,7 +53,7 @@ class Instructions extends Component{
     if(instructions){
      instructions = instructions.map((item, index) => {
       return item.type === 'text' ?
-        <pre key={index}>{item.data}</pre> :
+        <StyledP key={index}>{item.data}</StyledP> :
         <CodeMirror type="instructions" key={index} ref="editor" value={item.data} options={options}/>
     });
   } else{
