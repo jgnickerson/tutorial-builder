@@ -57,7 +57,7 @@ class TutorialSummary extends Component{
     const tutorialSummary = this.state.showDescription === true ? (
       <Summary onClick={() => {this.setState({showDescription:false})}}>
       <Title>{this.props.title}</Title>
-      <Button style={{"margin-left": "22px", "margin-top": "5px"}}onClick={() => {this.props.onClick(this.props.id)}}>Open Tutorial</Button>
+      <Button style={{"margin-left": "22px", "margin-top": "5px"}}onClick={() => {this.props.onClick(this.props.id)}}>{this.props.buttonText}</Button>
       <Description>{this.props.description}</Description>
       <Author>{this.props.author}</Author>
       <StarRating rating={this.props.rating} setRating={(rating)=>{this.props.setRatingFor(this.props.id, rating)}}/>

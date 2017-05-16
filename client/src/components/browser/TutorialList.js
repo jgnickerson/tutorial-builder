@@ -24,7 +24,8 @@ function TutorialList(props){
 					description={props.tutorials[i].description}
 				lastUpdate={props.tutorials[i].lastUpdate}
 				rating={props.tutorials[i].rating}
-				onClick={props.onSelect}
+				buttonText={props.mode === 'owned' ? 'Edit Tutorial' : 'Open Tutorial'}
+				onClick={props.mode === 'owned' ? props.onEdit : props.onSelect}
 				// setRatingFor={(id, rating)=>this.setRating(id, rating)}
 				/>
 			</Col>
@@ -40,7 +41,8 @@ function TutorialList(props){
 						description={props.tutorials[i+1].description}
 					lastUpdate={props.tutorials[i+1].lastUpdate}
 					rating={props.tutorials[i+1].rating}
-					onClick={props.onSelect}
+					buttonText={props.mode === 'owned' ? 'Edit Tutorial' : 'Open Tutorial'}
+					onClick={props.mode === 'owned' ? props.onEdit : props.onSelect}
 					// setRatingFor={(id, rating)=>this.setRating(id, rating)}
 					/>
 				</Col>

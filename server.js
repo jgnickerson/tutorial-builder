@@ -316,6 +316,19 @@ app.get('/users/owner',
 			err => res.send(boom.badImplementation(err)));
 });
 
+app.get('/users/owner/:tutorialID',
+	jwtMiddleware({secret: passphrase}),
+	(req, res) => {
+		db.collection('users').findOne({_id: new ObjectID(req.user.id) }, { tutorialsOwned: {$elemMatch: { _id : new ObjectID(req.params.tutorialID)}}},
+		(err, result) => {
+			if (err) {
+				return res.send(boom.badImplementation(err));
+			} else {
+				return res.send(result.tutorialsOwned[0]);
+			}
+		});
+})
+
 app.get('/users/tutorials',
 	jwtMiddleware({secret: passphrase}),
 	(req, res) => {

@@ -42,6 +42,27 @@ class CreateContainer extends Component {
       errorMessage:"",
     }
 
+    if (props.tutorialID) {
+      const jwt = window.localStorage.getItem('jwt');
+      if (jwt) {
+        fetch('users/owner/' + props.tutorialID, {method: 'GET', headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt}})
+        .then(response=> {
+          if (response.ok) {
+            return response.json();
+          }
+        }).then(data=> {
+          this.setState({
+            title: data.title,
+            description: data.description,
+            starterCode: {js: data.js, html: data.html, css: data.css},
+            solutionCode: data.solution,
+            instructions: data.instructions,
+            mode: 'detailsPage'
+          })
+        })
+      }
+    }
+
     this.handleCodeChange = this.handleCodeChange.bind(this);
     this.handleTitleChange = this.handleTitleChange.bind(this);
     this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
