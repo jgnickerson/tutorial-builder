@@ -11,7 +11,7 @@ class HelpModals extends Component {
 		super(props);
 		this.state = {
 			modalID: 0,
-			numModals: 4,
+			numModals: 3,
 			onClose: props.onClose
 		};
 	}
@@ -22,26 +22,26 @@ class HelpModals extends Component {
     switch (this.state.modalID) {
   		case 0: 
   			modalBody = (<div>
-  				<img src="https://s3.amazonaws.com/codecademy-blog/assets/03-2013-new-experience.png" 
-  							height="300" width="550"/> 
+  				<img src="Instructions.png" height="400" width="520"/> 
         	<hr />
-        	<p>Help Text 0</p>
+        	<p>Add instructions in the instruction text box. You can use the dropdown menu to switch between adding text and adding code snippets.</p>
+          <p>If you're logged in, your progress will be continuously saved. Click the publish button when you're ready for other users to see your tutorial.</p>
       	</div>);
   			break;
   		case 1: 
   			modalBody = (<div>
-  				<img src="https://s3.amazonaws.com/codecademy-blog/assets/03-2013-new-experience.png"
-  							height="300" width="550"/>  
+  				<img src="StarterCode.png" height="600" width="350"/>  
         	<hr />
-        	<p>Help Text 1</p>
+        	<p>In the Starter Code window, add the code that users of your tutorial will start with. Then put your finished tutorial code in the Solution Code window.</p>
+          <p>You can click the window titles to switch between them and the tabs to switch between JavaScript, HTML, and CSS.</p>
   			</div>);
   			break;
   		case 2: 
   			modalBody = (<div>
-  				<img src="https://s3.amazonaws.com/codecademy-blog/assets/03-2013-new-experience.png"
-  							height="300" width="550"/>  
+  				<img src="IFrame.png" height="600" width="350"/>  
         	<hr />
-        	<p>Help Text 2</p>
+        	<p>You can use the run buttons to test your tutorial as you go.</p> 
+          <p>The top box displays tutorial results and the bottom box displays console.log() statements.</p>
   			</div>);
   			break;
   		default: modalBody = (<div></div>);
