@@ -8,7 +8,7 @@ function MenuBar(props) {
     navbar = (<Navbar inverse fixedTop>
                 <Navbar.Header>
                   <Navbar.Brand>
-                    <a onClick={() => props.browse('all')}>CodePanthr</a>
+                    <a onClick={() => props.browse('all')}>CodePanther</a>
                   </Navbar.Brand>
                   <Navbar.Toggle />
                 </Navbar.Header>
@@ -31,7 +31,7 @@ function MenuBar(props) {
     navbar = (<Navbar inverse fixedTop>
                 <Navbar.Header>
                   <Navbar.Brand>
-                    <a onClick={() => props.browse('all')}>CodePanthr</a>
+                    <a onClick={() => props.browse('all')}>CodePanther</a>
                   </Navbar.Brand>
                   <Navbar.Toggle />
                 </Navbar.Header>
