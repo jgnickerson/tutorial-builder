@@ -52,7 +52,8 @@ class CreateContainer extends Component {
             solutionCode: data.solution,
             instructions: data.instructions,
             mode: 'detailsPage'
-          })
+          });
+          this.persistInterval = setInterval(() => this.persistTutorial(), 1000);
         })
       }
     }
