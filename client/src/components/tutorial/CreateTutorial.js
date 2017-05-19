@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import style from 'bootstrap/dist/css/bootstrap.css';
+import React from 'react';
+import 'bootstrap/dist/css/bootstrap.css';
 import styled from 'styled-components';
 import {Grid, Row, Col, Button, ButtonGroup} from 'react-bootstrap';
 import CreateInstructions from './CreateInstructions.js';

@@ -75,7 +75,7 @@ TutorialSummary.propTypes = {
   id:React.PropTypes.string.isRequired,
   title:React.PropTypes.string.isRequired,
   description:React.PropTypes.string,
-  author:React.PropTypes.string.isRequired,
+  author:React.PropTypes.string,
   lastUpdate:React.PropTypes.string.isRequired,
   onClick:React.PropTypes.func.isRequired,
 };

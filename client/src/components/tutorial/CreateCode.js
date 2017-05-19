@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import style from 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/dist/css/bootstrap.css';
 import styled from 'styled-components';
 import PanelGroup from 'react-bootstrap/lib/PanelGroup';
 import Panel from 'react-bootstrap/lib/Panel';

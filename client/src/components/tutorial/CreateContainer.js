@@ -4,19 +4,11 @@ Will handle fetching of tutorial and manage state of Tutorial (e.g. current step
 */
 
 import React, { Component } from 'react';
-import Tutorial from './Tutorial.js';
 import CreateTutorial from './CreateTutorial.js';
-import InstructionWriter from './InstructionWriter.js';
 import HelpModals from './HelpModals.js';
-import arrayMove from 'react-sortable-hoc';
-import styled from 'styled-components';
 
-import { ListGroup, ListGroupItem, Button, PageHeader, Form, Col, ControlLabel, FormControl, FormGroup, ButtonGroup } from 'react-bootstrap';
+import { Button, PageHeader, Form, Col, ControlLabel, FormControl, FormGroup, ButtonGroup } from 'react-bootstrap';
 
-const InitialDiv = styled.div`
-  margin-left: 20%;
-  margin-right: 20%;
-`;
 
 class CreateContainer extends Component {
   constructor(props) {
@@ -287,10 +279,6 @@ class CreateContainer extends Component {
 
     return renderedElement;
   }
-}
-
-CreateContainer.propTypes = {
-  onExit: React.PropTypes.func.isRequired
 }
 
 export default CreateContainer;

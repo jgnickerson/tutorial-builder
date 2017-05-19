@@ -2,7 +2,7 @@
 SingleModal component for 1-off popups
 */
 
-import React, { Component } from 'react';
+import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
 
 function SingleModal(props) {

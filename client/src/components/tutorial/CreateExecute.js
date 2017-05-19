@@ -5,7 +5,6 @@ import React from 'react';
 import styled from 'styled-components';
 import Button from 'react-bootstrap/lib/Button';
 import ButtonGroup from 'react-bootstrap/lib/ButtonGroup';
-import Panel from 'react-bootstrap/lib/Panel';
 
 const Console = styled.div`
   height: 300px;

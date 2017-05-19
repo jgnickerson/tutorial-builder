@@ -109,11 +109,6 @@ class TutorialContainer extends Component {
   }
 
   render() {
-    const onModeChange = ((element) => {
-      const mode = element.target.value;
-      this.setState({mode: mode});
-    });
-
     // modal warns user if they are not logged in that they're changes won't persist
     const warningBody = (<div>
       <Alert bsStyle="warning">
@@ -159,10 +154,6 @@ class TutorialContainer extends Component {
       </div>
     )
   }
-}
-
-TutorialContainer.propTypes = {
-  onExit: React.PropTypes.func.isRequired
 }
 
 export default TutorialContainer;

@@ -4,7 +4,7 @@
   imports and formats CodeMirror component to allow for editing of code and updating state.code
 */
 import React, { Component } from 'react';
-import style from 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/dist/css/bootstrap.css';
 import styled from 'styled-components';
 import PanelGroup from 'react-bootstrap/lib/PanelGroup';
 import Panel from 'react-bootstrap/lib/Panel';

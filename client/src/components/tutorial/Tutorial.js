@@ -5,11 +5,8 @@
 import React from 'react';
 import Instructions from './Instructions.js';
 import Editor from './Editor.js';
-import SolutionDisplay from './SolutionDisplay.js';
 import Execute from './Execute.js';
-import CreateCode from './CreateCode.js';
-import {Grid, Row, Col, PageHeader, ControlLabel, FormControl, ButtonToolbar, 
-  Button, PanelGroup, Panel, BPanel, ButtonGroup} from 'react-bootstrap';
+import {Grid, Row, Col, PageHeader, Button, ButtonGroup} from 'react-bootstrap';
 import styled from 'styled-components';
 import 'bootstrap/dist/css/bootstrap.css';
 
@@ -18,17 +15,13 @@ const EqualHeightDiv = styled.div`
   display: flex;
 `;
 
-const PanelStyle = styled.div`
-  background: #f5f5f5;
-`;
-
 function Tutorial(props) {
     if (props.mode){
       return (
         <div>
         <br />
         <br />
-            <Grid display= "flex">
+            <Grid display="flex">
               <Row>
                 <PageHeader>{props.title}</PageHeader>
               </Row>

@@ -1,20 +1,18 @@
-import React, { Component } from 'react';
+import React from 'react';
 import CodeMirror from 'react-codemirror';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/mode/javascript/javascript';
 import styled from 'styled-components';
-import style from 'bootstrap/dist/css/bootstrap.css';
-import ListGroup from 'react-bootstrap/lib/ListGroup';
+import 'bootstrap/dist/css/bootstrap.css';
 import ListGroupItem from 'react-bootstrap/lib/ListGroupItem';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
-import InputGroup from 'react-bootstrap/lib/InputGroup';
 import Button from 'react-bootstrap/lib/Button';
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import ButtonGroup from 'react-bootstrap/lib/ButtonGroup';
-import {Grid, Row, Col} from 'react-bootstrap';
-import {SortableContainer, SortableElement, arrayMove} from 'react-sortable-hoc';
+import Col from 'react-bootstrap/lib/Col';
+import {SortableContainer, SortableElement} from 'react-sortable-hoc';
 
 const InstructionContainer = styled.li`
   width: 100%;
@@ -136,15 +134,6 @@ const SortableList = SortableContainer((props) => {
 
 
 function CreateInstructions(props) {
-
-  // create CodeMirror props
-  const options = {
-    tabSize: 2,
-    readOnly: true,
-    lineWrapping: true,
-    viewportMargin: Infinity
-  };
-
   return(
     <InstructionContainer>
       <SortableList items={props.instructions} onSortEnd={props.onSortEnd} removeInstruction={props.removeInstruction}/>

@@ -20,27 +20,27 @@ class HelpModals extends Component {
 
     let modalBody;
     switch (this.state.modalID) {
-  		case 0: 
+  		case 0:
   			modalBody = (<div>
-  				<img src="Instructions.png" height="400" width="520"/> 
+  				<img src="Instructions.png" alt="instructions explanation" height="400" width="520"/>
         	<hr />
         	<p>Add instructions in the instruction text box. You can use the dropdown menu to switch between adding text and adding code snippets.</p>
           <p>If you're logged in, your progress will be continuously saved. Click the publish button when you're ready for other users to see your tutorial.</p>
       	</div>);
   			break;
-  		case 1: 
+  		case 1:
   			modalBody = (<div>
-  				<img src="StarterCode.png" height="600" width="350"/>  
+  				<img src="StarterCode.png" alt="starter code explanation" height="600" width="350"/>
         	<hr />
         	<p>In the Starter Code window, add the code that users of your tutorial will start with. Then put your finished tutorial code in the Solution Code window.</p>
           <p>You can click the window titles to switch between them and the tabs to switch between JavaScript, HTML, and CSS.</p>
   			</div>);
   			break;
-  		case 2: 
+  		case 2:
   			modalBody = (<div>
-  				<img src="IFrame.png" height="600" width="350"/>  
+  				<img src="IFrame.png"  alt="iframe execution explanation" height="600" width="350"/>
         	<hr />
-        	<p>You can use the run buttons to test your tutorial as you go.</p> 
+        	<p>You can use the run buttons to test your tutorial as you go.</p>
           <p>The top box displays tutorial results and the bottom box displays console.log() statements.</p>
   			</div>);
   			break;
