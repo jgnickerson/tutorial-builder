@@ -13,11 +13,7 @@ cd ..
 We have two separate package.json, one for the server and one for the client, hence we run npm install twice.
 
 ### Adding Test Data to MongoDB
-#### Experimental NPM script
-Run `npm run refresh` to (hopefully) seed the database automatically. Then ctrl-c out and run `npm start`. If that doesn't work (nothing shows up on a page where you expect things to show up) follow the below instructions to manually seed the db.
-
-#### Manually add Test Data to db
-To manually seed the db with test data, first create a db directory in the root folder, then run:
+To seed the db with test data, first create a db directory in the root folder of the repo, then run:
 ~~~
 mongod --port 4201 --dbpath ./db
 ~~~
@@ -34,7 +30,7 @@ mongoimport --port 4201 --db tutorial-builder --collection users --jsonArray ./t
 ~~~
 
 ### Running Server/Client
-To run the client dev server and backend simultaneously, run
+To run the client dev server and backend simultaneously, in the root of the repo run
 ~~~
 npm start
 ~~~
