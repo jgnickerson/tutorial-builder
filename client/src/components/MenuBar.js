@@ -17,10 +17,10 @@ function MenuBar(props) {
                     <NavItem onSelect={()=>props.switchMode('createNew')}>Build a new tutorial</NavItem>
                   </Nav>
                   <Nav pullRight>
+                    <NavItem onSelect={() => props.browse('owned')}>My Created Tutorials</NavItem>
+                    <NavItem onSelect={() => props.browse('used')}>My Started Tutorials</NavItem>
                       <NavDropdown eventKey={1} title={props.name} id="basic-nav-dropdown">
-                        <MenuItem eventKey={1.1} onSelect={() => props.browse('used')}>Tutorials used</MenuItem>
-                        <MenuItem eventKey={1.2} onSelect={() => props.browse('owned')}>Tutorials owned</MenuItem>
-                        <MenuItem onSelect={()=>props.switchMode('changePassword')} eventKey={1.3}>Change Password</MenuItem>
+                        <MenuItem onSelect={()=>props.switchMode('changePassword')} eventKey={1.1}>Change Password</MenuItem>
                         <MenuItem divider />
                         <MenuItem onSelect={() => props.logout()}>Log out</MenuItem>
                       </NavDropdown>
